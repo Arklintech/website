@@ -354,8 +354,12 @@ export default function CinematicIntro() {
       <div style={{ position: 'sticky', top: 0, left: 0, width: '100%', height: '100dvh', overflow: 'hidden', background: '#000' }}>
         <canvas
           ref={canvasRef}
+          role="img"
+          aria-label="ZAQVORO Living Machine interactive scrolltelling cinematic sequence"
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', imageRendering: 'auto', pointerEvents: 'none' }}
-        />
+        >
+          ZAQVORO Living Machine interactive scrolltelling visualization
+        </canvas>
 
         {/* Loading veil */}
         {!criticalReady && (

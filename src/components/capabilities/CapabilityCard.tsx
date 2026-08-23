@@ -12,17 +12,19 @@ interface CapabilityCardProps {
 }
 
 const icons: Record<string, React.ReactNode> = {
-  'ai-intelligence': <Cpu className="w-3.5 h-3.5 text-z-blue-400" />,
-  'software-platforms': <Layers className="w-3.5 h-3.5 text-z-blue-400" />,
-  'automation-orchestration': <Workflow className="w-3.5 h-3.5 text-z-blue-400" />,
-  'business-systems': <Building2 className="w-3.5 h-3.5 text-z-blue-400" />,
+  'ai-intelligence': <Cpu className="w-3.5 h-3.5 text-z-blue-400" aria-hidden="true" />,
+  'software-platforms': <Layers className="w-3.5 h-3.5 text-z-blue-400" aria-hidden="true" />,
+  'automation-orchestration': <Workflow className="w-3.5 h-3.5 text-z-blue-400" aria-hidden="true" />,
+  'business-systems': <Building2 className="w-3.5 h-3.5 text-z-blue-400" aria-hidden="true" />,
 };
 
 export default function CapabilityCard({ capability, onSelect }: CapabilityCardProps) {
   return (
-    <div
+    <button
+      type="button"
       onClick={() => onSelect(capability)}
-      className="z-card light-sweep-container flex flex-col h-full cursor-pointer group overflow-hidden bg-z-surface border-z-border hover:border-z-blue-500/70 transition-all duration-200"
+      aria-label={`Explore capability: ${capability.title} (${capability.category})`}
+      className="z-card light-sweep-container flex flex-col h-full cursor-pointer group overflow-hidden bg-z-surface border-z-border hover:border-z-blue-500/70 transition-all duration-200 text-left w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-z-blue-400"
     >
       {/* Visual Image Header */}
       <div className="relative w-full aspect-[16/8] sm:aspect-[16/8.5] bg-z-deep overflow-hidden border-b border-z-border/60 shrink-0">
@@ -76,7 +78,7 @@ export default function CapabilityCard({ capability, onSelect }: CapabilityCardP
                       {step}
                     </span>
                     {idx < Math.min(capability.systemFlow.length, 3) - 1 && (
-                      <span className="text-[9px] text-z-dim font-mono">→</span>
+                      <span className="text-[9px] text-z-dim font-mono" aria-hidden="true">→</span>
                     )}
                   </React.Fragment>
                 ))}
@@ -93,10 +95,10 @@ export default function CapabilityCard({ capability, onSelect }: CapabilityCardP
 
           <div className="inline-flex items-center gap-1 font-mono text-[10px] sm:text-[11px] uppercase tracking-wider text-z-blue-400 group-hover:text-z-blue-300 font-medium">
             <span>EXPLORE</span>
-            <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
+            <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" aria-hidden="true" />
           </div>
         </div>
       </div>
-    </div>
+    </button>
   );
 }

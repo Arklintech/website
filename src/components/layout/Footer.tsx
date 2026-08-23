@@ -35,27 +35,27 @@ export default function Footer() {
               <a
                 href="https://linkedin.com"
                 target="_blank"
-                rel="noreferrer"
-                className="w-8 h-8 rounded border border-z-border flex items-center justify-center font-mono text-xs text-z-muted hover:text-z-white hover:border-z-blue-400 transition-colors"
-                aria-label="LinkedIn"
+                rel="noopener noreferrer"
+                className="w-8 h-8 rounded border border-z-border flex items-center justify-center font-mono text-xs text-z-muted hover:text-z-white hover:border-z-blue-400 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-z-blue-400"
+                aria-label="ZAQVORO on LinkedIn (opens in new tab)"
               >
                 in
               </a>
               <a
                 href="https://x.com"
                 target="_blank"
-                rel="noreferrer"
-                className="w-8 h-8 rounded border border-z-border flex items-center justify-center font-mono text-xs text-z-muted hover:text-z-white hover:border-z-blue-400 transition-colors"
-                aria-label="X Twitter"
+                rel="noopener noreferrer"
+                className="w-8 h-8 rounded border border-z-border flex items-center justify-center font-mono text-xs text-z-muted hover:text-z-white hover:border-z-blue-400 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-z-blue-400"
+                aria-label="ZAQVORO on X Twitter (opens in new tab)"
               >
                 𝕏
               </a>
               <a
-                href="https://github.com"
+                href="https://github.com/Anaskhan47/Zaqvoro"
                 target="_blank"
-                rel="noreferrer"
-                className="w-8 h-8 rounded border border-z-border flex items-center justify-center font-mono text-xs text-z-muted hover:text-z-white hover:border-z-blue-400 transition-colors"
-                aria-label="GitHub"
+                rel="noopener noreferrer"
+                className="w-8 h-8 rounded border border-z-border flex items-center justify-center font-mono text-xs text-z-muted hover:text-z-white hover:border-z-blue-400 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-z-blue-400"
+                aria-label="ZAQVORO on GitHub (opens in new tab)"
               >
                 git
               </a>
@@ -68,10 +68,10 @@ export default function Footer() {
               CAPABILITIES
             </div>
             <ul className="space-y-2 text-xs font-mono">
-              <li><a href="#capabilities" className="hover:text-z-white transition-colors">AI & Intelligence</a></li>
-              <li><a href="#capabilities" className="hover:text-z-white transition-colors">Software & Platforms</a></li>
-              <li><a href="#capabilities" className="hover:text-z-white transition-colors">Automation</a></li>
-              <li><a href="#capabilities" className="hover:text-z-white transition-colors">Business Systems</a></li>
+              <li><a href="#capabilities" className="hover:text-z-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-z-blue-400 rounded">AI & Intelligence</a></li>
+              <li><a href="#capabilities" className="hover:text-z-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-z-blue-400 rounded">Software & Platforms</a></li>
+              <li><a href="#capabilities" className="hover:text-z-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-z-blue-400 rounded">Automation</a></li>
+              <li><a href="#capabilities" className="hover:text-z-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-z-blue-400 rounded">Business Systems</a></li>
             </ul>
           </div>
 
@@ -81,10 +81,10 @@ export default function Footer() {
               SYSTEMS
             </div>
             <ul className="space-y-2 text-xs font-mono">
-              <li><a href="#systems" className="hover:text-z-white transition-colors">Data & Analytics</a></li>
-              <li><a href="#systems" className="hover:text-z-white transition-colors">Infrastructure</a></li>
-              <li><a href="#systems" className="hover:text-z-white transition-colors">Security</a></li>
-              <li><a href="#systems" className="hover:text-z-white transition-colors">Integration</a></li>
+              <li><a href="#systems" className="hover:text-z-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-z-blue-400 rounded">Data & Analytics</a></li>
+              <li><a href="#systems" className="hover:text-z-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-z-blue-400 rounded">Infrastructure</a></li>
+              <li><a href="#systems" className="hover:text-z-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-z-blue-400 rounded">Security</a></li>
+              <li><a href="#systems" className="hover:text-z-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-z-blue-400 rounded">Integration</a></li>
             </ul>
           </div>
 
@@ -94,10 +94,10 @@ export default function Footer() {
               COMPANY
             </div>
             <ul className="space-y-2 text-xs font-mono">
-              <li><a href="#about" className="hover:text-z-white transition-colors">About Us</a></li>
-              <li><a href="#work" className="hover:text-z-white transition-colors">Selected Work</a></li>
-              <li><a href="#future" className="hover:text-z-white transition-colors">Innovation Lab</a></li>
-              <li><a href="#process" className="hover:text-z-white transition-colors">How We Build</a></li>
+              <li><a href="#about" className="hover:text-z-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-z-blue-400 rounded">About Us</a></li>
+              <li><a href="#work" className="hover:text-z-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-z-blue-400 rounded">Selected Work</a></li>
+              <li><a href="#future" className="hover:text-z-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-z-blue-400 rounded">Innovation Lab</a></li>
+              <li><a href="#process" className="hover:text-z-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-z-blue-400 rounded">How We Build</a></li>
             </ul>
           </div>
         </div>
@@ -113,7 +113,7 @@ export default function Footer() {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+            <span className="w-2 h-2 rounded-full bg-emerald-400" aria-hidden="true" />
             <span>ALL SYSTEMS OPERATIONAL</span>
           </div>
         </div>

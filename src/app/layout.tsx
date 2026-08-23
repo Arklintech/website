@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://zaqvoro.vercel.app'),
   title: 'ZAQVORO Technologies — Advanced Intelligent Systems & Engineering',
   description:
     'We architect intelligent systems, automate complex operations, and build software that drives real outcomes. Industrial intelligence, precision engineering, and connected platforms.',
@@ -15,6 +16,9 @@ export const metadata: Metadata = {
     'Enterprise Cloud Infrastructure',
   ],
   authors: [{ name: 'ZAQVORO Technologies' }],
+  alternates: {
+    canonical: 'https://zaqvoro.vercel.app/',
+  },
   icons: {
     icon: '/brand/logo.webp',
     shortcut: '/favicon.ico',
@@ -23,23 +27,37 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
   openGraph: {
-    title: 'ZAQVORO Technologies — Build What Doesn\'t Exist',
+    title: 'ZAQVORO Technologies — Advanced Intelligent Systems & Engineering',
     description:
       'We architect intelligent systems, automate complex operations, and build software that drives real outcomes.',
-    url: 'https://zaqvoro.com',
+    url: 'https://zaqvoro.vercel.app/',
     siteName: 'ZAQVORO Technologies',
     images: [
       {
         url: '/brand/logo.png',
         width: 1200,
         height: 1200,
-        alt: 'ZAQVORO Technologies Living Machine Logo',
+        alt: 'ZAQVORO Technologies Logo',
       },
     ],
     locale: 'en_US',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ZAQVORO Technologies — Advanced Intelligent Systems & Engineering',
+    description:
+      'We architect intelligent systems, automate complex operations, and build software that drives real outcomes.',
+    images: ['/brand/logo.png'],
   },
 };
 
