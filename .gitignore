@@ -7,9 +7,9 @@ node_modules/
 .next/
 out/
 
-# ── Cinematic frames (large binary assets — 42MB, use Git LFS or CDN) ─────────
-public/cinematic/frames/
+# ── Large binary / source video ─────────────────────────────────────────────
 public/cinematic/contact_sheet.jpg
+public/frames/
 
 # ── Source video (large binary) ───────────────────────────────────────────────
 *.mp4
