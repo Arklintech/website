@@ -1,0 +1,41 @@
+:root {
+  /* Core Blacks & Surfaces */
+  --z-black: #020407;
+  --z-deep: #050A10;
+  --z-surface: #080F17;
+  --z-surface-2: #0C141E;
+  --z-metal: #151D27;
+  --z-border: #1B2A38;
+  --z-border-bright: #2A4055;
+
+  /* Blue System */
+  --z-blue-900: #03111F;
+  --z-blue-700: #062B4A;
+  --z-blue-500: #0878C9;
+  --z-blue-400: #149BFF;
+  --z-blue-300: #5BC3FF;
+
+  /* Text & Hierarchy */
+  --z-white: #F5F8FC;
+  --z-text: #DCE5EE;
+  --z-muted: #8A9AAA;
+  --z-dim: #536474;
+
+  /* Amber System (Restrained Activity) */
+  --z-amber: #F59A23;
+  --z-amber-soft: #B96C1C;
+
+  /* Glow Definitions */
+  --glow-level-1: 0 0 15px -3px rgba(20, 155, 255, 0.2);
+  --glow-level-2: 0 0 25px -2px rgba(20, 155, 255, 0.4);
+  --glow-level-3: 0 0 50px 2px rgba(20, 155, 255, 0.6);
+  --glow-amber: 0 0 30px -2px rgba(245, 154, 35, 0.35);
+
+  /* Fluid Typography Clamps */
+  --font-size-display-xl: clamp(3.2rem, 6.5vw, 6.8rem);
+  --font-size-display-l: clamp(2.4rem, 4.5vw, 4.8rem);
+  --font-size-display-m: clamp(1.8rem, 3vw, 3.2rem);
+  --font-size-heading: clamp(1.35rem, 2.2vw, 2.25rem);
+  --font-size-body: clamp(0.925rem, 1.1vw, 1.075rem);
+  --font-size-ui: clamp(0.68rem, 0.8vw, 0.82rem);
+}
