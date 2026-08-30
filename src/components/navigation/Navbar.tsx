@@ -14,18 +14,18 @@ export default function Navbar({ onOpenProjectModal }: NavbarProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isDarkHero, setIsDarkHero] = useState(pathname === '/');
+  const [showNavbar, setShowNavbar] = useState(pathname !== '/');
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
       setScrolled(scrollY > 20);
 
-      // On home page, top hero is dark black until user scrolls past robot section
+      // On home page, keep navbar hidden while robot is at top; reveal when scrolled down
       if (pathname === '/') {
-        setIsDarkHero(scrollY < 500);
+        setShowNavbar(scrollY > 80);
       } else {
-        setIsDarkHero(false);
+        setShowNavbar(true);
       }
     };
 
@@ -45,11 +45,13 @@ export default function Navbar({ onOpenProjectModal }: NavbarProps) {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isDarkHero
-          ? 'bg-black/70 backdrop-blur-md border-b border-white/10 text-white shadow-sm'
-          : scrolled
-            ? 'bg-[#F5F1E8]/95 backdrop-blur-md border-b border-[#D8D4C9] text-[#111827] shadow-sm'
-            : 'bg-[#F5F1E8]/90 backdrop-blur-md border-b border-[#D8D4C9]/60 text-[#111827]'
+        showNavbar
+          ? 'opacity-100 translate-y-0 pointer-events-auto'
+          : 'opacity-0 -translate-y-4 pointer-events-none'
+      } ${
+        scrolled
+          ? `bg-[#F5F1E8]/95 backdrop-blur-md ${pathname === '/industries' ? '' : 'border-b border-[#D8D4C9]'} shadow-sm`
+          : `bg-[#F5F1E8]/90 backdrop-blur-md ${pathname === '/industries' ? '' : 'border-b border-[#D8D4C9]/60'}`
       }`}
       role="banner"
     >
@@ -61,7 +63,7 @@ export default function Navbar({ onOpenProjectModal }: NavbarProps) {
             className="flex items-center gap-3 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1463FF] rounded-lg"
             aria-label="ARKLINTECH — Home"
           >
-            <KeystoneLogo size="sm" textColor={isDarkHero ? 'text-white' : 'text-[#0B132B]'} />
+            <KeystoneLogo size="sm" textColor="text-[#0B132B]" />
           </Link>
 
           {/* Desktop Navigation Links */}
@@ -73,9 +75,7 @@ export default function Navbar({ onOpenProjectModal }: NavbarProps) {
                 className={`py-2 uppercase transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1463FF] rounded ${
                   pathname?.startsWith(link.href)
                     ? 'text-[#1463FF]'
-                    : isDarkHero
-                      ? 'text-white/85 hover:text-[#1463FF]'
-                      : 'text-[#111827] hover:text-[#1463FF]'
+                    : 'text-[#111827] hover:text-[#1463FF]'
                 }`}
               >
                 {link.label}
@@ -101,24 +101,16 @@ export default function Navbar({ onOpenProjectModal }: NavbarProps) {
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`lg:hidden p-2 rounded-lg border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1463FF] ${
-              isDarkHero
-                ? 'bg-white/10 border-white/20 text-white hover:text-[#1463FF]'
-                : 'bg-white border-[#D8D4C9] text-[#111827] hover:text-[#1463FF]'
-            }`}
+            className="lg:hidden p-2 rounded-lg bg-white border border-[#D8D4C9] text-[#111827] hover:text-[#1463FF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1463FF] transition-colors"
             aria-label="Toggle navigation menu"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5 text-[#1463FF]" /> : <Menu className="w-5 h-5" />}
+            {mobileMenuOpen ? <X className="w-5 h-5 text-[#1463FF]" /> : <Menu className="w-5 h-5 text-[#111827]" />}
           </button>
         </div>
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className={`lg:hidden py-4 px-3 border-t space-y-1.5 rounded-b-2xl shadow-xl ${
-            isDarkHero
-              ? 'bg-[#0B132B] border-white/15 text-white'
-              : 'bg-[#FBF9F3] border-[#D8D4C9] text-[#111827]'
-          }`}>
+          <div className="lg:hidden py-4 px-3 border-t border-[#D8D4C9] bg-[#FBF9F3] space-y-1.5 rounded-b-2xl shadow-xl">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -126,10 +118,8 @@ export default function Navbar({ onOpenProjectModal }: NavbarProps) {
                 onClick={() => setMobileMenuOpen(false)}
                 className={`block p-3 rounded-xl font-mono text-xs font-bold uppercase transition-colors ${
                   pathname?.startsWith(link.href)
-                    ? 'bg-[#1463FF]/15 text-[#1463FF] border border-[#1463FF]/30'
-                    : isDarkHero
-                      ? 'text-white/90 hover:bg-white/10 hover:text-[#1463FF]'
-                      : 'text-[#111827] hover:bg-[#EDF4FF] hover:text-[#1463FF]'
+                    ? 'bg-[#EDF4FF] text-[#1463FF] border border-[#1463FF]/30'
+                    : 'text-[#111827] hover:bg-[#EDF4FF] hover:text-[#1463FF]'
                 }`}
               >
                 {link.label}

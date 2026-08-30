@@ -47,10 +47,10 @@ export default function ArkParticleRobot({
     let p_g: Uint8Array;
     let p_b: Uint8Array;
 
-    let naturalW = 1024;
-    let naturalH = 768;
+    let naturalW = 1448;
+    let naturalH = 900;
     let imgReady = false;
-    let rafId: number;
+    let rafId: number | null = null;
     let dissolve = 0;
     let targetDissolve = 0;
 
@@ -100,10 +100,8 @@ export default function ArkParticleRobot({
     // Mobile Device Orientation Sensor (Physical Tilt Parallax)
     const onDeviceOrientation = (e: DeviceOrientationEvent) => {
       if (e.gamma === null || e.beta === null) return;
-
       const gamma = Math.max(-35, Math.min(35, e.gamma || 0));
       const beta = Math.max(15, Math.min(75, e.beta || 45)) - 45;
-
       lookTargetX = gamma / 35;
       lookTargetY = beta / 30;
     };
@@ -147,15 +145,15 @@ export default function ArkParticleRobot({
     const initParticleModel = () => {
       const img = new Image();
       img.onload = () => {
-        const srcW = img.naturalWidth || 1024;
-        const srcH = img.naturalHeight || 768;
+        const srcW = img.naturalWidth || 1448;
+        const srcH = img.naturalHeight || 900;
         naturalW = srcW;
         naturalH = srcH;
 
         const off = document.createElement('canvas');
         off.width = srcW;
         off.height = srcH;
-        const octx = off.getContext('2d');
+        const octx = off.getContext('2d', { willReadFrequently: true });
         if (!octx) return;
         octx.drawImage(img, 0, 0, srcW, srcH);
         const data = octx.getImageData(0, 0, srcW, srcH).data;
@@ -174,7 +172,8 @@ export default function ArkParticleRobot({
           b: number;
         }[] = [];
 
-        const step = srcW > 800 ? 2 : 1;
+        // Sample particles from source
+        const step = srcW > 1600 ? 2 : 1;
         for (let y = 0; y < srcH; y += step) {
           for (let x = 0; x < srcW; x += step) {
             const i = (y * srcW + x) * 4;
@@ -185,7 +184,7 @@ export default function ArkParticleRobot({
             if (a < 20) continue;
 
             const maxC = Math.max(r, Math.max(g, b));
-            if (maxC < 14) continue;
+            if (maxC < 12) continue;
 
             const lum = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 255.0;
             const isBlue = b > r * 1.12 && b > 50;
@@ -284,6 +283,9 @@ export default function ArkParticleRobot({
 
         imgReady = true;
         resize();
+        if (rafId === null) {
+          rafId = requestAnimationFrame(render);
+        }
       };
       img.onerror = () => {
         console.warn('Failed to load particle robot source image:', source);
@@ -447,51 +449,18 @@ export default function ArkParticleRobot({
       }
 
       ctx.putImageData(imgData, 0, 0);
-      if (isVisible && !(dissolve >= 0.999 && targetDissolve >= 0.999)) {
-        rafId = requestAnimationFrame(render);
-      } else if (!isVisible) {
-        isRunning = false;
-      } else {
-        // Fully dissolved and visible, check occasionally
-        rafId = requestAnimationFrame(render);
-      }
+      rafId = requestAnimationFrame(render);
     };
 
-    window.addEventListener('resize', resize, { passive: true });
-    
-    let isVisible = true;
-    let isRunning = true;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          isVisible = entry.isIntersecting;
-          if (isVisible && !isRunning) {
-            isRunning = true;
-            rafId = requestAnimationFrame(render);
-          }
-        });
-      },
-      { rootMargin: '200px 0px' }
-    );
-    observer.observe(track);
-
-    const resizeObserver = new ResizeObserver(resize);
-    resizeObserver.observe(canvas);
-    resize();
+    // Start render loop immediately
     rafId = requestAnimationFrame(render);
 
     return () => {
-      cancelAnimationFrame(rafId);
       window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseleave', onMouseLeave);
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('deviceorientation', onDeviceOrientation);
-      }
-      resizeObserver.disconnect();
-      observer.disconnect();
+      window.removeEventListener('resize', resize);
+      if (rafId !== null) cancelAnimationFrame(rafId);
     };
   }, [source, onProgressChange]);
 
@@ -499,9 +468,8 @@ export default function ArkParticleRobot({
     <div
       ref={trackRef}
       id="scroll-track"
-      className={className}
+      className={`relative w-full ${className}`}
       style={{
-        position: 'relative',
         width: '100%',
         height: '350vh',
         backgroundColor: '#000000',
