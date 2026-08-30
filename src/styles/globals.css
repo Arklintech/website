@@ -191,13 +191,6 @@ body {
   perspective: 1000px;
 }
 
-/* Off-screen layout containment */
-section:not(#scroll-track):not(#hero) {
-  content-visibility: auto;
-  contain-intrinsic-size: 1px 700px;
-}
-
-
 /* Global Brand Font Enforcement for ARKLINTECH */
 .font-syncopate, .font-logo {
   font-family: 'Syncopate', var(--font-syncopate), sans-serif !important;
