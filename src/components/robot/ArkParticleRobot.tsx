@@ -285,9 +285,14 @@ export default function ArkParticleRobot({
         imgReady = true;
         resize();
       };
+      img.onerror = () => {
+        console.warn('Failed to load particle robot source image:', source);
+      };
       img.src = source;
     };
 
+    window.addEventListener('resize', resize);
+    resize();
     initParticleModel();
 
     // 60FPS Direct-Pixel Render Loop on Deep Black Canvas
