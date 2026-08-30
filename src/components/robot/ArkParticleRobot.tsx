@@ -316,7 +316,8 @@ export default function ArkParticleRobot({
     initParticleModel();
 
     // 60FPS Direct-Pixel Render Loop on Deep Black Canvas
-    const render = (t: number) => {
+    function render(t: number) {
+      if (!track || !ctx) return;
       const time = t * 0.001;
 
       // Smooth scroll interpolation
