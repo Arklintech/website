@@ -341,7 +341,7 @@ export const ABOUT_CONTENT: AboutContent = {
     statement: 'The Keystone represents the fundamental architectural anchor of ARKLINTECH: building unshakeable digital foundations that bind intelligence, software, and real-world operations.',
   },
   evolution: {
-    sectionNumber: '09',
+    sectionNumber: '08',
     title: 'CAPABILITY EVOLUTION',
     subtitle: 'The natural trajectory of modern technology engineering.',
     steps: [
@@ -353,7 +353,7 @@ export const ABOUT_CONTENT: AboutContent = {
     ],
   },
   cta: {
-    sectionNumber: '10',
+    sectionNumber: '09',
     title: 'START A SYSTEM',
     subtitle: 'Partner with ARKLINTECH to engineer your next-generation technology infrastructure.',
     buttonText: 'START A SYSTEM',

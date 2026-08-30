@@ -1,4 +1,3 @@
-import ArklintechWordmark from '@/components/brand/ArklintechWordmark';
 'use client';
 
 import React from 'react';

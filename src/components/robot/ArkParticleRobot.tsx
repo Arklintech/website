@@ -23,7 +23,16 @@ export default function ArkParticleRobot({
     const indicator = indicatorRef.current;
     if (!track || !canvas) return;
 
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    // Reset scroll position on refresh to ensure the particle robot is always visible on reload
+    if (typeof window !== 'undefined') {
+      if ('scrollRestoration' in window.history) {
+        window.history.scrollRestoration = 'manual';
+      }
+      window.scrollTo(0, 0);
+    }
+
+    // Match original standalone options for optimal performance and browser compatibility
+    const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
     if (!ctx) return;
 
     let width = Math.max(1, window.innerWidth);
@@ -73,6 +82,11 @@ export default function ArkParticleRobot({
         targetDissolve = Math.max(0, Math.min(1, top / total));
       } else {
         targetDissolve = 0;
+      }
+
+      // Resume render loop if user scrolls back into view
+      if (rafId === null && targetDissolve < 0.995) {
+        rafId = requestAnimationFrame(render);
       }
     };
 
@@ -293,7 +307,11 @@ export default function ArkParticleRobot({
       img.src = source;
     };
 
-    window.addEventListener('resize', resize);
+    const resizeObserver = new ResizeObserver(() => {
+      resize();
+    });
+    resizeObserver.observe(canvas);
+
     resize();
     initParticleModel();
 
@@ -449,7 +467,13 @@ export default function ArkParticleRobot({
       }
 
       ctx.putImageData(imgData, 0, 0);
-      rafId = requestAnimationFrame(render);
+      
+      // Speed Optimization: Pause 60FPS loop when particles are fully dissolved offstage
+      if (!(dissolve >= 0.995 && targetDissolve >= 0.995)) {
+        rafId = requestAnimationFrame(render);
+      } else {
+        rafId = null;
+      }
     };
 
     // Start render loop immediately
@@ -459,7 +483,7 @@ export default function ArkParticleRobot({
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseleave', onMouseLeave);
-      window.removeEventListener('resize', resize);
+      resizeObserver.disconnect();
       if (rafId !== null) cancelAnimationFrame(rafId);
     };
   }, [source, onProgressChange]);

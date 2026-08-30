@@ -7,7 +7,6 @@ import PageContainer from '@/components/layout/PageContainer';
 import KeystoneLogo from '@/components/brand/KeystoneLogo';
 import SystemArchitectureDiagram from '@/components/architecture/SystemArchitectureDiagram';
 import SystemArchitectureFlow from '@/components/architecture/SystemArchitectureFlow';
-import TheKeystoneSection from '@/components/about/TheKeystoneSection';
 import { ABOUT_CONTENT } from '@/content/about';
 import { PROJECTS } from '@/content/projects';
 import EngineeringConvergenceSection from '@/components/home/EngineeringConvergenceSection';
@@ -282,12 +281,7 @@ export default function AboutPage() {
             </section>
 
             {/* ========================================================================= */}
-            {/* 08 — THE KEYSTONE / THE STRUCTURE BEHIND THE SYSTEM                       */}
-            {/* ========================================================================= */}
-            <TheKeystoneSection />
-
-            {/* ========================================================================= */}
-            {/* 09 — DIRECTION / CAPABILITY EVOLUTION                                     */}
+            {/* 08 — DIRECTION / CAPABILITY EVOLUTION                                     */}
             {/* ========================================================================= */}
             <section className="py-16 md:py-24 border-b border-[#D8D4C9]">
               <div className="space-y-4 mb-12">
@@ -313,7 +307,7 @@ export default function AboutPage() {
             </section>
 
             {/* ========================================================================= */}
-            {/* 10 — START A SYSTEM (ENGAGEMENT CTA)                                      */}
+            {/* 09 — START A SYSTEM (ENGAGEMENT CTA)                                      */}
             {/* ========================================================================= */}
             <section className="py-16 md:py-24">
               <div className="p-8 sm:p-12 rounded-xl bg-white border border-[#D8D4C9] flex flex-col md:flex-row items-center justify-between gap-8">
