@@ -23,13 +23,14 @@ export default function SmoothScrollProvider({
 
     try {
       lenis = new Lenis({
-        duration: 0.8, // Responsive smoothness without delayed lag
+        duration: 0.6, // Fast, snappy, responsive smoothness
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         orientation: 'vertical',
         gestureOrientation: 'vertical',
         smoothWheel: true,
-        wheelMultiplier: 1.0,
-        touchMultiplier: 1.2,
+        wheelMultiplier: 1.1,
+        touchMultiplier: 1.0,
+        syncTouch: false,
         infinite: false,
       });
 
