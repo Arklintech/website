@@ -73,11 +73,14 @@ export default function ArkParticleRobot({
       return x - Math.floor(x);
     };
 
-    // ── Helpers ────────────────────────────────────────────────────────────
+    // ── Loop indirection object — breaks TDZ: startLoop never names tick directly ──
+    // SWC/Babel cannot create a circular TDZ because `loop` is declared before both
+    // `startLoop` and `tick`, and `loop.fn` is assigned later when tick is defined.
+    const loop: { fn: ((t: number) => void) | null } = { fn: null };
 
     const startLoop = () => {
-      if (rafId === null) {
-        rafId = requestAnimationFrame(tick);
+      if (rafId === null && loop.fn) {
+        rafId = requestAnimationFrame(loop.fn);
       }
     };
 
@@ -313,7 +316,7 @@ export default function ArkParticleRobot({
       }
 
       if (!imgReady || particleCount === 0) {
-        rafId = requestAnimationFrame(tick);
+        rafId = requestAnimationFrame(loop.fn!);
         return;
       }
 
@@ -415,9 +418,12 @@ export default function ArkParticleRobot({
       if (dissolve >= 0.995 && targetDissolve >= 0.995) {
         rafId = null;
       } else {
-        rafId = requestAnimationFrame(tick);
+        rafId = requestAnimationFrame(loop.fn!);
       }
     };
+
+    // Wire up the indirection: now startLoop can safely call loop.fn
+    loop.fn = tick;
 
     // Kick off render loop
     startLoop();
