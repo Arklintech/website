@@ -1,104 +1,51 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Cpu, Layers, Workflow, Building2 } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Capability } from '@/content/capabilities';
-import { cn } from '@/lib/utils';
 
 interface CapabilityCardProps {
   capability: Capability;
-  onSelect: (cap: Capability) => void;
 }
 
-const icons: Record<string, React.ReactNode> = {
-  'ai-intelligence': <Cpu className="w-3.5 h-3.5 text-z-blue-400" aria-hidden="true" />,
-  'software-platforms': <Layers className="w-3.5 h-3.5 text-z-blue-400" aria-hidden="true" />,
-  'automation-orchestration': <Workflow className="w-3.5 h-3.5 text-z-blue-400" aria-hidden="true" />,
-  'business-systems': <Building2 className="w-3.5 h-3.5 text-z-blue-400" aria-hidden="true" />,
-};
-
-export default function CapabilityCard({ capability, onSelect }: CapabilityCardProps) {
+export default function CapabilityCard({ capability }: CapabilityCardProps) {
   return (
-    <button
-      type="button"
-      onClick={() => onSelect(capability)}
-      aria-label={`Explore capability: ${capability.title} (${capability.category})`}
-      className="z-card light-sweep-container flex flex-col h-full cursor-pointer group overflow-hidden bg-z-surface border-z-border hover:border-z-blue-500/70 transition-all duration-200 text-left w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-z-blue-400"
-    >
-      {/* Visual Image Header */}
-      <div className="relative w-full aspect-[16/8] sm:aspect-[16/8.5] bg-z-deep overflow-hidden border-b border-z-border/60 shrink-0">
+    <div className="flex flex-col justify-between overflow-hidden group bg-white border border-[#D8D4C9] hover:border-[#1463FF] shadow-sm hover:shadow-md transition-all duration-300 rounded-xl">
+      {/* Visual Container */}
+      <div className="relative w-full aspect-[4/3] bg-[#F5F1E8] overflow-hidden border-b border-[#D8D4C9]">
         <Image
           src={capability.visual}
           alt={capability.title}
           fill
-          loading="lazy"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          className={cn(
-            'object-cover group-hover:scale-105 transition-transform duration-300 ease-out',
-            capability.focalPoint || 'object-center'
-          )}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+          className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
         />
-
-        {/* Cinematic Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-z-surface via-transparent to-black/40 opacity-80 group-hover:opacity-60 transition-opacity" />
-
-        {/* Category Number Tag */}
-        <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 px-2 py-0.5 rounded bg-z-black/85 border border-z-border/80 font-mono text-[10px] text-z-blue-300 backdrop-blur-md">
-          {icons[capability.id]}
-          <span>{capability.number}</span>
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-white/60 via-transparent to-transparent opacity-80" />
       </div>
 
-      {/* Content Container */}
-      <div className="p-4 sm:p-5 flex flex-col justify-between flex-grow">
+      {/* Card Content & Action */}
+      <div className="p-5 flex flex-col justify-between flex-grow space-y-4">
         <div>
-          <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-z-blue-400 block mb-1 font-semibold">
-            {capability.category}
-          </span>
-
-          <h3 className="font-display text-sm sm:text-base font-semibold text-z-white group-hover:text-z-blue-300 transition-colors">
+          <h3 className="font-display font-bold text-base text-[#111827] tracking-tight group-hover:text-[#1463FF] transition-colors">
             {capability.title}
           </h3>
-
-          <p className="mt-1.5 text-xs text-z-muted font-body leading-relaxed line-clamp-2">
+          <p className="mt-2 text-xs text-[#536070] font-body leading-relaxed">
             {capability.description}
           </p>
-
-          {/* System Flow Pills */}
-          {capability.systemFlow && capability.systemFlow.length > 0 && (
-            <div className="mt-3 pt-2.5 border-t border-z-border/40">
-              <span className="font-mono text-[9px] uppercase tracking-widest text-z-dim block mb-1 font-semibold">
-                SYSTEM FLOW:
-              </span>
-              <div className="flex flex-wrap items-center gap-1">
-                {capability.systemFlow.slice(0, 3).map((step, idx) => (
-                  <React.Fragment key={step}>
-                    <span className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-z-surface-2 border border-z-border/70 text-z-blue-300 font-medium">
-                      {step}
-                    </span>
-                    {idx < Math.min(capability.systemFlow.length, 3) - 1 && (
-                      <span className="text-[9px] text-z-dim font-mono" aria-hidden="true">→</span>
-                    )}
-                  </React.Fragment>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
-        {/* Explore CTA */}
-        <div className="mt-4 pt-2.5 border-t border-z-border/40 flex items-center justify-between">
-          <span className="font-mono text-[9px] text-z-dim uppercase tracking-wider">
-            MATRIX 0{capability.number}
-          </span>
-
-          <div className="inline-flex items-center gap-1 font-mono text-[10px] sm:text-[11px] uppercase tracking-wider text-z-blue-400 group-hover:text-z-blue-300 font-medium">
-            <span>EXPLORE</span>
-            <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" aria-hidden="true" />
-          </div>
+        <div className="pt-2 border-t border-[#D8D4C9]/60">
+          <Link
+            href={capability.href}
+            className="inline-flex items-center gap-1.5 font-mono text-xs text-[#1463FF] hover:text-[#0050E6] font-bold transition-colors group/link focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1463FF] rounded px-1 -mx-1"
+          >
+            <span>Learn more</span>
+            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/link:translate-x-1" />
+          </Link>
         </div>
       </div>
-    </button>
+    </div>
   );
 }

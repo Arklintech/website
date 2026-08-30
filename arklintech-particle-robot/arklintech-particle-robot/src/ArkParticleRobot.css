@@ -1,0 +1,47 @@
+.ark-particle-robot-track {
+  position: relative;
+  width: 100%;
+  height: 320vh;
+  background: #000000;
+}
+
+.ark-particle-robot {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background: #000000;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ark-particle-robot__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: pan-y;
+  cursor: crosshair;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 700px) {
+  .ark-particle-robot-track {
+    height: 260vh;
+  }
+
+  .ark-particle-robot {
+    height: 100vh;
+    height: 100svh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ark-particle-robot__canvas {
+    cursor: default;
+  }
+}

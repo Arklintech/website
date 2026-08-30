@@ -13,11 +13,11 @@ export default function AmbientBackground() {
         }}
       />
 
-      {/* Restrained Amber Operation Node Glow near Hero Core */}
+      {/* Cool Cyan Operation Node Glow (Locked Blue/Cyan Theme) */}
       <div
         className="absolute top-[15%] right-[20%] w-[400px] sm:w-[500px] h-[400px] sm:h-[500px] rounded-full blur-[120px] opacity-25 will-change-transform"
         style={{
-          background: 'radial-gradient(circle at center, rgba(245, 154, 35, 0.22) 0%, rgba(185, 108, 28, 0.08) 50%, transparent 75%)',
+          background: 'radial-gradient(circle at center, rgba(0, 229, 255, 0.15) 0%, rgba(8, 120, 201, 0.08) 50%, transparent 75%)',
         }}
       />
 
@@ -29,7 +29,7 @@ export default function AmbientBackground() {
         }}
       />
 
-      {/* Final Convergence Ambient Node (Bottom-Page Resolution) */}
+      {/* Bottom Ambient Node (Resolution) */}
       <div
         className="absolute bottom-[5%] right-[15%] w-[650px] sm:w-[850px] h-[650px] sm:h-[850px] rounded-full blur-[150px] opacity-35 will-change-transform"
         style={{
@@ -39,11 +39,11 @@ export default function AmbientBackground() {
 
       {/* Subtle Environmental Grid Texture */}
       <div
-        className="absolute inset-0 opacity-40"
+        className="absolute inset-0 opacity-35"
         style={{
           backgroundImage: `
-            linear-gradient(to right, rgba(27, 42, 56, 0.12) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(27, 42, 56, 0.12) 1px, transparent 1px)
+            linear-gradient(to right, rgba(27, 42, 56, 0.15) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(27, 42, 56, 0.15) 1px, transparent 1px)
           `,
           backgroundSize: '48px 48px',
         }}

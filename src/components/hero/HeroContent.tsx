@@ -1,64 +1,92 @@
 'use client';
 
 import React from 'react';
-import { ArrowUpRight, ChevronDown } from 'lucide-react';
-import TelemetryTicker from './TelemetryTicker';
+import Link from 'next/link';
+import { ArrowRight, Play } from 'lucide-react';
 
 interface HeroContentProps {
-  onOpenProjectModal: () => void;
+  onOpenProjectModal?: () => void;
 }
+
+const STEPS = [
+  { num: '01', title: 'UNDERSTAND', desc: 'We understand the problem' },
+  { num: '02', title: 'CONNECT', desc: 'We connect systems, data & people' },
+  { num: '03', title: 'ORCHESTRATE', desc: 'We orchestrate intelligent workflows' },
+  { num: '04', title: 'BUILD', desc: 'We build robust digital systems' },
+  { num: '05', title: 'EXECUTE', desc: 'We deploy, monitor & optimize' },
+  { num: '06', title: 'EVOLVE', desc: 'The system evolves for impact' },
+];
 
 export default function HeroContent({ onOpenProjectModal }: HeroContentProps) {
   return (
-    <div className="flex flex-col justify-center max-w-2xl">
-      {/* 01 Section Tag & Eyebrow */}
-      <div className="flex items-center gap-3 mb-4 sm:mb-6">
-        <span className="font-mono text-xs font-semibold tracking-wider text-z-blue-400 border border-z-border px-2 py-0.5 rounded bg-z-surface-2/80">
-          01
-        </span>
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-z-blue-500/30 bg-z-blue-900/40 backdrop-blur-md">
-          <span className="w-1.5 h-1.5 rounded-full bg-z-blue-400 animate-pulse" />
-          <span className="font-mono text-[10px] sm:text-[11px] font-medium tracking-[0.2em] text-z-blue-300 uppercase">
-            CORE CAPABILITIES
-          </span>
-        </div>
+    <div className="flex flex-col items-center text-center justify-center space-y-7 max-w-4xl mx-auto z-20 relative">
+      {/* Primary Headline */}
+      <div className="space-y-1">
+        <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-[72px] font-black uppercase tracking-tight text-[#111827] leading-[0.98]">
+          <span className="block text-[#111827]">WE ARCHITECT</span>
+          <span className="block text-[#1463FF]">INTELLIGENT SYSTEMS</span>
+        </h1>
       </div>
 
-      {/* Main Headline in Space Grotesk */}
-      <h1 className="text-display-xl font-display font-medium text-z-white uppercase tracking-tight">
-        BUILD WHAT <br />
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-z-white via-z-text to-z-blue-300">
-          DOESN&apos;T EXIST.
-        </span>
-      </h1>
+      {/* Subheading & Operating Philosophy */}
+      <div className="space-y-2.5 max-w-2xl mx-auto">
+        <p className="text-base sm:text-lg lg:text-xl font-semibold text-[#111827] font-body leading-snug">
+          Software. Automation. Intelligence. Connected operations.
+        </p>
+        <p
+    className="text-base sm:text-lg md:text-xl text-[#0F172A] font-semibold leading-relaxed max-w-xl mx-auto"
+    style={{ fontFamily: "'Caveat', var(--font-handwriting), cursive" }}
+  >
+    We design and engineer intelligent systems that connect technology, data and operations to solve real business problems.
+  </p>
+      </div>
 
-      {/* Supporting Narrative using User's Exact Specification */}
-      <p className="mt-5 sm:mt-6 text-sm sm:text-base md:text-lg text-z-muted font-body leading-relaxed max-w-xl">
-        We architect intelligent systems, automate complex operations, and build software that drives real outcomes across four core engineering disciplines.
-      </p>
+      {/* Hero Action Buttons */}
+      <div className="pt-2 flex flex-wrap items-center justify-center gap-4 sm:gap-5">
+        {/* Primary CTA: Solid Blue Button */}
+        <Link
+          href="/what-we-do"
+          className="inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded bg-[#1463FF] hover:bg-[#0050E6] text-white font-mono text-xs sm:text-sm font-bold uppercase tracking-wider transition-all shadow-sm group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1463FF]"
+        >
+          <span>EXPLORE WHAT WE DO</span>
+          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+        </Link>
 
-      {/* Primary & Secondary Action CTAs */}
-      <div className="mt-7 sm:mt-9 flex flex-wrap items-center gap-3 sm:gap-4">
+        {/* Secondary Action: Watch System Button */}
         <button
+          type="button"
           onClick={onOpenProjectModal}
-          className="z-btn-primary group text-xs sm:text-sm py-3 px-6"
+          className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded bg-white hover:bg-[#FBF9F3] border border-[#D8D4C9] hover:border-[#1463FF] text-[#111827] hover:text-[#1463FF] font-mono text-xs sm:text-sm font-bold uppercase tracking-wider transition-all shadow-sm group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1463FF]"
         >
-          <span>START A PROJECT</span>
-          <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          <span>WATCH THE SYSTEM</span>
+          <Play className="w-3.5 h-3.5 text-[#1463FF] fill-[#1463FF]/20" />
         </button>
-
-        <a
-          href="#capabilities"
-          className="z-btn-secondary text-xs sm:text-sm py-3 px-6 flex items-center gap-2 group backdrop-blur-md bg-z-surface/60"
-        >
-          <span>EXPLORE THE SYSTEM</span>
-          <ChevronDown className="w-3.5 h-3.5 transition-transform group-hover:translate-y-0.5 text-z-dim group-hover:text-z-blue-400" />
-        </a>
       </div>
 
-      {/* Bottom Telemetry Bar */}
-      <div className="mt-8 sm:mt-12 pt-4 border-t border-z-border/40 max-w-xl">
-        <TelemetryTicker />
+      {/* Horizontal Process Steps Bar */}
+      <div className="w-full pt-8 sm:pt-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 p-3 rounded-xl bg-[#FBF9F3] border border-[#D8D4C9] text-left">
+          {STEPS.map((step, idx) => (
+            <div
+              key={step.num}
+              className={`p-2.5 rounded-lg transition-colors ${
+                idx === 2 ? 'bg-[#EDF4FF] border border-[#1463FF]/30' : 'hover:bg-white/80'
+              }`}
+            >
+              <div className="flex items-center gap-1.5">
+                <span className={`font-mono text-[10px] font-bold ${idx === 2 ? 'text-[#1463FF]' : 'text-[#768494]'}`}>
+                  — {step.num}
+                </span>
+                <span className={`font-mono text-[11px] font-bold uppercase ${idx === 2 ? 'text-[#1463FF]' : 'text-[#111827]'}`}>
+                  {step.title}
+                </span>
+              </div>
+              <p className="text-[10px] text-[#536070] font-body mt-1 line-clamp-2 leading-tight">
+                {step.desc}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import Navbar from '@/components/navigation/Navbar';
@@ -20,7 +20,7 @@ export default function PageShell({ children }: PageShellProps) {
 
   return (
     <SmoothScrollProvider>
-      <div className="relative min-h-screen bg-z-black text-z-text overflow-x-clip selection:bg-z-blue-500/30 selection:text-z-white">
+      <div className="relative min-h-screen bg-[#F5F1E8] text-z-text selection:bg-z-blue-500/30 selection:text-z-white">
         {/* Layered Cinematic Environment */}
         <AmbientBackground />
         <GrainOverlay />

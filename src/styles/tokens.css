@@ -1,41 +1,65 @@
 :root {
-  /* Core Blacks & Surfaces */
-  --z-black: #020407;
-  --z-deep: #050A10;
-  --z-surface: #080F17;
-  --z-surface-2: #0C141E;
-  --z-metal: #151D27;
-  --z-border: #1B2A38;
-  --z-border-bright: #2A4055;
+  /* ==========================================================================
+     ARKLINTECH DESIGN SYSTEM — PREMIUM CREAM + BLUE MASTER PALETTE
+     ========================================================================== */
 
-  /* Blue System */
-  --z-blue-900: #03111F;
-  --z-blue-700: #062B4A;
-  --z-blue-500: #0878C9;
-  --z-blue-400: #149BFF;
-  --z-blue-300: #5BC3FF;
+  /* Surface & Background Colors */
+  --z-bg-primary: #F5F1E8;         /* Warm Architectural Cream Base */
+  --z-bg-footer: #EDE8DD;          /* Warm Cream Footer */
+  --z-bg-secondary: #EBE5D8;       /* Subtle Warm Cream Secondary */
+  --z-bg-navy: #0B2E73;            /* Deep Blue */
+  --z-bg-panel: #FBF9F3;           /* Clean Cream Surface / Card Base */
+  --z-bg-panel-elevated: #FFFFFF;  /* Elevated White Surface */
+  --z-bg-card-hover: #F0EAE0;      /* Card Hover State */
+  
+  /* Semantic Background Aliases */
+  --z-black: #F5F1E8;
+  --z-deep: #EBE5D8;
+  --z-surface: #FBF9F3;
+  --z-surface-2: #FFFFFF;
+  --z-surface-3: #EDF4FF;
 
-  /* Text & Hierarchy */
-  --z-white: #F5F8FC;
-  --z-text: #DCE5EE;
-  --z-muted: #8A9AAA;
-  --z-dim: #536474;
+  /* ARKLINTECH Blue Signal Color */
+  --z-accent-primary: #1463FF;     /* Master Brand Electric Blue */
+  --z-accent-bright: #1463FF;      /* Signal Blue */
+  --z-blue-600: #0050E6;
+  --z-blue-500: #1463FF;
+  --z-blue-400: #2B75FF;
+  --z-blue-300: #5C95FF;
+  --z-blue-200: #DCEAFF;           /* Light Blue Tint */
+  --z-blue-900: #0B2E73;           /* Deep Blue */
+  --z-cyan-400: #1463FF;
+  --z-cyan-300: #2B75FF;
 
-  /* Amber System (Restrained Activity) */
-  --z-amber: #F59A23;
-  --z-amber-soft: #B96C1C;
+  /* Typography Colors */
+  --z-text-primary: #111827;       /* Deep Charcoal Navy */
+  --z-text-secondary: #536070;     /* Disciplined Slate/Navy Gray */
+  --z-text-tertiary: #768494;      /* Muted Metadata */
+  --z-white: #111827;
+  --z-text: #111827;
+  --z-muted: #536070;
+  --z-dim: #768494;
 
-  /* Glow Definitions */
-  --glow-level-1: 0 0 15px -3px rgba(20, 155, 255, 0.2);
-  --glow-level-2: 0 0 25px -2px rgba(20, 155, 255, 0.4);
-  --glow-level-3: 0 0 50px 2px rgba(20, 155, 255, 0.6);
-  --glow-amber: 0 0 30px -2px rgba(245, 154, 35, 0.35);
+  /* Structural Precision Borders */
+  --z-border: #D8D4C9;             /* Subtle Warm Gray Border */
+  --z-border-subtle: #E2DDD2;
+  --z-border-hover: #1463FF;
+  --z-border-active: #1463FF;
 
-  /* Fluid Typography Clamps */
-  --font-size-display-xl: clamp(3.2rem, 6.5vw, 6.8rem);
-  --font-size-display-l: clamp(2.4rem, 4.5vw, 4.8rem);
-  --font-size-display-m: clamp(1.8rem, 3vw, 3.2rem);
-  --font-size-heading: clamp(1.35rem, 2.2vw, 2.25rem);
-  --font-size-body: clamp(0.925rem, 1.1vw, 1.075rem);
-  --font-size-ui: clamp(0.68rem, 0.8vw, 0.82rem);
+  /* Restrained Lighting & Shadow */
+  --z-glow-color: rgba(20, 99, 255, 0.15);
+  --z-glow-primary: 0 4px 20px rgba(20, 99, 255, 0.12);
+  --z-glow-bright: 0 4px 25px rgba(20, 99, 255, 0.18);
+  --z-glow-panel: 0 2px 12px rgba(17, 24, 39, 0.05);
+
+  /* Geometry & Radii */
+  --z-radius-sm: 4px;
+  --z-radius-md: 6px;
+  --z-radius-lg: 10px;
+  --z-radius-xl: 14px;
+
+  /* Typography System */
+  --font-family-display: "Söhne", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", sans-serif;
+  --font-family-body: "Söhne", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+  --font-family-mono: "Söhne", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", sans-serif;
 }

@@ -36,7 +36,7 @@ export const CINEMATIC_STAGES: CinematicStage[] = [
     name: 'DORMANT',
     range: [0.000, 0.125],
     headline: 'INTELLIGENT SYSTEM AT REST',
-    subheadline: 'The central ZAQVORO machine is physically stable. Core illumination restrained. Awaiting user-directed activation.',
+    subheadline: 'The central ARKLINTECH machine is physically stable. Core illumination restrained. Awaiting user-directed activation.',
     telemetry: {
       coreStatus: 'STANDBY // READY',
       networkStatus: 'OFFLINE',

@@ -1,60 +1,54 @@
 import type { Metadata, Viewport } from 'next';
-import './globals.css';
+import '@/styles/globals.css';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://zaqvoro.vercel.app'),
-  title: 'ZAQVORO Technologies — Advanced Intelligent Systems & Engineering',
+  title: 'ARKLINTECH — Advanced Technology Systems & Engineering',
   description:
-    'We architect intelligent systems, automate complex operations, and build software that drives real outcomes. Industrial intelligence, precision engineering, and connected platforms.',
+    'We architect intelligent systems, automate complex operations, and build software that drives real outcomes.',
   keywords: [
-    'Intelligent Systems',
-    'AI Software Engineering',
-    'Automation Orchestration',
-    'Business Systems Architecture',
-    'ZAQVORO Technologies',
-    'Custom Software Development',
-    'Enterprise Cloud Infrastructure',
+    'Systems Architecture',
+    'Full-Stack Engineering',
+    'AI & Automation',
+    'Cloud & DevOps',
+    'Business Systems',
+    'Enterprise Software',
+    'ARKLINTECH',
   ],
-  authors: [{ name: 'ZAQVORO Technologies' }],
+  authors: [{ name: 'ARKLINTECH' }],
+  creator: 'ARKLINTECH',
+  publisher: 'ARKLINTECH',
+  metadataBase: new URL('https://arklintech.com'),
   alternates: {
-    canonical: 'https://zaqvoro.vercel.app/',
+    canonical: '/',
   },
   icons: {
-    icon: '/brand/logo.webp',
-    shortcut: '/favicon.ico',
-    apple: '/brand/logo.png',
+    icon: [
+      { url: '/brand/icon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/brand/icon.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: [{ url: '/brand/icon.png', sizes: '180x180', type: 'image/png' }],
   },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
+  manifest: '/site.webmanifest',
   openGraph: {
-    title: 'ZAQVORO Technologies — Advanced Intelligent Systems & Engineering',
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://arklintech.com',
+    siteName: 'ARKLINTECH',
+    title: 'ARKLINTECH — Advanced Technology Systems & Engineering',
     description:
       'We architect intelligent systems, automate complex operations, and build software that drives real outcomes.',
-    url: 'https://zaqvoro.vercel.app/',
-    siteName: 'ZAQVORO Technologies',
     images: [
       {
         url: '/brand/logo.png',
         width: 1200,
-        height: 1200,
-        alt: 'ZAQVORO Technologies Logo',
+        height: 630,
+        alt: 'ARKLINTECH — Advanced Technology Systems',
       },
     ],
-    locale: 'en_US',
-    type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ZAQVORO Technologies — Advanced Intelligent Systems & Engineering',
+    title: 'ARKLINTECH — Advanced Technology Systems & Engineering',
     description:
       'We architect intelligent systems, automate complex operations, and build software that drives real outcomes.',
     images: ['/brand/logo.png'],
@@ -65,7 +59,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
-  themeColor: '#020407',
+  themeColor: '#F5F1E8',
 };
 
 export default function RootLayout({
@@ -74,16 +68,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="light" style={{ backgroundColor: '#F5F1E8', color: '#111827' }}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="icon" href="/brand/logo.webp" type="image/webp" />
-        <link rel="apple-touch-icon" href="/brand/logo.png" />
       </head>
-      <body className="bg-z-black text-z-text font-body antialiased min-h-screen">
+      <body
+        className="bg-[#F5F1E8] text-[#111827] font-body antialiased min-h-screen"
+        style={{ backgroundColor: '#F5F1E8', color: '#111827', margin: 0 }}
+      >
         {children}
       </body>
-    </html >
+    </html>
   );
 }

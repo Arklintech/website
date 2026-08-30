@@ -29,7 +29,7 @@ export default function FinalConvergenceSection({ onOpenProjectModal }: FinalCon
           {/* Visual Asset 15: Final Convergence */}
           <Image
             src="/visuals/zaqvoro/final-convergence.webp"
-            alt="ZAQVORO Final Convergence - System Core Resolution"
+            alt="ARKLINTECH Final Convergence - System Core Resolution"
             fill
             loading="lazy"
             sizes="100vw"

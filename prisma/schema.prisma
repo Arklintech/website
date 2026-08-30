@@ -1,0 +1,66 @@
+// ARKLINTECH Backend Database Schema
+// Datasource: SQLite (local dev & embedded) / PostgreSQL (production ready)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Inquiry {
+  id          String   @id @default(cuid())
+  name        String
+  company     String?
+  email       String
+  phone       String?
+  industry    String?
+  service     String?
+  requirement String
+  budget      String?
+  status      String   @default("NEW") // NEW, IN_REVIEW, ENGAGED, ARCHIVED
+  notes       String?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([email])
+}
+
+model TelemetryLog {
+  id        String   @id @default(cuid())
+  eventType String   // ERROR, PAGE_VIEW, INTERACTION, PERFORMANCE
+  pathname  String?
+  metadata  String?  // JSON stringified metadata
+  userAgent String?
+  timestamp DateTime @default(now())
+
+  @@index([eventType])
+  @@index([timestamp])
+}
+
+model Subscriber {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  source       String?  @default("WEBSITE")
+  status       String   @default("ACTIVE") // ACTIVE, UNSUBSCRIBED
+  subscribedAt DateTime @default(now())
+
+  @@index([email])
+}
+
+model SystemMetric {
+  id           String   @id @default(cuid())
+  metricName   String   // UPTIME, DB_LATENCY, API_REQUESTS
+  metricValue  Float
+  unit         String?  // ms, count, percent
+  recordedAt   DateTime @default(now())
+
+  @@index([metricName])
+  @@index([recordedAt])
+}

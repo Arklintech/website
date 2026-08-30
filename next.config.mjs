@@ -7,6 +7,30 @@ const nextConfig = {
   },
   compress: true,
   poweredByHeader: false,
+  async redirects() {
+    return [
+      {
+        source: '/start',
+        destination: '/start-a-system',
+        permanent: false,
+      },
+      {
+        source: '/request',
+        destination: '/start-a-system',
+        permanent: false,
+      },
+      {
+        source: '/contact',
+        destination: '/start-a-system',
+        permanent: false,
+      },
+      {
+        source: '/start-project',
+        destination: '/start-a-system',
+        permanent: false,
+      },
+    ];
+  },
   async headers() {
     return [
       {
@@ -27,15 +51,6 @@ const nextConfig = {
           {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=()',
-          },
-        ],
-      },
-      {
-        source: '/cinematic/frames/(.*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
           },
         ],
       },

@@ -19,7 +19,7 @@ const STATES: StateConfig[] = [
     name: 'DORMANT',
     stageNumber: '01',
     headline: 'INTELLIGENT SYSTEM AT REST',
-    subheadline: 'The central ZAQVORO machine is physically stable. Core illumination restrained. Awaiting user-directed activation.',
+    subheadline: 'The central ARKLINTECH machine is physically stable. Core illumination restrained. Awaiting user-directed activation.',
     range: [0.0, 0.125],
     coreStatus: 'STANDBY // READY',
     networkStatus: 'OFFLINE',

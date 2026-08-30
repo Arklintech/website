@@ -1,0 +1,18 @@
+[
+  {
+    "eventType": "SYSTEM_TEST",
+    "pathname": "/work",
+    "metadata": "{\"status\":\"ok\"}",
+    "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.9168",
+    "id": "tel_6vxg5wq",
+    "timestamp": "2026-08-30T21:18:57.222Z"
+  },
+  {
+    "eventType": "INQUIRY_SUBMITTED",
+    "pathname": "/api/inquiries",
+    "metadata": "{\"inquiryId\":\"inq_kaovqrymtgba9ul\",\"industry\":\"Healthcare & Clinical Systems\",\"service\":\"AI & Intelligence Systems\"}",
+    "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.9168",
+    "id": "tel_y9l5hy1",
+    "timestamp": "2026-08-30T21:18:31.778Z"
+  }
+]

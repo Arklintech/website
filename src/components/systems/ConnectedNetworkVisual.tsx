@@ -11,7 +11,7 @@ export default function ConnectedNetworkVisual() {
       {/* Primary Connected Network Visual Asset */}
       <Image
         src={SYSTEMS_OVERVIEW.visual}
-        alt="ZAQVORO Connected Network - One Unified Intelligence Fabric"
+        alt="ARKLINTECH Connected Network - One Unified Intelligence Fabric"
         fill
         loading="lazy"
         sizes="(max-width: 768px) 100vw, (max-width: 1440px) 100vw, 1440px"

@@ -2,54 +2,31 @@
 
 import React from 'react';
 import PageShell from '@/components/layout/PageShell';
-import CinematicIntro from '@/components/hero/CinematicIntro';
+import ArkParticleRobot from '@/components/robot/ArkParticleRobot';
 import Hero from '@/components/hero/Hero';
-import CapabilitiesSection from '@/components/capabilities/CapabilitiesSection';
-import ProcessSection from '@/components/process/ProcessSection';
-import SystemsSection from '@/components/systems/SystemsSection';
-import SelectedWorkSection from '@/components/work/SelectedWorkSection';
-import FutureSection from '@/components/future/FutureSection';
-import WhyZaqvoroSection from '@/components/philosophy/WhyZaqvoroSection';
-import FinalConvergenceSection from '@/components/cta/FinalConvergenceSection';
+import OrientationSection from '@/components/home/OrientationSection';
+import SelectedProductionSystemsSection from '@/components/home/SelectedProductionSystemsSection';
+import HomeStartSection from '@/components/home/HomeStartSection';
 
 export default function HomePage() {
   return (
     <PageShell>
       {({ onOpenProjectModal }) => (
         <>
-          {/* =========================================================
-              CLEAN SCROLLTELLING INTRO
-              (Pure full-screen 2K living machine scrolltelling experience)
-              ========================================================= */}
-          <CinematicIntro />
+          {/* 00 — INTRO LANDING: Scroll-Driven Particle Robot Traversal */}
+          <ArkParticleRobot />
 
-          {/* =========================================================
-              MAIN HOMEPAGE (UNPINNED & FLOWING NATURALLY)
-              ========================================================= */}
-
-          {/* 01 — HERO SECTION */}
+          {/* 01 — HERO (Approved Blueprint Composition) */}
           <Hero onOpenProjectModal={onOpenProjectModal} />
 
-          {/* 02 — WHAT WE BUILD */}
-          <CapabilitiesSection onOpenProjectModal={onOpenProjectModal} />
+          {/* 02 — ORIENTATION (Plain-Language Business Explanation) */}
+          <OrientationSection />
 
-          {/* 03 — HOW WE BUILD */}
-          <ProcessSection />
+          {/* 03 — SELECTED PRODUCTION SYSTEMS (Clean, Curated Preview with Direct Work Handoff) */}
+          <SelectedProductionSystemsSection />
 
-          {/* 04 — SYSTEMS */}
-          <SystemsSection onOpenProjectModal={onOpenProjectModal} />
-
-          {/* 05 — SELECTED WORK */}
-          <SelectedWorkSection onOpenProjectModal={onOpenProjectModal} />
-
-          {/* 06 — FUTURE / INNOVATION */}
-          <FutureSection onOpenProjectModal={onOpenProjectModal} />
-
-          {/* 07 — WHY ZAQVORO */}
-          <WhyZaqvoroSection onOpenProjectModal={onOpenProjectModal} />
-
-          {/* 08 — FINAL CONVERGENCE */}
-          <FinalConvergenceSection onOpenProjectModal={onOpenProjectModal} />
+          {/* 04 — START A SYSTEM (Short Intake & 3-Step Confirmation) */}
+          <HomeStartSection onOpenProjectModal={onOpenProjectModal} />
         </>
       )}
     </PageShell>

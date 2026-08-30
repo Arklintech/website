@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@300;400;500;600;700;800&family=Syncopate:wght@400;700&display=swap');
 @import './tokens.css';
 
 @tailwind base;
@@ -6,10 +6,18 @@
 @tailwind utilities;
 
 :root {
-  --font-orbitron: 'Orbitron', sans-serif;
-  --font-space-grotesk: 'Orbitron', 'Space Grotesk', sans-serif;
-  --font-inter: 'Inter', sans-serif;
-  --font-ibm-plex-mono: 'IBM Plex Mono', monospace;
+  --font-handwriting: 'Caveat', 'Architects Daughter', cursive;
+  --font-syncopate: 'Syncopate', sans-serif;
+  --font-sohne: "Söhne", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", sans-serif;
+  --font-sans: var(--font-sohne);
+  --font-display: var(--font-sohne);
+  --font-body: var(--font-sohne);
+  --font-mono: var(--font-sohne);
+  --font-space-grotesk: var(--font-sohne);
+  --font-inter: var(--font-sohne);
+  --font-ibm-plex-mono: var(--font-sohne);
+  --font-sf-pro: var(--font-sohne);
+  --font-sf-mono: var(--font-sohne);
 }
 
 * {
@@ -19,9 +27,9 @@
 }
 
 html {
-  background-color: var(--z-black);
-  color: var(--z-text);
-  font-family: var(--font-inter);
+  background-color: var(--z-bg-primary);
+  color: var(--z-text-primary);
+  font-family: var(--font-sohne);
   scroll-behavior: smooth;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -29,8 +37,8 @@ html {
 }
 
 body {
-  background-color: var(--z-black);
-  color: var(--z-text);
+  background-color: var(--z-bg-primary);
+  color: var(--z-text-primary);
   overflow-x: hidden;
   position: relative;
   min-height: 100vh;
@@ -38,26 +46,27 @@ body {
 
 /* Custom Selection */
 ::selection {
-  background: rgba(20, 155, 255, 0.35);
-  color: var(--z-white);
+  background: #DCEAFF;
+  color: #0B2E73;
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--z-black);
+  background: var(--z-bg-primary);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--z-border);
+  background: #D8D4C9;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--z-blue-500);
+  background: var(--z-accent-primary);
 }
 
-/* Layered Cinematic Background System */
+/* Architectural Ambient Background */
 .cinematic-bg {
   position: fixed;
   top: 0;
@@ -66,23 +75,20 @@ body {
   height: 100vh;
   pointer-events: none;
   z-index: 0;
-  background: 
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(6, 43, 74, 0.35), transparent 70%),
-    radial-gradient(ellipse 60% 40% at 85% 30%, rgba(8, 120, 201, 0.12), transparent 60%),
-    radial-gradient(ellipse 50% 30% at 15% 65%, rgba(245, 154, 35, 0.05), transparent 50%),
-    radial-gradient(ellipse 70% 45% at 50% 105%, rgba(6, 43, 74, 0.25), transparent 70%),
-    linear-gradient(180deg, #020407 0%, #050A10 40%, #03070D 70%, #020407 100%);
+  background-color: #F5F1E8;
 }
 
-/* Subtle Technical Precision Grid */
+/* Technical Precision Grid */
 .technical-grid {
-  background-size: 48px 48px;
-  background-image: 
-    linear-gradient(to right, rgba(27, 42, 56, 0.18) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(27, 42, 56, 0.18) 1px, transparent 1px);
+  background-image: none;
 }
 
-/* Atmospheric Vignette */
+/* Dense Dot Grid */
+.tech-dot-grid {
+  background-image: none;
+}
+
+/* Vignette overlay */
 .vignette-overlay {
   position: fixed;
   top: 0;
@@ -91,201 +97,128 @@ body {
   height: 100vh;
   pointer-events: none;
   z-index: 1;
-  background: radial-gradient(circle at 50% 50%, transparent 60%, rgba(2, 4, 7, 0.75) 100%);
+}
+
+/* Custom Utilities */
+@layer utilities {
+  .text-display-2xl {
+    font-size: clamp(2.5rem, 5.5vw, 4.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+  }
+  .text-display-xl {
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .text-display-l {
+    font-size: clamp(1.65rem, 3vw, 2.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+  }
+  .text-display-m {
+    font-size: clamp(1.25rem, 2vw, 1.75rem);
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+  .font-arklintech {
+    font-family: var(--font-space-grotesk), sans-serif;
+    letter-spacing: 0.18em;
+    font-weight: 700;
+  }
+}
+
+/* Button & Interaction Components */
+@layer components {
+  /* 1. Primary: ARKLINTECH Blue Filled + White Text */
+  .z-btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded font-mono text-xs uppercase tracking-wider font-semibold text-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1463FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F1E8];
+    background-color: #1463FF;
+  }
+  .z-btn-primary:hover {
+    background-color: #0050E6;
+    box-shadow: 0 4px 15px rgba(20, 99, 255, 0.3);
+    transform: translateY(-1px);
+  }
+
+  /* 2. Secondary: Light Cream Surface + Subtle Border + Dark Navy Text */
+  .z-btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded font-mono text-xs uppercase tracking-wider font-semibold text-[#111827] border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1463FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F1E8];
+    background-color: #FFFFFF;
+    border-color: #D8D4C9;
+  }
+  .z-btn-secondary:hover {
+    border-color: #1463FF;
+    background-color: #FBF9F3;
+    color: #1463FF;
+    transform: translateY(-1px);
+  }
+
+  /* 3. Ghost: Transparent Background + Navy-Gray Text + Blue Hover */
+  .z-btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded font-mono text-xs uppercase tracking-wider font-semibold text-[#536070] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1463FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F1E8];
+    background-color: transparent;
+  }
+  .z-btn-ghost:hover {
+    color: #1463FF;
+  }
+
+  .z-card {
+    @apply relative rounded-lg border transition-all duration-200;
+    background-color: #FBF9F3;
+    border-color: #D8D4C9;
+  }
+  .z-card:hover {
+    border-color: #1463FF;
+    box-shadow: 0 4px 20px rgba(17, 24, 39, 0.06);
+  }
+}
+
+@keyframes dash {
+  from {
+    stroke-dashoffset: 40;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+
+/* Performance Optimizations */
+.hardware-accelerated {
   transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
 }
 
-/* Subtle Grain Texture */
-.grain-layer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 9998;
-  opacity: 0.028;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 0);
-  background-size: 3px 3px;
-  transform: translateZ(0);
+/* Off-screen layout containment */
+section:not(#scroll-track):not(#hero) {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 700px;
 }
 
-/* Light Sweep Effect */
-.light-sweep-container {
-  position: relative;
-  overflow: hidden;
-  transform: translateZ(0);
+
+/* Global Brand Font Enforcement for ARKLINTECH */
+.font-syncopate, .font-logo {
+  font-family: 'Syncopate', var(--font-syncopate), sans-serif !important;
 }
 
-.light-sweep-container::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    60deg,
-    transparent 42%,
-    rgba(20, 155, 255, 0.07) 50%,
-    transparent 58%
-  );
-  transform: translateX(-100%) translateZ(0);
-  transition: transform 0.6s ease-out;
-  pointer-events: none;
-}
-
-.light-sweep-container:hover::after {
-  transform: translateX(100%) translateZ(0);
-}
-
-/* Glow Levels */
-.glow-level-1 {
-  box-shadow: var(--glow-level-1);
-}
-.glow-level-2 {
-  box-shadow: var(--glow-level-2);
-}
-.glow-level-3 {
-  box-shadow: var(--glow-level-3);
-}
-
-/* Typography Scale */
-.text-display-xl {
-  font-size: clamp(2.5rem, 5vw, 5.5rem);
-  line-height: 1.06;
-  letter-spacing: -0.015em;
-  font-family: var(--font-orbitron);
-}
-.text-display-l {
-  font-size: clamp(2rem, 3.8vw, 4rem);
-  line-height: 1.1;
-  letter-spacing: -0.01em;
-  font-family: var(--font-orbitron);
-}
-.text-display-m {
-  font-size: clamp(1.5rem, 2.6vw, 2.75rem);
-  line-height: 1.15;
-  letter-spacing: 0.01em;
-  font-family: var(--font-orbitron);
-}
-.text-heading {
-  font-size: clamp(1.2rem, 1.9vw, 1.85rem);
-  line-height: 1.25;
-  font-family: var(--font-orbitron);
-}
-.text-body {
-  font-size: clamp(0.9rem, 1vw, 1.05rem);
-  line-height: 1.6;
-  font-family: var(--font-inter);
-}
-.text-ui {
-  font-size: clamp(0.68rem, 0.75vw, 0.8rem);
-  line-height: 1.4;
-  letter-spacing: 0.08em;
-  font-family: var(--font-ibm-plex-mono);
-}
-
-/* Precision Engineered Card Styling */
-.z-card {
-  background: linear-gradient(180deg, rgba(12, 20, 30, 0.85) 0%, rgba(8, 15, 23, 0.95) 100%);
-  border: 1px solid var(--z-border);
-  border-radius: 4px;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
-  position: relative;
-  transform: translateZ(0);
-  will-change: transform;
-}
-.z-card:hover {
-  border-color: var(--z-blue-500);
-  box-shadow: 0 0 25px -3px rgba(20, 155, 255, 0.35);
-  transform: translateY(-2px) translateZ(0);
-}
-
-/* Primary Button Styling */
-.z-btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  background-color: var(--z-blue-500);
-  color: var(--z-white);
-  font-family: var(--font-ibm-plex-mono);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+.ark-brand {
+  font-family: 'Syncopate', var(--font-syncopate), sans-serif !important;
+  letter-spacing: 0.12em;
+  font-weight: 800;
   text-transform: uppercase;
-  padding: 0.65rem 1.4rem;
-  border-radius: 2px;
-  border: 1px solid var(--z-blue-400);
-  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 0 18px -2px rgba(20, 155, 255, 0.45);
-  transform: translateZ(0);
-}
-.z-btn-primary:hover {
-  background-color: var(--z-blue-400);
-  box-shadow: 0 0 28px 0px rgba(20, 155, 255, 0.75);
-  transform: translateY(-1px) translateZ(0);
 }
 
-/* Secondary Button Styling */
-.z-btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  background-color: rgba(12, 20, 30, 0.7);
-  color: var(--z-text);
-  font-family: var(--font-ibm-plex-mono);
-  font-size: 0.78rem;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 0.65rem 1.4rem;
-  border-radius: 2px;
-  border: 1px solid var(--z-border);
-  backdrop-filter: blur(8px);
-  transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
-}
-.z-btn-secondary:hover {
-  border-color: var(--z-blue-500);
-  color: var(--z-white);
-  background-color: rgba(12, 20, 30, 0.95);
-}
-
-/* Pulsing Status Dot */
-.status-indicator {
-  position: relative;
-  display: inline-flex;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background-color: #00E599;
-}
-.status-indicator::after {
-  content: '';
-  position: absolute;
-  top: -3px;
-  left: -3px;
-  width: 13px;
-  height: 13px;
-  border-radius: 50%;
-  background-color: rgba(0, 229, 153, 0.4);
-  animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
-}
-
-@keyframes pulse-ring {
-  0% { transform: scale(0.7); opacity: 0.8; }
-  100% { transform: scale(2.2); opacity: 0; }
-}
-
+/* Reduced Motion Accessibility */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
+

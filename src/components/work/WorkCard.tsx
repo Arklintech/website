@@ -13,11 +13,9 @@ interface WorkCardProps {
 
 export default function WorkCard({ project, onSelect }: WorkCardProps) {
   return (
-    <button
-      type="button"
+    <div
       onClick={() => onSelect(project)}
-      aria-label={`View case study: ${project.name} (${project.type})`}
-      className="z-card light-sweep-container flex flex-col h-full cursor-pointer group overflow-hidden bg-z-surface border-z-border hover:border-z-blue-500/70 transition-all duration-200 text-left w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-z-blue-400"
+      className="z-card light-sweep-container flex flex-col h-full cursor-pointer group overflow-hidden bg-z-surface border-z-border hover:border-z-blue-500/70 transition-all duration-200"
     >
       {/* Real Project Visual Preview Container */}
       <div className="relative w-full aspect-[16/8.5] bg-z-deep overflow-hidden border-b border-z-border/60 shrink-0">
@@ -69,10 +67,10 @@ export default function WorkCard({ project, onSelect }: WorkCardProps) {
 
           <div className="inline-flex items-center gap-1 font-mono text-[10px] sm:text-[11px] uppercase tracking-wider text-z-blue-400 group-hover:text-z-blue-300 font-medium">
             <span>VIEW CASE STUDY</span>
-            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
           </div>
         </div>
       </div>
-    </button>
+    </div>
   );
 }

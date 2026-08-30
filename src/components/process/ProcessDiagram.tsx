@@ -15,7 +15,7 @@ export default function ProcessDiagram({ activeStep, onStepSelect }: ProcessDiag
       <div className="absolute inset-0 opacity-40 group-hover:opacity-60 transition-opacity">
         <Image
           src="/visuals/zaqvoro/workflow-process.webp"
-          alt="ZAQVORO Workflow Orchestration Engine"
+          alt="ARKLINTECH Workflow Orchestration Engine"
           fill
           loading="lazy"
           sizes="(max-width: 1024px) 100vw, 40vw"

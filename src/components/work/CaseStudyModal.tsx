@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { X, CheckCircle2, ArrowRight } from 'lucide-react';
 import { Project } from '@/content/projects';
@@ -16,31 +16,10 @@ export default function CaseStudyModal({
   onClose,
   onOpenProjectModal,
 }: CaseStudyModalProps) {
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && project) {
-        onClose();
-      }
-    };
-    if (project) {
-      window.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden';
-    }
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
-    };
-  }, [project, onClose]);
-
   if (!project) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-z-black/90 backdrop-blur-md"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="case-study-modal-title"
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-z-black/90 backdrop-blur-md">
       <div className="relative w-full max-w-xl sm:max-w-2xl max-h-[85vh] sm:max-h-[88vh] flex flex-col bg-z-surface border border-z-border rounded-lg overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200 my-auto">
         {/* Visual Preview Header */}
         <div className="relative w-full h-24 sm:h-32 md:h-36 bg-z-deep overflow-hidden shrink-0">
@@ -55,17 +34,16 @@ export default function CaseStudyModal({
 
           <button
             onClick={onClose}
-            aria-label="Close case study modal"
-            className="absolute top-2.5 right-2.5 p-1.5 rounded-full bg-z-black/80 border border-z-border text-z-muted hover:text-z-white transition-colors z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-z-blue-400"
+            className="absolute top-2.5 right-2.5 p-1.5 rounded-full bg-z-black/80 border border-z-border text-z-muted hover:text-z-white transition-colors z-10"
           >
-            <X className="w-4 h-4" aria-hidden="true" />
+            <X className="w-4 h-4" />
           </button>
 
           <div className="absolute bottom-2.5 left-4 right-4">
             <span className="font-mono text-[9px] sm:text-[10px] text-z-blue-400 font-semibold tracking-widest uppercase block mb-0.5">
               REAL CASE STUDY — {project.type}
             </span>
-            <h2 id="case-study-modal-title" className="text-base sm:text-xl font-display font-semibold text-z-white">
+            <h2 className="text-base sm:text-xl font-display font-semibold text-z-white">
               {project.name}
             </h2>
           </div>
@@ -131,16 +109,16 @@ export default function CaseStudyModal({
           </div>
 
           <div>
-            <h3 className="font-mono text-[9px] uppercase tracking-widest text-z-dim mb-1.5 font-semibold">
+            <h4 className="font-mono text-[9px] uppercase tracking-widest text-z-dim mb-1.5 font-semibold">
               CORE SYSTEM DELIVERABLES
-            </h3>
+            </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
               {project.features.map((feature) => (
                 <div
                   key={feature}
                   className="flex items-center gap-1.5 text-[11px] text-z-text bg-z-surface-2 p-1.5 rounded border border-z-border"
                 >
-                  <CheckCircle2 className="w-3 h-3 text-z-blue-400 shrink-0" aria-hidden="true" />
+                  <CheckCircle2 className="w-3 h-3 text-z-blue-400 shrink-0" />
                   <span>{feature}</span>
                 </div>
               ))}
@@ -148,9 +126,9 @@ export default function CaseStudyModal({
           </div>
 
           <div>
-            <h3 className="font-mono text-[9px] uppercase tracking-widest text-z-dim mb-1.5 font-semibold">
+            <h4 className="font-mono text-[9px] uppercase tracking-widest text-z-dim mb-1.5 font-semibold">
               TECHNOLOGY STACK & INTEGRATIONS
-            </h3>
+            </h4>
             <div className="flex flex-wrap gap-1">
               {project.stack.map((tech) => (
                 <span
@@ -168,7 +146,7 @@ export default function CaseStudyModal({
         <div className="p-3 sm:p-4 border-t border-z-border flex items-center justify-between gap-3 shrink-0 bg-z-surface">
           <button
             onClick={onClose}
-            className="font-mono text-[11px] uppercase tracking-wider text-z-muted hover:text-z-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-z-blue-400 rounded px-1"
+            className="font-mono text-[11px] uppercase tracking-wider text-z-muted hover:text-z-white"
           >
             CLOSE
           </button>
@@ -178,10 +156,10 @@ export default function CaseStudyModal({
               onClose();
               onOpenProjectModal();
             }}
-            className="z-btn-primary text-xs py-2 px-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-z-blue-400"
+            className="z-btn-primary text-xs py-2 px-4"
           >
             <span>ARCHITECT SIMILAR SYSTEM</span>
-            <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>

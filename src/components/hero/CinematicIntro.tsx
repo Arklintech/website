@@ -355,10 +355,10 @@ export default function CinematicIntro() {
         <canvas
           ref={canvasRef}
           role="img"
-          aria-label="ZAQVORO Living Machine interactive scrolltelling cinematic sequence"
+          aria-label="ARKLINTECH Living Machine interactive scrolltelling cinematic sequence"
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', imageRendering: 'auto', pointerEvents: 'none' }}
         >
-          ZAQVORO Living Machine interactive scrolltelling visualization
+          <span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: '0.12em' }} className="font-extrabold uppercase">ARKLINTECH</span> Living Machine interactive scrolltelling visualization
         </canvas>
 
         {/* Loading veil */}

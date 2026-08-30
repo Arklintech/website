@@ -20,7 +20,7 @@ export default function HeroVisual() {
         <div className="relative w-full h-full rounded-full overflow-hidden shadow-[0_0_80px_rgba(8,120,201,0.35)] border border-z-border/80">
           <Image
             src="/visuals/zaqvoro/hero-zcore.webp"
-            alt="ZAQVORO Core - Advanced Intelligent System Target"
+            alt="ARKLINTECH Core - Advanced Intelligent System Target"
             fill
             priority
             sizes="(max-width: 640px) 260px, (max-width: 1024px) 420px, 540px"

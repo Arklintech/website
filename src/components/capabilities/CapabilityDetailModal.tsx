@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import Image from 'next/image';
-import { X, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { X, ArrowRight, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { Capability } from '@/content/capabilities';
 
 interface CapabilityDetailModalProps {
@@ -53,6 +53,16 @@ export default function CapabilityDetailModal({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-z-surface via-transparent to-black/60" />
 
+          {/* Back button */}
+          <button
+            onClick={onClose}
+            aria-label="Back to capabilities"
+            className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full bg-z-black/80 border border-z-border text-z-muted hover:text-z-white transition-colors z-10 font-mono text-[10px] flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-z-blue-400"
+          >
+            <ArrowLeft className="w-3 h-3 text-z-blue-400" aria-hidden="true" />
+            <span>BACK</span>
+          </button>
+
           {/* Close button */}
           <button
             onClick={onClose}
@@ -64,7 +74,7 @@ export default function CapabilityDetailModal({
 
           <div className="absolute bottom-2.5 left-4 right-4">
             <span className="font-mono text-[9px] sm:text-[10px] text-z-blue-400 font-semibold tracking-widest uppercase block mb-0.5">
-              CAPABILITY 0{capability.number} — {capability.category}
+              CAPABILITY {capability.number} — {capability.category}
             </span>
             <h2 id="capability-modal-title" className="text-base sm:text-xl font-display font-semibold text-z-white">
               {capability.title}
@@ -77,7 +87,7 @@ export default function CapabilityDetailModal({
           {/* Positioning & Description */}
           <div>
             <h3 className="font-display text-sm sm:text-base text-z-white font-medium mb-1">
-              {capability.positioning}
+              {capability.positioning || capability.subheading}
             </h3>
             <p className="text-xs text-z-muted font-body leading-relaxed">
               {capability.description}
@@ -87,14 +97,14 @@ export default function CapabilityDetailModal({
           {/* System Flow Pipeline */}
           {capability.systemFlow && capability.systemFlow.length > 0 && (
             <div className="p-3 rounded border border-z-border/80 bg-z-surface-2/70">
-              <span className="font-mono text-[9px] uppercase tracking-widest text-z-blue-400 font-semibold block mb-1.5">
+              <span className="font-mono text-[9px] uppercase tracking-widest text-z-cyan-400 font-semibold block mb-1.5">
                 SYSTEM EXECUTION FLOW
               </span>
               <div className="flex flex-wrap items-center gap-1">
                 {capability.systemFlow.map((step, idx) => (
                   <React.Fragment key={step}>
                     <div className="flex items-center gap-1 px-2 py-0.5 rounded bg-z-surface border border-z-blue-500/30 text-z-white font-mono text-[10px] font-medium shadow-sm">
-                      <span className="text-[9px] text-z-blue-400 font-bold">{idx + 1}.</span>
+                      <span className="text-[9px] text-z-cyan-400 font-bold">{idx + 1}.</span>
                       <span>{step}</span>
                     </div>
                     {idx < capability.systemFlow.length - 1 && (
@@ -106,19 +116,19 @@ export default function CapabilityDetailModal({
             </div>
           )}
 
-          {/* What We Build List */}
-          {capability.whatWeBuild && capability.whatWeBuild.length > 0 && (
+          {/* Key Deliverables List */}
+          {capability.businessView?.keyDeliverables && capability.businessView.keyDeliverables.length > 0 && (
             <div>
               <h4 className="font-mono text-[9px] uppercase tracking-widest text-z-dim mb-1.5 font-semibold">
-                WHAT WE ENGINEER & BUILD
+                KEY DELIVERABLES
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                {capability.whatWeBuild.map((item) => (
+                {capability.businessView.keyDeliverables.map((item) => (
                   <div
                     key={item}
                     className="flex items-start gap-1.5 p-2 rounded bg-z-surface-2/40 border border-z-border/60"
                   >
-                    <CheckCircle2 className="w-3.5 h-3.5 text-z-blue-400 shrink-0 mt-0.5" aria-hidden="true" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-z-cyan-400 shrink-0 mt-0.5" aria-hidden="true" />
                     <span className="text-[11px] text-z-text font-body leading-snug">{item}</span>
                   </div>
                 ))}
@@ -129,36 +139,26 @@ export default function CapabilityDetailModal({
           {/* Problem Solved & System Role Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-0.5">
             <div className="p-3 rounded border border-z-border/60 bg-z-surface-2/30">
-              <h5 className="font-mono text-[9px] uppercase tracking-wider text-z-amber font-semibold mb-1">
+              <h5 className="font-mono text-[9px] uppercase tracking-wider text-z-blue-400 font-semibold mb-1">
                 OPERATIONAL PROBLEM SOLVED
               </h5>
               <p className="text-[11px] text-z-muted font-body leading-relaxed">
-                {capability.problemSolved}
+                {capability.businessView?.problemSolved}
               </p>
             </div>
 
             <div className="p-3 rounded border border-z-border/60 bg-z-surface-2/30">
-              <h5 className="font-mono text-[9px] uppercase tracking-wider text-z-blue-400 font-semibold mb-1">
+              <h5 className="font-mono text-[9px] uppercase tracking-wider text-z-cyan-400 font-semibold mb-1">
                 SYSTEM ARCHITECTURE ROLE
               </h5>
               <p className="text-[11px] text-z-muted font-body leading-relaxed">
-                {capability.systemRole}
+                {capability.systemView?.systemRole}
               </p>
             </div>
           </div>
-
-          {/* Concrete Outcome */}
-          <div className="p-3 rounded border border-emerald-500/30 bg-emerald-950/20">
-            <h5 className="font-mono text-[9px] uppercase tracking-wider text-emerald-400 font-semibold mb-1">
-              SYSTEM OUTCOME PRODUCED
-            </h5>
-            <p className="text-[11px] text-z-text font-body leading-relaxed">
-              {capability.outcomeProduced}
-            </p>
-          </div>
         </div>
 
-        {/* Action Footer (Pinned Bottom) */}
+        {/* Action Footer */}
         <div className="p-3 sm:p-4 border-t border-z-border flex items-center justify-between gap-3 shrink-0 bg-z-surface">
           <button
             onClick={onClose}

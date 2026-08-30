@@ -10,44 +10,47 @@ const config: Config = {
     extend: {
       colors: {
         z: {
-          black: "#020407",
-          deep: "#050A10",
-          surface: "#080F17",
-          "surface-2": "#0C141E",
-          metal: "#151D27",
-          border: "#1B2A38",
-          "border-bright": "#2A4055",
-          "blue-900": "#03111F",
-          "blue-700": "#062B4A",
-          "blue-500": "#0878C9",
-          "blue-400": "#149BFF",
-          "blue-300": "#5BC3FF",
-          white: "#F5F8FC",
-          text: "#DCE5EE",
-          muted: "#8A9AAA",
-          dim: "#536474",
-          amber: "#F59A23",
-          "amber-soft": "#B96C1C",
+          black: "#F5F1E8",          /* Architectural Cream Background */
+          deep: "#EBE5D8",           /* Warm Cream Surface */
+          surface: "#FBF9F3",        /* Card Surface Base */
+          "surface-2": "#FFFFFF",    /* Elevated Card Surface */
+          "surface-hover": "#F0EAE0",/* Hover State Surface */
+          metal: "#E2DDD2",
+          border: "#D8D4C9",         /* Subtle structural warm-gray border */
+          "border-bright": "#1463FF",
+          "blue-900": "#0B2E73",     /* Deep Navy */
+          "blue-700": "#004099",
+          "blue-600": "#0050E6",
+          "blue-500": "#1463FF",     /* Master Arklintech Electric Blue */
+          "blue-400": "#2B75FF",
+          "blue-300": "#5C95FF",
+          "blue-200": "#DCEAFF",     /* Light Blue Tint */
+          "cyan-400": "#1463FF",
+          "cyan-300": "#2B75FF",
+          white: "#111827",          /* Deep Navy Primary Text */
+          text: "#111827",
+          muted: "#536070",          /* Secondary Navy-Gray Text */
+          dim: "#768494",            /* Muted Metadata Text */
         },
       },
       fontFamily: {
-        display: ["var(--font-orbitron)", "var(--font-space-grotesk)", "sans-serif"],
-        brand: ["var(--font-orbitron)", "sans-serif"],
-        body: ["var(--font-inter)", "sans-serif"],
-        mono: ["var(--font-ibm-plex-mono)", "monospace"],
+        brand: ["var(--font-syncopate)", "sans-serif"],
+        logo: ["var(--font-syncopate)", "sans-serif"],
+        display: ["Söhne", "-apple-system", "BlinkMacSystemFont", "SF Pro Display", "SF Pro Text", "Inter", "sans-serif"],
+        body: ["Söhne", "-apple-system", "BlinkMacSystemFont", "SF Pro Text", "Inter", "sans-serif"],
+        mono: ["Söhne", "-apple-system", "BlinkMacSystemFont", "SF Pro Display", "SF Pro Text", "Inter", "sans-serif"],
+        sans: ["Söhne", "-apple-system", "BlinkMacSystemFont", "SF Pro Text", "Inter", "sans-serif"],
       },
       boxShadow: {
-        "glow-sm": "0 0 15px -3px rgba(20, 155, 255, 0.25)",
-        "glow-md": "0 0 25px -2px rgba(20, 155, 255, 0.4)",
-        "glow-lg": "0 0 45px 0px rgba(20, 155, 255, 0.55)",
-        "glow-amber": "0 0 25px -2px rgba(245, 154, 35, 0.35)",
-        "border-glow": "inset 0 0 12px 0 rgba(20, 155, 255, 0.2)",
+        "glow-sm": "0 2px 10px rgba(20, 99, 255, 0.12)",
+        "glow-md": "0 4px 20px rgba(20, 99, 255, 0.18)",
+        "glow-lg": "0 8px 30px rgba(20, 99, 255, 0.22)",
+        "border-glow": "0 0 0 1px #1463FF",
       },
       animation: {
         "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "spin-slow": "spin 25s linear infinite",
         "sweep": "sweep 4s ease-in-out infinite",
-        "flicker": "flicker 0.15s ease-in-out infinite",
       },
       keyframes: {
         sweep: {

@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Dr. Elena Rostova",
+    "company": "Apex Clinical Technologies",
+    "email": "elena.rostova@apexclinical.io",
+    "phone": "+1 (415) 890-2341",
+    "industry": "Healthcare & Clinical Systems",
+    "service": "AI & Intelligence Systems",
+    "requirement": "We require a high-throughput, HIPAA-compliant patient intake and telemetry synchronization platform capable of handling real-time clinical trial data.",
+    "ipAddress": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.9168",
+    "id": "inq_kaovqrymtgba9ul",
+    "status": "NEW",
+    "notes": null,
+    "createdAt": "2026-08-30T21:18:31.773Z",
+    "updatedAt": "2026-08-30T21:18:31.773Z"
+  }
+]

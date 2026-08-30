@@ -15,7 +15,36 @@ export interface Project {
   stack: string[];
   features: string[];
   href: string;
+  // Optional compatibility fields used by newer components
+  systemType?: string;
+  summary?: string;
+  tagline?: string;
+  metrics?: { label: string; value: string }[];
+  qualitativeOutcomes?: string[];
+  statusMarker?: string;
+  number?: string;
+  capabilities?: string[];
+  // Full 10-point engineering dossier (optional — only present on detailed project entries)
+  dossier?: {
+    context: { title: string; content: string; environment: string; scale: string };
+    challenge: { title: string; content: string; frictionPoints: string[] };
+    objective: { title: string; content: string; keyGoals: string[] };
+    system: { title: string; content: string; coreComponents: string[] };
+    architecture: {
+      title: string; content: string;
+      diagramNodes: { name: string; type: string; role: string }[];
+      flowDescription: string;
+    };
+    experience: { title: string; content: string; interfaceHighlights: string[] };
+    intelligence: { title: string; content: string; automationRules: string[] };
+    engineering: { title: string; content: string; technicalStandards: string[] };
+    outcome: { title: string; content: string; verifiedImpact: string[] };
+    technology: { title: string; stack: string[]; integrations: string[]; infrastructure: string[] };
+  };
 }
+
+// Alias for backward compatibility with components built using ProjectDossier
+export type ProjectDossier = Project;
 
 export const PROJECTS: Project[] = [
   {
