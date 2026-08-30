@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+.git
+arklintech-particle-robot
+*.mp4
+*.webm
+*.mov
+public/frames/
+public/cinematic/contact_sheet.jpg
