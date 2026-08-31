@@ -21,7 +21,6 @@ import {
 const ARCHITECTURE_LAYERS = [
   {
     id: 'layer-01',
-    number: 'LAYER 01',
     title: 'SOFTWARE',
     subtitle: 'Interfaces & Platforms',
     icon: Server,
@@ -34,7 +33,6 @@ const ARCHITECTURE_LAYERS = [
   },
   {
     id: 'layer-02',
-    number: 'LAYER 02',
     title: 'INTELLIGENCE',
     subtitle: 'AI Decision Engines',
     icon: Cpu,
@@ -47,7 +45,6 @@ const ARCHITECTURE_LAYERS = [
   },
   {
     id: 'layer-03',
-    number: 'LAYER 03',
     title: 'AUTOMATION',
     subtitle: 'Workflows & Operations',
     icon: Cog,
@@ -265,15 +262,12 @@ export default function SystemArchitectureDiagram() {
 
       {/* 3 Connected Architecture Layer Cards + Bold Living Blue Vector Connector Wires */}
       <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-0 relative">
-        {/* LAYER 01: SOFTWARE */}
+        {/* LAYER: SOFTWARE */}
         <div className="flex-1 rounded-2xl bg-white border border-[#D8D4C9] p-6 sm:p-7 flex flex-col justify-between shadow-sm transition-all hover:border-[#1463FF]/50 hover:shadow-md group">
           <div className="space-y-4">
             <div className="flex flex-col items-center text-center">
               <div className="w-12 h-12 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/25 flex items-center justify-center text-[#1463FF] mb-3 group-hover:scale-105 transition-transform shadow-xs">
                 <Server className="w-6 h-6 stroke-[1.75]" />
-              </div>
-              <div className="font-mono text-[10.5px] font-bold uppercase tracking-wider text-[#1463FF]">
-                LAYER 01
               </div>
               <h3 className="text-xl sm:text-2xl font-display font-bold text-[#111827] uppercase tracking-tight mt-0.5">
                 SOFTWARE
@@ -307,7 +301,7 @@ export default function SystemArchitectureDiagram() {
         <BoldDesktopConnectorWire id="bold-wire-1" />
         <BoldMobileConnectorWire id="bold-wire-1-mob" />
 
-        {/* LAYER 02: INTELLIGENCE (Central Processing Role) */}
+        {/* LAYER: INTELLIGENCE (Central Processing Role) */}
         <div className="flex-1 rounded-2xl bg-white border-2 border-[#1463FF]/50 p-6 sm:p-7 flex flex-col justify-between shadow-md transition-all hover:border-[#1463FF] hover:shadow-lg group relative">
           <div className="absolute inset-0 bg-[#EDF4FF]/35 rounded-2xl pointer-events-none -z-10" />
 
@@ -315,9 +309,6 @@ export default function SystemArchitectureDiagram() {
             <div className="flex flex-col items-center text-center">
               <div className="w-12 h-12 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/40 flex items-center justify-center text-[#1463FF] mb-3 group-hover:scale-105 transition-transform shadow-[0_0_12px_rgba(20,99,255,0.18)]">
                 <Cpu className="w-6 h-6 stroke-[1.75]" />
-              </div>
-              <div className="font-mono text-[10.5px] font-bold uppercase tracking-wider text-[#1463FF]">
-                LAYER 02
               </div>
               <h3 className="text-xl sm:text-2xl font-display font-bold text-[#111827] uppercase tracking-tight mt-0.5">
                 INTELLIGENCE
@@ -351,15 +342,12 @@ export default function SystemArchitectureDiagram() {
         <BoldDesktopConnectorWire id="bold-wire-2" />
         <BoldMobileConnectorWire id="bold-wire-2-mob" />
 
-        {/* LAYER 03: AUTOMATION */}
+        {/* LAYER: AUTOMATION */}
         <div className="flex-1 rounded-2xl bg-white border border-[#D8D4C9] p-6 sm:p-7 flex flex-col justify-between shadow-sm transition-all hover:border-[#1463FF]/50 hover:shadow-md group">
           <div className="space-y-4">
             <div className="flex flex-col items-center text-center">
               <div className="w-12 h-12 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/25 flex items-center justify-center text-[#1463FF] mb-3 group-hover:scale-105 transition-transform shadow-xs">
                 <Cog className="w-6 h-6 stroke-[1.75]" />
-              </div>
-              <div className="font-mono text-[10.5px] font-bold uppercase tracking-wider text-[#1463FF]">
-                LAYER 03
               </div>
               <h3 className="text-xl sm:text-2xl font-display font-bold text-[#111827] uppercase tracking-tight mt-0.5">
                 AUTOMATION

@@ -213,7 +213,7 @@ export default function SystemArchitectureFlow() {
           {/* 7 EXACTLY POSITIONED ARCHITECTURAL MODULE CARDS                       */}
           {/* ===================================================================== */}
 
-          {/* 1. NODE 01: INTELLIGENCE (x=350, y=30, w=300, h=130) */}
+          {/* 1. NODE: INTELLIGENCE (x=350, y=30, w=300, h=130) */}
           <g transform="translate(350, 30)">
             <rect width="300" height="130" rx="16" fill="url(#intelCardGrad)" stroke="#1463FF" strokeWidth="2" filter="url(#intelShadow)" />
             <rect x="127" y="14" width="46" height="38" rx="10" fill="#EDF4FF" stroke="#1463FF" strokeWidth="1" strokeOpacity="0.4" />
@@ -223,14 +223,13 @@ export default function SystemArchitectureFlow() {
               <path d="M 10 3 C 13 3, 16 5, 16 9 C 16 10.5, 15.5 12, 14.5 13 C 16.5 14, 18 16, 18 18.5 C 18 21.5, 15.5 24, 12.5 24 C 12 24, 11.5 23.9, 11 23.7" />
               <path d="M 10 3 L 10 24" />
             </g>
-            <text x="150" y="66" textAnchor="middle" fill="#1463FF" fontFamily="monospace" fontSize="10.5" fontWeight="bold" letterSpacing="0.1em">01</text>
-            <text x="150" y="86" textAnchor="middle" fill="#111827" fontFamily="system-ui, sans-serif" fontSize="17" fontWeight="bold" letterSpacing="0.04em">INTELLIGENCE</text>
-            <text x="150" y="103" textAnchor="middle" fill="#536070" fontFamily="system-ui, sans-serif" fontSize="11">Central Decision System</text>
+            <text x="150" y="74" textAnchor="middle" fill="#111827" fontFamily="system-ui, sans-serif" fontSize="17" fontWeight="bold" letterSpacing="0.04em">INTELLIGENCE</text>
+            <text x="150" y="93" textAnchor="middle" fill="#536070" fontFamily="system-ui, sans-serif" fontSize="11">Central Decision System</text>
             <line x1="20" y1="113" x2="280" y2="113" stroke="#1463FF" strokeOpacity="0.25" strokeWidth="1" />
             <text x="150" y="123" textAnchor="middle" fill="#1463FF" fontFamily="monospace" fontSize="9.5" fontWeight="600">Inference · Analysis · Optimization</text>
           </g>
 
-          {/* 2. NODE 02: SOFTWARE (x=40, y=120, w=220, h=120) */}
+          {/* 2. NODE: SOFTWARE (x=40, y=120, w=220, h=120) */}
           <g transform="translate(40, 120)">
             <rect width="220" height="120" rx="16" fill="#FFFFFF" stroke="#D8D4C9" strokeWidth="1.2" filter="url(#cardShadow)" />
             <rect x="91" y="12" width="38" height="32" rx="8" fill="#EDF4FF" stroke="#1463FF" strokeWidth="1" strokeOpacity="0.25" />
@@ -240,14 +239,13 @@ export default function SystemArchitectureFlow() {
               <line x1="6" y1="18" x2="14" y2="18" />
               <line x1="10" y1="14" x2="10" y2="18" />
             </g>
-            <text x="110" y="57" textAnchor="middle" fill="#1463FF" fontFamily="monospace" fontSize="10" fontWeight="bold">02</text>
-            <text x="110" y="75" textAnchor="middle" fill="#111827" fontFamily="system-ui, sans-serif" fontSize="14.5" fontWeight="bold" letterSpacing="0.04em">SOFTWARE</text>
-            <text x="110" y="91" textAnchor="middle" fill="#536070" fontFamily="system-ui, sans-serif" fontSize="10.5">Interfaces &amp; Platforms</text>
+            <text x="110" y="66" textAnchor="middle" fill="#111827" fontFamily="system-ui, sans-serif" fontSize="14.5" fontWeight="bold" letterSpacing="0.04em">SOFTWARE</text>
+            <text x="110" y="84" textAnchor="middle" fill="#536070" fontFamily="system-ui, sans-serif" fontSize="10.5">Interfaces &amp; Platforms</text>
             <line x1="15" y1="101" x2="205" y2="101" stroke="#D8D4C9" strokeOpacity="0.8" strokeWidth="1" />
             <text x="110" y="112" textAnchor="middle" fill="#768494" fontFamily="monospace" fontSize="9">Applications · APIs · Data</text>
           </g>
 
-          {/* 3. NODE 03: ORCHESTRATION (x=350, y=200, w=300, h=120) */}
+          {/* 3. NODE: ORCHESTRATION (x=350, y=200, w=300, h=120) */}
           <g transform="translate(350, 200)">
             <rect width="300" height="120" rx="16" fill="#FFFFFF" stroke="#D8D4C9" strokeWidth="1.2" filter="url(#cardShadow)" />
             <rect x="131" y="12" width="38" height="32" rx="8" fill="#EDF4FF" stroke="#1463FF" strokeWidth="1" strokeOpacity="0.25" />
@@ -259,14 +257,13 @@ export default function SystemArchitectureFlow() {
               <path d="M 4 7 L 4 11" />
               <path d="M 7 4 L 14 4 L 14 11" />
             </g>
-            <text x="150" y="57" textAnchor="middle" fill="#1463FF" fontFamily="monospace" fontSize="10" fontWeight="bold">03</text>
-            <text x="150" y="75" textAnchor="middle" fill="#111827" fontFamily="system-ui, sans-serif" fontSize="15" fontWeight="bold" letterSpacing="0.04em">ORCHESTRATION</text>
-            <text x="150" y="91" textAnchor="middle" fill="#536070" fontFamily="system-ui, sans-serif" fontSize="10.5">Coordination Layer</text>
+            <text x="150" y="66" textAnchor="middle" fill="#111827" fontFamily="system-ui, sans-serif" fontSize="15" fontWeight="bold" letterSpacing="0.04em">ORCHESTRATION</text>
+            <text x="150" y="84" textAnchor="middle" fill="#536070" fontFamily="system-ui, sans-serif" fontSize="10.5">Coordination Layer</text>
             <line x1="20" y1="101" x2="280" y2="101" stroke="#D8D4C9" strokeOpacity="0.8" strokeWidth="1" />
             <text x="150" y="112" textAnchor="middle" fill="#768494" fontFamily="monospace" fontSize="9.5">Rules · Logic · Scheduling</text>
           </g>
 
-          {/* 4. NODE 04: AUTOMATION (x=740, y=120, w=220, h=120) */}
+          {/* 4. NODE: AUTOMATION (x=740, y=120, w=220, h=120) */}
           <g transform="translate(740, 120)">
             <rect width="220" height="120" rx="16" fill="#FFFFFF" stroke="#D8D4C9" strokeWidth="1.2" filter="url(#cardShadow)" />
             <rect x="91" y="12" width="38" height="32" rx="8" fill="#EDF4FF" stroke="#1463FF" strokeWidth="1" strokeOpacity="0.25" />
@@ -274,9 +271,8 @@ export default function SystemArchitectureFlow() {
             <g transform="translate(101, 18)" stroke="#1463FF" strokeWidth="1.8" fill="none">
               <polygon points="11 2 4 11 9 11 7 18 14 9 9 9 11 2" strokeLinejoin="round" />
             </g>
-            <text x="110" y="57" textAnchor="middle" fill="#1463FF" fontFamily="monospace" fontSize="10" fontWeight="bold">04</text>
-            <text x="110" y="75" textAnchor="middle" fill="#111827" fontFamily="system-ui, sans-serif" fontSize="14.5" fontWeight="bold" letterSpacing="0.04em">AUTOMATION</text>
-            <text x="110" y="91" textAnchor="middle" fill="#536070" fontFamily="system-ui, sans-serif" fontSize="10.5">Execution Engine</text>
+            <text x="110" y="66" textAnchor="middle" fill="#111827" fontFamily="system-ui, sans-serif" fontSize="14.5" fontWeight="bold" letterSpacing="0.04em">AUTOMATION</text>
+            <text x="110" y="84" textAnchor="middle" fill="#536070" fontFamily="system-ui, sans-serif" fontSize="10.5">Execution Engine</text>
             <line x1="15" y1="101" x2="205" y2="101" stroke="#D8D4C9" strokeOpacity="0.8" strokeWidth="1" />
             <text x="110" y="112" textAnchor="middle" fill="#768494" fontFamily="monospace" fontSize="9">Workflows · Actions · Integrations</text>
           </g>
@@ -297,7 +293,7 @@ export default function SystemArchitectureFlow() {
             <text x="110" y="111" textAnchor="middle" fill="#768494" fontFamily="monospace" fontSize="8.5">Structured · Unstructured · Streams</text>
           </g>
 
-          {/* 6. NODE 05: OPERATIONS (x=350, y=360, w=300, h=120) */}
+          {/* 6. NODE: OPERATIONS (x=350, y=360, w=300, h=120) */}
           <g transform="translate(350, 360)">
             <rect width="300" height="120" rx="16" fill="#FFFFFF" stroke="#D8D4C9" strokeWidth="1.2" filter="url(#cardShadow)" />
             <rect x="131" y="12" width="38" height="32" rx="8" fill="#EDF4FF" stroke="#1463FF" strokeWidth="1" strokeOpacity="0.25" />
@@ -306,14 +302,13 @@ export default function SystemArchitectureFlow() {
               <circle cx="9" cy="9" r="3.5" />
               <path d="M 9 1 L 9 3 M 9 15 L 9 17 M 1 9 L 3 9 M 15 9 L 17 9 M 3.3 3.3 L 4.7 4.7 M 13.3 13.3 L 14.7 14.7 M 3.3 14.7 L 4.7 13.3 M 13.3 4.7 L 14.7 3.3" />
             </g>
-            <text x="150" y="57" textAnchor="middle" fill="#1463FF" fontFamily="monospace" fontSize="10" fontWeight="bold">05</text>
-            <text x="150" y="75" textAnchor="middle" fill="#111827" fontFamily="system-ui, sans-serif" fontSize="15" fontWeight="bold" letterSpacing="0.04em">OPERATIONS</text>
-            <text x="150" y="91" textAnchor="middle" fill="#536070" fontFamily="system-ui, sans-serif" fontSize="10.5">Operational Management</text>
+            <text x="150" y="66" textAnchor="middle" fill="#111827" fontFamily="system-ui, sans-serif" fontSize="15" fontWeight="bold" letterSpacing="0.04em">OPERATIONS</text>
+            <text x="150" y="84" textAnchor="middle" fill="#536070" fontFamily="system-ui, sans-serif" fontSize="10.5">Operational Management</text>
             <line x1="20" y1="101" x2="280" y2="101" stroke="#D8D4C9" strokeOpacity="0.8" strokeWidth="1" />
             <text x="150" y="112" textAnchor="middle" fill="#768494" fontFamily="monospace" fontSize="9.5">Monitoring · Control · Governance</text>
           </g>
 
-          {/* 7. NODE 06: OUTCOME (x=350, y=520, w=300, h=120) */}
+          {/* 7. NODE: OUTCOME (x=350, y=520, w=300, h=120) */}
           <g transform="translate(350, 520)">
             <rect width="300" height="120" rx="16" fill="#FFFFFF" stroke="#D8D4C9" strokeWidth="1.2" filter="url(#cardShadow)" />
             <rect x="131" y="12" width="38" height="32" rx="8" fill="#EDF4FF" stroke="#1463FF" strokeWidth="1" strokeOpacity="0.25" />
@@ -323,9 +318,8 @@ export default function SystemArchitectureFlow() {
               <circle cx="9" cy="9" r="4.5" />
               <circle cx="9" cy="9" r="1.5" fill="#1463FF" />
             </g>
-            <text x="150" y="57" textAnchor="middle" fill="#1463FF" fontFamily="monospace" fontSize="10" fontWeight="bold">06</text>
-            <text x="150" y="75" textAnchor="middle" fill="#111827" fontFamily="system-ui, sans-serif" fontSize="15" fontWeight="bold" letterSpacing="0.04em">OUTCOME</text>
-            <text x="150" y="91" textAnchor="middle" fill="#536070" fontFamily="system-ui, sans-serif" fontSize="10.5">Measured Operational Result</text>
+            <text x="150" y="66" textAnchor="middle" fill="#111827" fontFamily="system-ui, sans-serif" fontSize="15" fontWeight="bold" letterSpacing="0.04em">OUTCOME</text>
+            <text x="150" y="84" textAnchor="middle" fill="#536070" fontFamily="system-ui, sans-serif" fontSize="10.5">Measured Operational Result</text>
             <line x1="20" y1="101" x2="280" y2="101" stroke="#D8D4C9" strokeOpacity="0.8" strokeWidth="1" />
             <text x="150" y="112" textAnchor="middle" fill="#768494" fontFamily="monospace" fontSize="9.5">Impact · Value · Continuous Improvement</text>
           </g>
@@ -336,12 +330,12 @@ export default function SystemArchitectureFlow() {
       {/* MOBILE / TABLET COMPACT VERTICAL CONNECTED TOPOLOGY (below lg)            */}
       {/* ========================================================================= */}
       <div className="lg:hidden flex flex-col items-center space-y-0 w-full py-2">
-        {/* Node 02 */}
+        {/* Node: SOFTWARE */}
         <div className="w-full p-5 rounded-2xl bg-white border border-[#D8D4C9] text-center flex flex-col items-center shadow-sm">
           <div className="w-10 h-10 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/25 flex items-center justify-center text-[#1463FF] mb-2">
             <Monitor className="w-5 h-5" />
           </div>
-          <span className="font-mono text-[10px] font-bold text-[#1463FF]">02 • SOFTWARE</span>
+          <span className="font-mono text-[10px] font-bold text-[#1463FF]">SOFTWARE</span>
           <h3 className="text-base font-display font-bold text-[#111827] uppercase">Interfaces &amp; Platforms</h3>
           <p className="text-[11px] text-[#768494] font-mono mt-1">Applications · APIs · Data</p>
         </div>
@@ -356,12 +350,12 @@ export default function SystemArchitectureFlow() {
           </svg>
         </div>
 
-        {/* Node 01 */}
+        {/* Node: INTELLIGENCE */}
         <div className="w-full p-5 rounded-2xl bg-[#F6FAFF] border-2 border-[#1463FF]/50 text-center flex flex-col items-center shadow-md">
           <div className="w-11 h-11 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/40 flex items-center justify-center text-[#1463FF] mb-2 shadow-[0_0_10px_rgba(20,99,255,0.15)]">
             <Brain className="w-6 h-6" />
           </div>
-          <span className="font-mono text-[10px] font-bold text-[#1463FF]">01 • INTELLIGENCE (CENTRAL NODE)</span>
+          <span className="font-mono text-[10px] font-bold text-[#1463FF]">INTELLIGENCE</span>
           <h3 className="text-lg font-display font-bold text-[#111827] uppercase">Central Decision System</h3>
           <p className="text-[11px] text-[#1463FF] font-mono mt-1 font-semibold">Inference · Analysis · Optimization</p>
         </div>
@@ -376,12 +370,12 @@ export default function SystemArchitectureFlow() {
           </svg>
         </div>
 
-        {/* Node 03 */}
+        {/* Node: ORCHESTRATION */}
         <div className="w-full p-5 rounded-2xl bg-white border border-[#D8D4C9] text-center flex flex-col items-center shadow-sm">
           <div className="w-10 h-10 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/25 flex items-center justify-center text-[#1463FF] mb-2">
             <Workflow className="w-5 h-5" />
           </div>
-          <span className="font-mono text-[10px] font-bold text-[#1463FF]">03 • ORCHESTRATION</span>
+          <span className="font-mono text-[10px] font-bold text-[#1463FF]">ORCHESTRATION</span>
           <h3 className="text-base font-display font-bold text-[#111827] uppercase">Coordination Layer</h3>
           <p className="text-[11px] text-[#768494] font-mono mt-1">Rules · Logic · Scheduling</p>
         </div>
@@ -396,12 +390,12 @@ export default function SystemArchitectureFlow() {
           </svg>
         </div>
 
-        {/* Node 04 */}
+        {/* Node: AUTOMATION */}
         <div className="w-full p-5 rounded-2xl bg-white border border-[#D8D4C9] text-center flex flex-col items-center shadow-sm">
           <div className="w-10 h-10 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/25 flex items-center justify-center text-[#1463FF] mb-2">
             <Zap className="w-5 h-5" />
           </div>
-          <span className="font-mono text-[10px] font-bold text-[#1463FF]">04 • AUTOMATION</span>
+          <span className="font-mono text-[10px] font-bold text-[#1463FF]">AUTOMATION</span>
           <h3 className="text-base font-display font-bold text-[#111827] uppercase">Execution Engine</h3>
           <p className="text-[11px] text-[#768494] font-mono mt-1">Workflows · Actions · Integrations</p>
         </div>
@@ -435,12 +429,12 @@ export default function SystemArchitectureFlow() {
           </svg>
         </div>
 
-        {/* Node 05 */}
+        {/* Node: OPERATIONS */}
         <div className="w-full p-5 rounded-2xl bg-white border border-[#D8D4C9] text-center flex flex-col items-center shadow-sm">
           <div className="w-10 h-10 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/25 flex items-center justify-center text-[#1463FF] mb-2">
             <Cog className="w-5 h-5" />
           </div>
-          <span className="font-mono text-[10px] font-bold text-[#1463FF]">05 • OPERATIONS</span>
+          <span className="font-mono text-[10px] font-bold text-[#1463FF]">OPERATIONS</span>
           <h3 className="text-base font-display font-bold text-[#111827] uppercase">Operational Management</h3>
           <p className="text-[11px] text-[#768494] font-mono mt-1">Monitoring · Control · Governance</p>
         </div>
@@ -455,12 +449,12 @@ export default function SystemArchitectureFlow() {
           </svg>
         </div>
 
-        {/* Node 06 */}
+        {/* Node: OUTCOME */}
         <div className="w-full p-5 rounded-2xl bg-white border border-[#D8D4C9] text-center flex flex-col items-center shadow-sm">
           <div className="w-10 h-10 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/25 flex items-center justify-center text-[#1463FF] mb-2">
             <Target className="w-5 h-5" />
           </div>
-          <span className="font-mono text-[10px] font-bold text-[#1463FF]">06 • OUTCOME</span>
+          <span className="font-mono text-[10px] font-bold text-[#1463FF]">OUTCOME</span>
           <h3 className="text-base font-display font-bold text-[#111827] uppercase">Measured Operational Result</h3>
           <p className="text-[11px] text-[#768494] font-mono mt-1">Impact · Value · Continuous Improvement</p>
         </div>
