@@ -1,11 +1,10 @@
-import ArklintechWordmark from '@/components/brand/ArklintechWordmark';
 'use client';
 
 import React from 'react';
 import Link from 'next/link';
 import GlobalPresenceMap from './GlobalPresenceMap';
 import KeystoneLogo from '@/components/brand/KeystoneLogo';
-import { ArrowRight, Linkedin, Twitter, Instagram, Youtube } from 'lucide-react';
+import { ArrowRight, Mail } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -13,7 +12,7 @@ export default function Footer() {
       {/* Centered Content Container */}
       <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 relative">
         {/* ========================================================================= */}
-        {/* GIANT <span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: '0.12em' }} className="font-extrabold uppercase">ARKLINTECH</span> WATERMARK LAYER (Bounded exactly within content margins)  */}
+        {/* GIANT ARKLINTECH WATERMARK LAYER (Bounded exactly within content margins)  */}
         {/* ========================================================================= */}
         <div
           className="absolute inset-x-4 sm:inset-x-6 lg:inset-x-12 bottom-2 sm:bottom-4 md:bottom-6 pointer-events-none select-none z-0 overflow-hidden flex items-end justify-center"
@@ -65,6 +64,18 @@ export default function Footer() {
                   <span>START A SYSTEM</span>
                   <ArrowRight className="w-3.5 h-3.5 text-[#1463FF] transition-transform group-hover:translate-x-1" />
                 </Link>
+              </div>
+
+              {/* Direct Company Contact Email */}
+              <div className="pt-1">
+                <a
+                  href="mailto:work@arklintech.com"
+                  className="inline-flex items-center gap-2 text-xs font-mono text-[#536070] hover:text-[#1463FF] transition-colors group focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1463FF] rounded"
+                  aria-label="Send email to work@arklintech.com"
+                >
+                  <Mail className="w-3.5 h-3.5 text-[#1463FF] shrink-0" />
+                  <span>work@arklintech.com</span>
+                </a>
               </div>
             </div>
 
@@ -132,51 +143,11 @@ export default function Footer() {
           </div>
 
           {/* ========================================================================= */}
-          {/* BOTTOM BAR, SOCIALS & LEGAL (z-10 relative)                               */}
+          {/* BOTTOM BAR & LEGAL (z-10 relative)                                        */}
           {/* ========================================================================= */}
           <div className="pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-mono text-xs text-[#768494]">
             <div>
               © 2026 <span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: "0.1em" }} className="font-bold"><span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: '0.12em' }} className="font-extrabold uppercase">ARKLINTECH</span></span> Technology Systems. All rights reserved.
-            </div>
-
-            {/* Social Links */}
-            <div className="flex items-center gap-3 text-[#536070]">
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn"
-                className="w-8 h-8 rounded-full bg-white/80 border border-[#D8D4C9] flex items-center justify-center hover:text-[#111827] hover:border-[#1677FF] hover:bg-[#EDF4FF] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1677FF]"
-              >
-                <Linkedin className="w-4 h-4" />
-              </a>
-              <a
-                href="https://x.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="X"
-                className="w-8 h-8 rounded-full bg-white/80 border border-[#D8D4C9] flex items-center justify-center hover:text-[#111827] hover:border-[#1677FF] hover:bg-[#EDF4FF] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1677FF]"
-              >
-                <Twitter className="w-4 h-4" />
-              </a>
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="w-8 h-8 rounded-full bg-white/80 border border-[#D8D4C9] flex items-center justify-center hover:text-[#111827] hover:border-[#1677FF] hover:bg-[#EDF4FF] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1677FF]"
-              >
-                <Instagram className="w-4 h-4" />
-              </a>
-              <a
-                href="https://youtube.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="YouTube"
-                className="w-8 h-8 rounded-full bg-white/80 border border-[#D8D4C9] flex items-center justify-center hover:text-[#111827] hover:border-[#1677FF] hover:bg-[#EDF4FF] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1677FF]"
-              >
-                <Youtube className="w-4 h-4" />
-              </a>
             </div>
 
             <div className="flex items-center gap-4 text-[#768494]">
