@@ -74,7 +74,7 @@ export default function SelectedProductionSystemsSection() {
                 SYSTEMS<br />WE&apos;VE BUILT<span className="text-[#1463FF]">.</span>
               </h2>
               <p className="text-xs sm:text-sm text-[#475569] leading-relaxed max-w-sm">
-                Real problems. Real impact. Engineered systems built to perform where it matters most.
+                We engineer dependable systems that help businesses, teams, and operations work with greater clarity and control.
               </p>
               <div>
                 <Link

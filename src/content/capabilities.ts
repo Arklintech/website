@@ -40,8 +40,8 @@ export const CAPABILITIES: Capability[] = [
     category: 'INTELLIGENCE LAYER',
     title: 'AI & Intelligence',
     subheading: 'Intelligent Decision & Automation Systems',
-    positioning: 'Apply AI, contextual intelligence and data to improve decisions, automate intelligent work and enable more responsive operations.',
-    description: 'We engineer deterministic cognitive layers that synthesize complex data streams, maintain domain-specific organizational memory, and execute autonomous decisions across high-velocity operational workflows.',
+    positioning: 'We apply AI, context, and business data to improve decisions, automate intelligent work, and help operations respond with greater speed and precision.',
+    description: 'We turn business information into useful intelligence people can act on—helping teams understand what is happening, anticipate what comes next, and execute with confidence.',
     technicalVocabulary: [
       'AI',
       'Machine Learning',
@@ -55,14 +55,14 @@ export const CAPABILITIES: Capability[] = [
     systemFlow: ['DATA', 'CONTEXT', 'INTELLIGENCE', 'DECISION', 'ACTION'],
     systemFlowString: 'DATA → CONTEXT → INTELLIGENCE → DECISION → ACTION',
     businessView: {
-      problemSolved: 'Eliminates cognitive bottlenecks, manual spreadsheet analysis, decision latency, and fragmented business telemetry.',
-      valueDelivered: 'Empowers organizations with real-time automated decisioning, predictive operational foresight, and autonomous task triage.',
+      problemSolved: 'Eliminates information bottlenecks, manual data sorting, decision delays, and fragmented business reporting.',
+      valueDelivered: 'Empowers organizations with real-time automated decisioning, predictive operational foresight, and reliable task triage.',
       whoItHelps: ['Founders & CEOs', 'Operations Leaders', 'Product Managers', 'Decision Intelligence Teams'],
       keyDeliverables: [
-        'Domain-Specific Autonomous Execution Agents',
-        'Intelligent Document & Unstructured Data Ingestion',
+        'Domain-Specific Intelligent Execution Agents',
+        'Automated Document & Unstructured Data Ingestion',
         'Contextual Decision-Support Dashboards',
-        'Predictive Demand & Operational Risk Modeling',
+        'Predictive Operational & Risk Forecasting Models',
       ],
     },
     systemView: {
@@ -88,8 +88,8 @@ export const CAPABILITIES: Capability[] = [
     category: 'SOFTWARE ENGINEERING CORE',
     title: 'Software & Platforms',
     subheading: 'Custom Digital Platforms & Software Engineering',
-    positioning: 'Design and engineer applications, portals, platforms and digital products around the way organizations actually operate.',
-    description: 'We construct robust, maintainable digital platforms, distributed microservices, and client-facing applications engineered for high concurrency, zero-downtime execution, and multi-tenant scalability.',
+    positioning: 'We design and engineer applications, portals, platforms, and digital products around the way the business actually operates.',
+    description: 'We build software around the business—not the other way around. Our platforms, portals, and distributed microservices are engineered for high concurrency, zero-downtime execution, and multi-tenant scale.',
     technicalVocabulary: [
       'Software Engineering',
       'Applications',
@@ -107,7 +107,7 @@ export const CAPABILITIES: Capability[] = [
       valueDelivered: 'Provides proprietary digital assets that perfectly align with operational workflows, customer touchpoints, and business models.',
       whoItHelps: ['Founders & Enterprise Buyers', 'CTOs & Engineering Heads', 'Product Leaders', 'Operations Managers'],
       keyDeliverables: [
-        'Custom Web Applications & Portals',
+        'Custom Web Applications & Client Portals',
         'High-Throughput Backend Service Meshes',
         'Mobile & Desktop Native Platforms',
         'Scalable Multi-Tenant Cloud Architecture',
@@ -136,8 +136,8 @@ export const CAPABILITIES: Capability[] = [
     category: 'WORKFLOW ORCHESTRATION',
     title: 'Automation & Orchestration',
     subheading: 'Intelligent Workflow Systems for Complex Operations',
-    positioning: 'Connect events, rules, applications and automated actions into coordinated workflows that reduce repetitive manual work.',
-    description: 'We engineer event-driven orchestration architectures that bridge application boundaries, automate multi-step operational logic, and eliminate human handoff friction across high-volume business processes.',
+    positioning: 'We connect events, rules, applications, and automated actions into coordinated workflows that remove repetitive manual handoffs.',
+    description: 'We make routine work move automatically, accurately, and on time. Our event-driven systems coordinate multi-step operational logic across tool boundaries without human delay.',
     technicalVocabulary: [
       'Workflow Automation',
       'Orchestration',
@@ -151,7 +151,7 @@ export const CAPABILITIES: Capability[] = [
     systemFlow: ['EVENT', 'RULE', 'WORKFLOW', 'ACTION', 'RESULT'],
     systemFlowString: 'EVENT → RULE → WORKFLOW → ACTION → RESULT',
     businessView: {
-      problemSolved: 'Eliminates repetitive manual data entry, disconnected application silos, lost customer leads, and slow operational cycle times.',
+      problemSolved: 'Eliminates repetitive manual data entry, disconnected tool silos, missed handoffs, and slow operational cycle times.',
       valueDelivered: 'Translates complex operational requirements into automated, auditable workflows that run 24/7 with zero human latency.',
       whoItHelps: ['Operations VPs', 'COOs & General Managers', 'Finance & Logistics Teams', 'Customer Success Leaders'],
       keyDeliverables: [
@@ -184,8 +184,8 @@ export const CAPABILITIES: Capability[] = [
     category: 'ENTERPRISE OPERATIONAL ARCHITECTURE',
     title: 'Business Systems',
     subheading: 'Connected Operational Architecture',
-    positioning: 'Integrate the systems, data and workflows that run the organization into a more unified operational environment.',
-    description: 'We architect unified operational environments that integrate POS, CRM, ERP, inventory ledgers, and financial pipelines into a single synchronized source of truth with real-time operational command visibility.',
+    positioning: 'We connect the systems, data, and workflows that keep an organization running into one clearer operational environment.',
+    description: 'We bring the systems running the business together so the organization can operate as one—unifying POS, CRM, ERP, inventory ledgers, and financial pipelines into a single synchronized source of truth.',
     technicalVocabulary: [
       'CRM',
       'ERP',

@@ -9,10 +9,10 @@ interface HeroContentProps {
 }
 
 const STEPS = [
-  { num: '01', title: 'UNDERSTAND', desc: 'We understand the problem' },
+  { num: '01', title: 'UNDERSTAND', desc: 'We study how the business works' },
   { num: '02', title: 'CONNECT', desc: 'We connect systems, data & people' },
-  { num: '03', title: 'ORCHESTRATE', desc: 'We orchestrate intelligent workflows' },
-  { num: '04', title: 'BUILD', desc: 'We build robust digital systems' },
+  { num: '03', title: 'ORCHESTRATE', desc: 'We coordinate intelligent workflows' },
+  { num: '04', title: 'BUILD', desc: 'We build dependable digital systems' },
   { num: '05', title: 'EXECUTE', desc: 'We deploy, monitor & optimize' },
   { num: '06', title: 'EVOLVE', desc: 'The system evolves for impact' },
 ];
@@ -56,7 +56,7 @@ export default function HeroContent({ onOpenProjectModal }: HeroContentProps) {
           className="text-base sm:text-lg md:text-xl text-[#0F172A] font-semibold leading-relaxed max-w-xl mx-auto"
           style={{ fontFamily: "'Caveat', var(--font-handwriting), cursive" }}
         >
-          We design and engineer intelligent systems that connect technology, data and operations to solve real business problems.
+          We design and engineer intelligent systems that connect technology, data, and operations to solve real business problems.
         </p>
       </div>
 

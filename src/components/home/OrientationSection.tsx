@@ -31,7 +31,7 @@ export default function OrientationSection() {
             </h2>
 
             <p className="text-sm sm:text-base text-[#536070] font-body leading-relaxed">
-              <span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: "0.08em" }} className="font-extrabold text-[#1463FF]"><span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: '0.12em' }} className="font-extrabold uppercase">ARKLINTECH</span></span> approaches technology as a systems engineering problem. Disconnected software tools create disconnected operational work. We design and build unified digital platforms, automated workflow state machines and business systems that establish clear operational lineage across an enterprise.
+              <span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: "0.08em" }} className="font-extrabold text-[#1463FF]"><span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: '0.12em' }} className="font-extrabold uppercase">ARKLINTECH</span></span> approaches technology as a systems engineering problem. Disconnected software tools create disconnected operational work. We design and engineer unified digital platforms, automated workflow state machines, and business systems that establish clear operational lineage across an enterprise.
             </p>
 
             <div className="pt-2">
@@ -60,7 +60,7 @@ export default function OrientationSection() {
                   Connected Systems
                 </div>
                 <p className="text-xs text-[#536070] leading-relaxed font-body">
-                  Custom software platforms, state machine pipelines and business infrastructure engineered around your operating model.
+                  Custom software platforms, state machine pipelines, and business infrastructure engineered around your operating model.
                 </p>
               </div>
               <div className="mt-4 pt-3 border-t border-[#D8D4C9]/60 font-mono text-[10px] font-bold text-[#768494]">
@@ -102,7 +102,7 @@ export default function OrientationSection() {
                   Decision Makers
                 </div>
                 <p className="text-xs text-[#536070] leading-relaxed font-body">
-                  Founders, CEOs, COOs and technical leaders seeking reliable systems engineering execution without fluff.
+                  Founders, CEOs, COOs, and technical leaders seeking reliable systems engineering execution with zero fluff.
                 </p>
               </div>
               <div className="mt-4 pt-3 border-t border-[#D8D4C9]/60 font-mono text-[10px] font-bold text-[#768494]">

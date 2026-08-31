@@ -46,7 +46,7 @@ const DISCIPLINES: EngineeringDiscipline[] = [
   {
     id: 'architecture',
     label: 'ARCHITECTURE',
-    description: 'System structure, boundaries & services',
+    description: 'Defines system structure & boundaries',
     icon: Box,
     side: 'left',
     duration: 2.1,
@@ -55,7 +55,7 @@ const DISCIPLINES: EngineeringDiscipline[] = [
   {
     id: 'apis',
     label: 'APIS',
-    description: 'Interfaces that connect services & data',
+    description: 'Connects services and data reliably',
     icon: Code,
     side: 'left',
     duration: 2.4,
@@ -64,7 +64,7 @@ const DISCIPLINES: EngineeringDiscipline[] = [
   {
     id: 'databases',
     label: 'DATABASES',
-    description: 'Persistent models & system state',
+    description: 'Stores operational data & system state',
     icon: Database,
     side: 'left',
     duration: 2.8,
@@ -73,7 +73,7 @@ const DISCIPLINES: EngineeringDiscipline[] = [
   {
     id: 'workflows',
     label: 'WORKFLOWS',
-    description: 'Events, states & operational execution',
+    description: 'Controls event flow & process execution',
     icon: GitBranch,
     side: 'left',
     duration: 2.2,
@@ -82,7 +82,7 @@ const DISCIPLINES: EngineeringDiscipline[] = [
   {
     id: 'security',
     label: 'SECURITY',
-    description: 'Access, integrity & data protection',
+    description: 'Protects access, data & operations',
     icon: ShieldCheck,
     side: 'left',
     duration: 2.7,
@@ -91,7 +91,7 @@ const DISCIPLINES: EngineeringDiscipline[] = [
   {
     id: 'authentication',
     label: 'AUTHENTICATION',
-    description: 'Identity, permissions & controlled access',
+    description: 'Verifies identity & access permissions',
     icon: Lock,
     side: 'left',
     duration: 2.3,
@@ -102,7 +102,7 @@ const DISCIPLINES: EngineeringDiscipline[] = [
   {
     id: 'ai-intelligence',
     label: 'AI & INTELLIGENCE',
-    description: 'Analysis, inference & decision support',
+    description: 'Contextual insight & decision support',
     icon: Cpu,
     side: 'right',
     duration: 1.9,
@@ -111,7 +111,7 @@ const DISCIPLINES: EngineeringDiscipline[] = [
   {
     id: 'data-pipelines',
     label: 'DATA PIPELINE',
-    description: 'Ingestion, processing & movement',
+    description: 'Moves & prepares operational data',
     icon: BarChart3,
     side: 'right',
     duration: 2.5,
@@ -120,7 +120,7 @@ const DISCIPLINES: EngineeringDiscipline[] = [
   {
     id: 'integrations',
     label: 'INTEGRATIONS',
-    description: 'Connecting systems & external platforms',
+    description: 'Connects business tools & platforms',
     icon: Puzzle,
     side: 'right',
     duration: 2.6,
@@ -129,7 +129,7 @@ const DISCIPLINES: EngineeringDiscipline[] = [
   {
     id: 'deployment',
     label: 'DEPLOYMENT',
-    description: 'Release, infrastructure & runtime delivery',
+    description: 'Delivers systems reliably across clouds',
     icon: Rocket,
     side: 'right',
     duration: 2.2,
@@ -138,7 +138,7 @@ const DISCIPLINES: EngineeringDiscipline[] = [
   {
     id: 'observability',
     label: 'OBSERVABILITY',
-    description: 'System health, logs & real-time signals',
+    description: 'System health, telemetry & live signals',
     icon: Activity,
     side: 'right',
     duration: 2.0,

@@ -43,18 +43,17 @@ export interface Project {
   };
 }
 
-// Alias for backward compatibility with components built using ProjectDossier
 export type ProjectDossier = Project;
 
 export const PROJECTS: Project[] = [
   {
     id: 'daarayn',
     name: 'DAARAYN',
-    type: 'E-commerce Commerce Platform',
-    category: 'DIGITAL COMMERCE SYSTEM',
-    description: 'High-performance commerce platform engineered for sub-second checkout conversion, real-time inventory synchronization, and bespoke digital presentation.',
-    problem: 'Fragmented checkout flows, high database query latency during high-traffic spikes, and manual multi-currency inventory reconciliation.',
-    system: 'Architected an edge-rendered storefront directly tied to an asynchronous inventory ledger and multi-gateway payment pipeline.',
+    type: 'Trust & Operations System',
+    category: 'DIGITAL PLATFORM',
+    description: 'A unified operating platform connecting donor records, fund allocations, field execution, and real-time reporting across the trust ecosystem.',
+    problem: 'Disconnected donor records and manual spreadsheets made field activity difficult to see, track, and manage accurately.',
+    system: 'Architected a connected operating environment bringing donors, allocations, field teams, and reporting together in real time.',
     architecture: 'Edge Next.js frontend integrated with high-concurrency Node.js backend microservices, Redis transactional cache, and PostgreSQL database.',
     engineering: 'Built optimistic UI rendering, strict TypeScript schemas across API endpoints, and sub-500ms server-side catalog generation.',
     integration: 'Connected Stripe payment gateways, real-time inventory webhooks, and automated order fulfillment telemetry streams.',
@@ -68,10 +67,10 @@ export const PROJECTS: Project[] = [
   {
     id: 'neominds-enrollment',
     name: 'NEOMINDS ENROLLMENT',
-    type: 'Enrollment Management System',
+    type: 'Enrollment & Education Platform',
     category: 'EDUCATION TECHNOLOGY PLATFORM',
-    description: 'End-to-end student admissions and course enrollment workflow engine with document validation and dynamic applicant state tracking.',
-    problem: 'Disjointed application processing, manual document verification bottlenecks, lost applicant handoffs, and delayed admissions response.',
+    description: 'An end-to-end admissions and course enrollment workflow engine with document validation and dynamic applicant state tracking.',
+    problem: 'Paper-heavy admissions, manual verification bottlenecks, and lost applicant handoffs slowed down admissions response by weeks.',
     system: 'Engineered a multi-stage admissions state machine that automates document intake, validation scoring, and reviewer assignment.',
     architecture: 'React micro-frontend architecture paired with Express API services, Prisma ORM, and AWS S3 secure document vaults.',
     engineering: 'Constructed deterministic applicant state transition models, automated PDF verification handlers, and role-based review boards.',
@@ -86,11 +85,11 @@ export const PROJECTS: Project[] = [
   {
     id: 'parivar-restaurant',
     name: 'PARIVAR RESTAURANT',
-    type: 'Restaurant Management POS',
+    type: 'Restaurant Operations & POS',
     category: 'HOSPITALITY POS & OPERATIONS',
     description: 'Unified restaurant POS, kitchen display system (KDS), and live table management architecture for multi-terminal ordering.',
-    problem: 'Order synchronization delays between table servers, cashier stations, and kitchen prep queues during peak dining rushes.',
-    system: 'Designed a real-time local WebSocket event mesh linking offline-tolerant POS terminals with cloud analytics dashboards.',
+    problem: 'Delays between tables and kitchens created missed orders, waste, and severe operational pressure during busy dining periods.',
+    system: 'Designed a real-time local WebSocket event mesh linking offline-tolerant POS terminals with kitchen display queues and cloud analytics.',
     architecture: 'Electron/React desktop POS client operating over a localized WebSocket event bus, backed by dynamic GraphQL query schemas.',
     engineering: 'Engineered sub-50ms local order routing, offline-first transaction queues, and real-time kitchen station state displays.',
     integration: 'Connected kitchen display screens, thermal receipt printer hardware, table status sensors, and cloud management dashboards.',

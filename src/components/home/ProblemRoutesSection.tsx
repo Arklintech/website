@@ -71,7 +71,7 @@ export default function ProblemRoutesSection() {
               HOW WE HELP
             </h2>
             <p className="mt-1 text-xs sm:text-sm text-[#536070] font-body">
-              Business problems we solve
+              Practical ways we help organizations improve how they operate.
             </p>
           </div>
 

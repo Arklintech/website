@@ -12,8 +12,8 @@ export interface Principle {
 export const HUMAN_TECH_STATEMENT = {
   title: 'HUMAN + TECHNOLOGY',
   category: 'PHILOSOPHY & FOUNDATION',
-  headline: 'We combine human intelligence with advanced technology to create systems that empower people, not replace them.',
-  narrative: 'Maximum systemic leverage is achieved when intelligent software absorbs repetitive operational friction, liberating human command to focus on high-value strategic execution.',
+  headline: 'We combine human judgment with intelligent technology to create systems that empower people, not replace them.',
+  narrative: 'Maximum leverage is achieved when intelligent software absorbs repetitive operational friction, giving human teams the clarity and time to focus on high-value strategic execution.',
   visual: '/visuals/zaqvoro/human-technology.webp',
   focalPoint: 'object-center md:object-right',
   vocabulary: ['HUMAN COMMAND', 'SYSTEMIC LEVERAGE', 'AUGMENTED INTELLIGENCE', 'EMPOWERMENT', 'OPERATIONAL FREEDOM'],
