@@ -61,14 +61,14 @@ export default function SelectedProductionSystemsSection() {
   };
 
   return (
-    <section className="py-12 sm:py-16 lg:py-24 bg-[#F7F4EC] text-[#0B132B] border-b border-[#D8D4C9] relative overflow-hidden">
+    <section className="py-12 sm:py-16 lg:py-24 bg-[#F7F4EC] text-[#0B132B] border-b border-[#D8D4C9] relative">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* ═══ TOP TWO-COLUMN MASTER COMPOSITION (LEFT: Index · RIGHT: Showcase) ═══ */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           
           {/* ── LEFT COLUMN: Section Title & Vertical Project Index (3 cols) ── */}
-          <div className="lg:col-span-3 flex flex-col space-y-4">
+          <div className="lg:col-span-3 flex flex-col gap-4">
             
             {/* Header Block */}
             <div className="space-y-2">
@@ -119,37 +119,37 @@ export default function SelectedProductionSystemsSection() {
               })}
             </div>
 
-            {/* Vertical Timeline Project List (Desktop lg+) — matches image 3 style */}
-            <div className="hidden lg:block relative">
+            {/* Vertical Timeline Project List (Desktop lg+) */}
+            <div className="hidden lg:flex flex-col relative flex-1">
               {/* Vertical connector line */}
-              <div className="absolute left-[18px] top-3 bottom-3 w-[1px] bg-[#D8D4C9]" />
+              <div className="absolute left-[18px] top-0 bottom-0 w-[1px] bg-[#D8D4C9]" />
               
-              <div className="space-y-1">
+              <div className="flex flex-col">
                 {WORK_REVEAL_PROJECTS.map((project) => {
                   const isActive = project.id === activeProjectId;
                   return (
                     <button
                       key={project.id}
                       onClick={() => handleSelectProject(project.id)}
-                      className={`w-full flex items-start gap-3 px-0 py-2 text-left transition-all group relative`}
+                      className={`w-full flex items-center gap-2.5 px-0 py-1.5 text-left transition-all group relative`}
                     >
                       {/* Timeline dot / icon */}
-                      <div className={`relative z-10 w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all border ${
+                      <div className={`relative z-10 w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all border ${
                         isActive
                           ? 'bg-[#EDF4FF] border-[#1463FF] text-[#1463FF] shadow-sm'
                           : 'bg-[#F7F4EC] border-[#D8D4C9] text-[#94A3B8] group-hover:border-[#1463FF]/40 group-hover:text-[#1463FF]'
                       }`}>
-                        {PROJECT_ICONS[project.icon] ?? <Sparkles className="w-4 h-4" />}
+                        {PROJECT_ICONS[project.icon] ?? <Sparkles className="w-3.5 h-3.5" />}
                       </div>
                       
                       {/* Text content */}
-                      <div className="min-w-0 pt-1">
-                        <div className="flex items-baseline gap-1.5">
-                          <span className={`font-mono text-[10px] font-bold ${isActive ? 'text-[#1463FF]' : 'text-[#94A3B8]'}`}>
+                      <div className="min-w-0">
+                        <div className="flex items-baseline gap-1">
+                          <span className={`font-mono text-[9px] font-bold shrink-0 ${isActive ? 'text-[#1463FF]' : 'text-[#94A3B8]'}`}>
                             {project.number}
                           </span>
                           <span
-                            className={`font-black uppercase text-xs tracking-wide transition-colors ${
+                            className={`font-black uppercase text-[10px] tracking-wide transition-colors leading-tight ${
                               isActive ? 'text-[#1463FF]' : 'text-[#0B132B] group-hover:text-[#1463FF]'
                             }`}
                             style={{ fontFamily: "'Syncopate', sans-serif" }}
@@ -157,7 +157,7 @@ export default function SelectedProductionSystemsSection() {
                             {project.name}
                           </span>
                         </div>
-                        <span className="text-[10px] text-[#64748B] leading-tight block truncate pr-2">
+                        <span className="text-[9px] text-[#64748B] leading-tight block truncate pr-2">
                           {project.shortCategory}
                         </span>
                       </div>
