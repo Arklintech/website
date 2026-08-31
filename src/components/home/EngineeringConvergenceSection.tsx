@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useId } from 'react';
+import React, { useState, useId, useRef, useEffect, useCallback } from 'react';
 import { KeystoneMark } from '@/components/brand/KeystoneLogo';
 import {
   Box,
@@ -25,16 +25,20 @@ interface EngineeringDiscipline {
   description: string;
   icon: React.ElementType;
   side: 'left' | 'right';
-  x: number;
-  y: number;
-  targetX: number;
-  targetY: number;
-  cp1x: number;
-  cp1y: number;
-  cp2x: number;
-  cp2y: number;
   duration: number;
   delay: number;
+}
+
+interface CalculatedConnection {
+  id: string;
+  pathD: string;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  duration: number;
+  delay: number;
+  side: 'left' | 'right';
 }
 
 const DISCIPLINES: EngineeringDiscipline[] = [
@@ -45,14 +49,6 @@ const DISCIPLINES: EngineeringDiscipline[] = [
     description: 'System structure, boundaries & services',
     icon: Box,
     side: 'left',
-    x: 245,
-    y: 35,
-    targetX: 475,
-    targetY: 185,
-    cp1x: 350,
-    cp1y: 35,
-    cp2x: 395,
-    cp2y: 185,
     duration: 2.1,
     delay: 0.0,
   },
@@ -62,14 +58,6 @@ const DISCIPLINES: EngineeringDiscipline[] = [
     description: 'Interfaces that connect services & data',
     icon: Code,
     side: 'left',
-    x: 245,
-    y: 105,
-    targetX: 465,
-    targetY: 198,
-    cp1x: 335,
-    cp1y: 105,
-    cp2x: 385,
-    cp2y: 198,
     duration: 2.4,
     delay: 0.4,
   },
@@ -79,14 +67,6 @@ const DISCIPLINES: EngineeringDiscipline[] = [
     description: 'Persistent models & system state',
     icon: Database,
     side: 'left',
-    x: 245,
-    y: 175,
-    targetX: 465,
-    targetY: 210,
-    cp1x: 325,
-    cp1y: 175,
-    cp2x: 385,
-    cp2y: 210,
     duration: 2.8,
     delay: 0.8,
   },
@@ -96,14 +76,6 @@ const DISCIPLINES: EngineeringDiscipline[] = [
     description: 'Events, states & operational execution',
     icon: GitBranch,
     side: 'left',
-    x: 245,
-    y: 245,
-    targetX: 465,
-    targetY: 222,
-    cp1x: 325,
-    cp1y: 245,
-    cp2x: 385,
-    cp2y: 222,
     duration: 2.2,
     delay: 0.2,
   },
@@ -113,14 +85,6 @@ const DISCIPLINES: EngineeringDiscipline[] = [
     description: 'Access, integrity & data protection',
     icon: ShieldCheck,
     side: 'left',
-    x: 245,
-    y: 315,
-    targetX: 465,
-    targetY: 235,
-    cp1x: 335,
-    cp1y: 315,
-    cp2x: 385,
-    cp2y: 235,
     duration: 2.7,
     delay: 0.6,
   },
@@ -130,14 +94,6 @@ const DISCIPLINES: EngineeringDiscipline[] = [
     description: 'Identity, permissions & controlled access',
     icon: Lock,
     side: 'left',
-    x: 245,
-    y: 385,
-    targetX: 475,
-    targetY: 248,
-    cp1x: 350,
-    cp1y: 385,
-    cp2x: 395,
-    cp2y: 248,
     duration: 2.3,
     delay: 1.0,
   },
@@ -149,31 +105,15 @@ const DISCIPLINES: EngineeringDiscipline[] = [
     description: 'Analysis, inference & decision support',
     icon: Cpu,
     side: 'right',
-    x: 955,
-    y: 50,
-    targetX: 725,
-    targetY: 190,
-    cp1x: 850,
-    cp1y: 50,
-    cp2x: 805,
-    cp2y: 190,
     duration: 1.9,
     delay: 0.1,
   },
   {
     id: 'data-pipelines',
-    label: 'DATA PIPELINES',
+    label: 'DATA PIPELINE',
     description: 'Ingestion, processing & movement',
     icon: BarChart3,
     side: 'right',
-    x: 955,
-    y: 130,
-    targetX: 735,
-    targetY: 205,
-    cp1x: 865,
-    cp1y: 130,
-    cp2x: 815,
-    cp2y: 205,
     duration: 2.5,
     delay: 0.5,
   },
@@ -183,14 +123,6 @@ const DISCIPLINES: EngineeringDiscipline[] = [
     description: 'Connecting systems & external platforms',
     icon: Puzzle,
     side: 'right',
-    x: 955,
-    y: 210,
-    targetX: 735,
-    targetY: 218,
-    cp1x: 875,
-    cp1y: 210,
-    cp2x: 815,
-    cp2y: 218,
     duration: 2.6,
     delay: 0.9,
   },
@@ -200,14 +132,6 @@ const DISCIPLINES: EngineeringDiscipline[] = [
     description: 'Release, infrastructure & runtime delivery',
     icon: Rocket,
     side: 'right',
-    x: 955,
-    y: 290,
-    targetX: 735,
-    targetY: 230,
-    cp1x: 865,
-    cp1y: 290,
-    cp2x: 815,
-    cp2y: 230,
     duration: 2.2,
     delay: 0.3,
   },
@@ -217,14 +141,6 @@ const DISCIPLINES: EngineeringDiscipline[] = [
     description: 'System health, logs & real-time signals',
     icon: Activity,
     side: 'right',
-    x: 955,
-    y: 370,
-    targetX: 725,
-    targetY: 245,
-    cp1x: 850,
-    cp1y: 370,
-    cp2x: 805,
-    cp2y: 245,
     duration: 2.0,
     delay: 0.7,
   },
@@ -253,13 +169,151 @@ const PILLARS = [
   },
 ];
 
-function buildPathD(node: EngineeringDiscipline): string {
-  return `M ${node.x} ${node.y} C ${node.cp1x} ${node.cp1y}, ${node.cp2x} ${node.cp2y}, ${node.targetX} ${node.targetY}`;
-}
-
 export default function EngineeringConvergenceSection() {
   const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
   const uniqueId = useId().replace(/:/g, '-');
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const centerRef = useRef<HTMLDivElement>(null);
+  const nodeRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
+  const [connections, setConnections] = useState<CalculatedConnection[]>([]);
+  const [dimensions, setDimensions] = useState<{ width: number; height: number }>({ width: 1200, height: 450 });
+  const [centerPos, setCenterPos] = useState<{ x: number; y: number }>({ x: 600, y: 225 });
+
+  const updateConnections = useCallback(() => {
+    if (!containerRef.current || !centerRef.current) return;
+
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const centerRect = centerRef.current.getBoundingClientRect();
+
+    if (containerRect.width === 0 || containerRect.height === 0) return;
+
+    const width = containerRect.width;
+    const height = containerRect.height;
+    setDimensions({ width, height });
+
+    setCenterPos({
+      x: centerRect.left - containerRect.left + centerRect.width / 2,
+      y: centerRect.top - containerRect.top + centerRect.height / 2,
+    });
+
+    const leftNodes = DISCIPLINES.filter((d) => d.side === 'left');
+    const rightNodes = DISCIPLINES.filter((d) => d.side === 'right');
+
+    const newConns: CalculatedConnection[] = [];
+
+    // Left flank connections to central hub's left edge
+    const leftPad = Math.max(10, centerRect.height * 0.12);
+    const leftUsableHeight = centerRect.height - 2 * leftPad;
+    const leftStep = leftNodes.length > 1 ? leftUsableHeight / (leftNodes.length - 1) : 0;
+
+    leftNodes.forEach((node, idx) => {
+      const el = nodeRefs.current[node.id];
+      if (!el) return;
+      const nodeRect = el.getBoundingClientRect();
+
+      const x1 = nodeRect.right - containerRect.left;
+      const y1 = nodeRect.top + nodeRect.height / 2 - containerRect.top;
+
+      const x2 = centerRect.left - containerRect.left;
+      const y2 = centerRect.top - containerRect.top + leftPad + (leftStep * idx);
+
+      const dx = Math.max(10, x2 - x1);
+      const cp1x = x1 + dx * 0.48;
+      const cp1y = y1;
+      const cp2x = x2 - dx * 0.32;
+      const cp2y = y2;
+
+      const pathD = `M ${x1.toFixed(1)} ${y1.toFixed(1)} C ${cp1x.toFixed(1)} ${cp1y.toFixed(1)}, ${cp2x.toFixed(1)} ${cp2y.toFixed(1)}, ${x2.toFixed(1)} ${y2.toFixed(1)}`;
+
+      newConns.push({
+        id: node.id,
+        pathD,
+        x1,
+        y1,
+        x2,
+        y2,
+        duration: node.duration,
+        delay: node.delay,
+        side: 'left',
+      });
+    });
+
+    // Right flank connections to central hub's right edge
+    const rightPad = Math.max(12, centerRect.height * 0.14);
+    const rightUsableHeight = centerRect.height - 2 * rightPad;
+    const rightStep = rightNodes.length > 1 ? rightUsableHeight / (rightNodes.length - 1) : 0;
+
+    rightNodes.forEach((node, idx) => {
+      const el = nodeRefs.current[node.id];
+      if (!el) return;
+      const nodeRect = el.getBoundingClientRect();
+
+      const x1 = nodeRect.left - containerRect.left;
+      const y1 = nodeRect.top + nodeRect.height / 2 - containerRect.top;
+
+      const x2 = centerRect.right - containerRect.left;
+      const y2 = centerRect.top - containerRect.top + rightPad + (rightStep * idx);
+
+      const dx = Math.max(10, x1 - x2);
+      const cp1x = x1 - dx * 0.48;
+      const cp1y = y1;
+      const cp2x = x2 + dx * 0.32;
+      const cp2y = y2;
+
+      const pathD = `M ${x1.toFixed(1)} ${y1.toFixed(1)} C ${cp1x.toFixed(1)} ${cp1y.toFixed(1)}, ${cp2x.toFixed(1)} ${cp2y.toFixed(1)}, ${x2.toFixed(1)} ${y2.toFixed(1)}`;
+
+      newConns.push({
+        id: node.id,
+        pathD,
+        x1,
+        y1,
+        x2,
+        y2,
+        duration: node.duration,
+        delay: node.delay,
+        side: 'right',
+      });
+    });
+
+    setConnections(newConns);
+  }, []);
+
+  useEffect(() => {
+    updateConnections();
+
+    const handleResize = () => {
+      updateConnections();
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined' && containerRef.current) {
+      resizeObserver = new ResizeObserver(() => {
+        updateConnections();
+      });
+      resizeObserver.observe(containerRef.current);
+      if (centerRef.current) {
+        resizeObserver.observe(centerRef.current);
+      }
+    }
+
+    const timer1 = setTimeout(updateConnections, 50);
+    const timer2 = setTimeout(updateConnections, 200);
+    const timer3 = setTimeout(updateConnections, 600);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+    };
+  }, [updateConnections]);
 
   return (
     <section
@@ -342,10 +396,13 @@ export default function EngineeringConvergenceSection() {
         {/* ========================================================================= */}
         {/* UNIFIED RESPONSIVE CONVERGENCE TOPOLOGY (DESKTOP, TABLET & MOBILE)        */}
         {/* ========================================================================= */}
-        <div className="relative w-full h-[380px] sm:h-[410px] md:h-[430px] lg:h-[450px] max-w-[1200px] mx-auto select-none my-1">
-          {/* SVG Topology Vector Canvas (Scales proportionally across all viewports) */}
+        <div
+          ref={containerRef}
+          className="relative w-full h-[390px] sm:h-[420px] md:h-[440px] lg:h-[460px] max-w-[1200px] mx-auto select-none my-1"
+        >
+          {/* SVG Topology Vector Canvas (Dynamically tracks all node coordinates) */}
           <svg
-            viewBox="0 0 1200 420"
+            viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
             className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible"
             aria-hidden="true"
           >
@@ -381,30 +438,29 @@ export default function EngineeringConvergenceSection() {
               </linearGradient>
             </defs>
 
-            {/* Faint Concentric Technical Center Rings */}
-            <g transform="translate(600, 218)" className="opacity-25">
-              <circle r="120" fill="none" stroke="#00A3FF" strokeWidth="0.75" strokeDasharray="3 9" />
-              <circle r="150" fill="none" stroke="#00E5FF" strokeWidth="0.75" strokeDasharray="2 16" />
+            {/* Faint Concentric Technical Center Rings centered on Hub */}
+            <g transform={`translate(${centerPos.x}, ${centerPos.y})`} className="opacity-25">
+              <circle r="110" fill="none" stroke="#00A3FF" strokeWidth="0.75" strokeDasharray="3 9" />
+              <circle r="145" fill="none" stroke="#00E5FF" strokeWidth="0.75" strokeDasharray="2 16" />
             </g>
 
             {/* Render 11 Dynamic Bézier Streams with Moving Signal Photons */}
-            {DISCIPLINES.map((node) => {
-              const pathD = buildPathD(node);
-              const isHovered = activeNodeId === node.id;
+            {connections.map((conn) => {
+              const isHovered = activeNodeId === conn.id;
               const hasActiveHover = activeNodeId !== null;
               const isDimmed = hasActiveHover && !isHovered;
 
-              const streamGrad = node.side === 'left' ? `url(#streamGradLeft-${uniqueId})` : `url(#streamGradRight-${uniqueId})`;
+              const streamGrad = conn.side === 'left' ? `url(#streamGradLeft-${uniqueId})` : `url(#streamGradRight-${uniqueId})`;
 
               return (
                 <g
-                  key={node.id}
+                  key={conn.id}
                   className="transition-opacity duration-300"
                   opacity={isDimmed ? 0.25 : 1}
                 >
                   {/* Ambient Glow Trail */}
                   <path
-                    d={pathD}
+                    d={conn.pathD}
                     fill="none"
                     stroke="#0B2E73"
                     strokeWidth={isHovered ? 4 : 2}
@@ -414,7 +470,7 @@ export default function EngineeringConvergenceSection() {
 
                   {/* Sharp Core Circuit Path */}
                   <path
-                    d={pathD}
+                    d={conn.pathD}
                     fill="none"
                     stroke={isHovered ? '#00E5FF' : 'rgba(0, 163, 255, 0.45)'}
                     strokeWidth={isHovered ? 2.4 : 1.4}
@@ -422,15 +478,15 @@ export default function EngineeringConvergenceSection() {
 
                   {/* Traveling Electric Dash Pulse */}
                   <path
-                    d={pathD}
+                    d={conn.pathD}
                     fill="none"
                     stroke={streamGrad}
                     strokeWidth={isHovered ? 3.0 : 2.0}
                     strokeDasharray="45 150"
                     strokeLinecap="round"
-                    className={node.side === 'left' ? 'anim-dash-left' : 'anim-dash-right'}
+                    className={conn.side === 'left' ? 'anim-dash-left' : 'anim-dash-right'}
                     style={{
-                      animationDuration: `${isHovered ? node.duration * 0.6 : node.duration}s`,
+                      animationDuration: `${isHovered ? conn.duration * 0.6 : conn.duration}s`,
                     }}
                     filter={`url(#beamGlow-${uniqueId})`}
                   />
@@ -442,9 +498,9 @@ export default function EngineeringConvergenceSection() {
                     filter={`url(#beamGlow-${uniqueId})`}
                   >
                     <animateMotion
-                      dur={`${isHovered ? node.duration * 0.6 : node.duration}s`}
+                      dur={`${isHovered ? conn.duration * 0.6 : conn.duration}s`}
                       repeatCount="indefinite"
-                      path={pathD}
+                      path={conn.pathD}
                       keyPoints="0;1"
                       keyTimes="0;1"
                     />
@@ -456,9 +512,9 @@ export default function EngineeringConvergenceSection() {
                     fill="#FFFFFF"
                   >
                     <animateMotion
-                      dur={`${isHovered ? node.duration * 0.6 : node.duration}s`}
+                      dur={`${isHovered ? conn.duration * 0.6 : conn.duration}s`}
                       repeatCount="indefinite"
-                      path={pathD}
+                      path={conn.pathD}
                       keyPoints="0;1"
                       keyTimes="0;1"
                     />
@@ -471,27 +527,42 @@ export default function EngineeringConvergenceSection() {
                     opacity={0.8}
                   >
                     <animateMotion
-                      dur={`${isHovered ? node.duration * 0.6 : node.duration}s`}
-                      begin={`${node.delay}s`}
+                      dur={`${isHovered ? conn.duration * 0.6 : conn.duration}s`}
+                      begin={`${conn.delay}s`}
                       repeatCount="indefinite"
-                      path={pathD}
+                      path={conn.pathD}
                       keyPoints="0;1"
                       keyTimes="0;1"
                     />
                   </circle>
 
-                  {/* Source Node Pinpoint on Card */}
+                  {/* Source Node Pinpoint on Card Border */}
                   <circle
-                    cx={node.x}
-                    cy={node.y}
+                    cx={conn.x1}
+                    cy={conn.y1}
                     r={isHovered ? 5.5 : 4}
                     fill="#1463FF"
                     filter={`url(#pinGlow-${uniqueId})`}
                   />
                   <circle
-                    cx={node.x}
-                    cy={node.y}
+                    cx={conn.x1}
+                    cy={conn.y1}
                     r={2}
+                    fill="#FFFFFF"
+                  />
+
+                  {/* Target Pinpoint on Central Hub Border */}
+                  <circle
+                    cx={conn.x2}
+                    cy={conn.y2}
+                    r={isHovered ? 4.5 : 3.2}
+                    fill="#1463FF"
+                    opacity={0.85}
+                  />
+                  <circle
+                    cx={conn.x2}
+                    cy={conn.y2}
+                    r={1.5}
                     fill="#FFFFFF"
                   />
                 </g>
@@ -510,6 +581,9 @@ export default function EngineeringConvergenceSection() {
               return (
                 <div
                   key={node.id}
+                  ref={(el) => {
+                    nodeRefs.current[node.id] = el;
+                  }}
                   onMouseEnter={() => setActiveNodeId(node.id)}
                   onMouseLeave={() => setActiveNodeId(null)}
                   onClick={() => setActiveNodeId(isHovered ? null : node.id)}
@@ -555,7 +629,10 @@ export default function EngineeringConvergenceSection() {
           {/* ----------------------------------------------------------- */}
           {/* CENTRAL CONVERGENCE HUB                                      */}
           {/* ----------------------------------------------------------- */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-auto">
+          <div
+            ref={centerRef}
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-auto"
+          >
             <div className="w-[125px] sm:w-[170px] md:w-[200px] lg:w-[230px] rounded-lg sm:rounded-xl bg-white/95 border border-[#1463FF] sm:border-2 sm:border-[#1463FF] shadow-[0_0_20px_rgba(0,229,255,0.25)] sm:shadow-[0_0_35px_rgba(0,229,255,0.35)] p-2 sm:p-3 lg:p-4 flex flex-col items-center justify-center text-center backdrop-blur-md">
               <div className="flex items-center gap-1.5 sm:gap-2.5">
                 <KeystoneMark className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 shrink-0" />
@@ -582,7 +659,7 @@ export default function EngineeringConvergenceSection() {
           {/* ----------------------------------------------------------- */}
           {/* RIGHT FLANK: 5 Discipline Nodes Stack                        */}
           {/* ----------------------------------------------------------- */}
-          <div className="absolute right-0 top-0 bottom-0 flex flex-col justify-around w-[28%] sm:w-[24%] md:w-[22%] lg:w-[235px] z-10 py-1">
+          <div className="absolute right-0 top-0 bottom-0 flex flex-col justify-between w-[28%] sm:w-[24%] md:w-[22%] lg:w-[235px] z-10 py-1">
             {DISCIPLINES.filter((d) => d.side === 'right').map((node) => {
               const Icon = node.icon;
               const isHovered = activeNodeId === node.id;
@@ -590,6 +667,9 @@ export default function EngineeringConvergenceSection() {
               return (
                 <div
                   key={node.id}
+                  ref={(el) => {
+                    nodeRefs.current[node.id] = el;
+                  }}
                   onMouseEnter={() => setActiveNodeId(node.id)}
                   onMouseLeave={() => setActiveNodeId(null)}
                   onClick={() => setActiveNodeId(isHovered ? null : node.id)}
@@ -665,3 +745,4 @@ export default function EngineeringConvergenceSection() {
     </section>
   );
 }
+
