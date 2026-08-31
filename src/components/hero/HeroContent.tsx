@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Play } from 'lucide-react';
 
@@ -18,6 +18,25 @@ const STEPS = [
 ];
 
 export default function HeroContent({ onOpenProjectModal }: HeroContentProps) {
+  const [activeStepIndex, setActiveStepIndex] = useState(0);
+
+  useEffect(() => {
+    // Respect prefers-reduced-motion
+    if (typeof window !== 'undefined') {
+      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if (mediaQuery.matches) {
+        setActiveStepIndex(-1);
+        return;
+      }
+    }
+
+    const interval = setInterval(() => {
+      setActiveStepIndex((prev) => (prev + 1) % STEPS.length);
+    }, 2400);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="flex flex-col items-center text-center justify-center space-y-7 max-w-4xl mx-auto z-20 relative">
       {/* Primary Headline */}
@@ -34,11 +53,11 @@ export default function HeroContent({ onOpenProjectModal }: HeroContentProps) {
           Software. Automation. Intelligence. Connected operations.
         </p>
         <p
-    className="text-base sm:text-lg md:text-xl text-[#0F172A] font-semibold leading-relaxed max-w-xl mx-auto"
-    style={{ fontFamily: "'Caveat', var(--font-handwriting), cursive" }}
-  >
-    We design and engineer intelligent systems that connect technology, data and operations to solve real business problems.
-  </p>
+          className="text-base sm:text-lg md:text-xl text-[#0F172A] font-semibold leading-relaxed max-w-xl mx-auto"
+          style={{ fontFamily: "'Caveat', var(--font-handwriting), cursive" }}
+        >
+          We design and engineer intelligent systems that connect technology, data and operations to solve real business problems.
+        </p>
       </div>
 
       {/* Hero Action Buttons */}
@@ -66,26 +85,39 @@ export default function HeroContent({ onOpenProjectModal }: HeroContentProps) {
       {/* Horizontal Process Steps Bar */}
       <div className="w-full pt-8 sm:pt-10">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 p-3 rounded-xl bg-[#FBF9F3] border border-[#D8D4C9] text-left">
-          {STEPS.map((step, idx) => (
-            <div
-              key={step.num}
-              className={`p-2.5 rounded-lg transition-colors ${
-                idx === 2 ? 'bg-[#EDF4FF] border border-[#1463FF]/30' : 'hover:bg-white/80'
-              }`}
-            >
-              <div className="flex items-center gap-1.5">
-                <span className={`font-mono text-[10px] font-bold ${idx === 2 ? 'text-[#1463FF]' : 'text-[#768494]'}`}>
-                  — {step.num}
-                </span>
-                <span className={`font-mono text-[11px] font-bold uppercase ${idx === 2 ? 'text-[#1463FF]' : 'text-[#111827]'}`}>
-                  {step.title}
-                </span>
+          {STEPS.map((step, idx) => {
+            const isLit = idx === activeStepIndex;
+            return (
+              <div
+                key={step.num}
+                className={`p-2.5 rounded-lg border transition-all duration-700 ease-in-out ${
+                  isLit
+                    ? 'bg-[#EDF4FF] border-[#1463FF]/40 shadow-[0_2px_12px_rgba(20,99,255,0.12)]'
+                    : 'bg-transparent border-transparent hover:bg-white/80'
+                }`}
+              >
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className={`font-mono text-[10px] font-bold transition-colors duration-700 ${
+                      isLit ? 'text-[#1463FF]' : 'text-[#768494]'
+                    }`}
+                  >
+                    — {step.num}
+                  </span>
+                  <span
+                    className={`font-mono text-[11px] font-bold uppercase transition-colors duration-700 ${
+                      isLit ? 'text-[#1463FF]' : 'text-[#111827]'
+                    }`}
+                  >
+                    {step.title}
+                  </span>
+                </div>
+                <p className="text-[10px] text-[#536070] font-body mt-1 line-clamp-2 leading-tight">
+                  {step.desc}
+                </p>
               </div>
-              <p className="text-[10px] text-[#536070] font-body mt-1 line-clamp-2 leading-tight">
-                {step.desc}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

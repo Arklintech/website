@@ -54,7 +54,7 @@ interface HeroTimelineBarProps {
 }
 
 export default function HeroTimelineBar({
-  activeStageIndex = 2, // Default to 03 ORCHESTRATE active matching reference blueprint
+  activeStageIndex = -1, // Default neutral state
   onSelectStage,
 }: HeroTimelineBarProps) {
   return (
