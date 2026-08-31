@@ -42,7 +42,7 @@ export const metadata: Metadata = {
       'We architect intelligent systems, automate complex operations, and build software that drives real outcomes.',
     images: [
       {
-        url: '/brand/logo.png',
+        url: '/brand/og-image.png',
         width: 1200,
         height: 630,
         alt: 'ARKLINTECH — Advanced Technology Systems',
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     title: 'ARKLINTECH — Advanced Technology Systems & Engineering',
     description:
       'We architect intelligent systems, automate complex operations, and build software that drives real outcomes.',
-    images: ['/brand/logo.png'],
+    images: ['/brand/og-image.png'],
   },
 };
 
