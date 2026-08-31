@@ -1,27 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="270 20 430 365" width="430" height="365">
-  <defs>
-    <linearGradient id="keystoneBlue" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#0060FC"/>
-      <stop offset="100%" stop-color="#005EF6"/>
-    </linearGradient>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 850" fill="none" role="img" aria-label="ARKLINTECH Logo">
   <path
-    fill="url(#keystoneBlue)"
-    d="
-      M 402 27
-      Q 394 27 388 37
-      L 280 366
-      L 440 366
-      L 457 170
-      L 411 133
-      L 510 134
-      L 510 294
-      L 554 366
-      L 682 366
-      L 581 39
-      Q 578 27 570 27
-      Z
-    "
+    fill="#005EF8"
+    d="M 309 17 C 298 17 288 23 281 37 L 25 822 L 404 821 L 444 357 L 336 268 L 572 271 L 572 652 L 676 822 L 979 822 L 741 39 C 735 25 726 17 714 17 Z"
   />
 </svg>

@@ -1,9 +1,9 @@
-import KeystoneLogo from '@/components/brand/KeystoneLogo';
 'use client';
 
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { KeystoneMark } from '@/components/brand/KeystoneLogo';
 import {
   ArrowDown,
   ArrowRight,
@@ -36,134 +36,86 @@ const darkVisualBox  = "lg:col-span-7 relative flex items-center justify-center 
 
 export default function WhatWeDoExperience({ onOpenProjectModal }: WhatWeDoExperienceProps) {
   return (
-    <section id="what-we-do" className="py-20 md:py-28 bg-[#F5F1E8] border-b border-[#D8D4C9] relative overflow-hidden">
-      
+    <section id="what-we-do" className="relative min-h-screen bg-[#F5F1E8] text-[#111827] overflow-x-hidden selection:bg-[#1463FF]/20 selection:text-[#111827] pt-24 sm:pt-28 md:pt-32 pb-16 sm:pb-20 border-b border-[#D8D4C9]">
+      {/* Subtle Ambient Glow */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#1463FF]/5 blur-[120px] rounded-full pointer-events-none" />
 
-      <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-16 sm:space-y-24">
-        {/* ========================================================================= */}
-        {/* 1. GREETING / HERO INTRODUCTION                                          */}
-        {/* ========================================================================= */}
-        <div className="text-center space-y-6 max-w-3xl mx-auto pt-4 select-none">
-          <div className="inline-block font-mono text-[11px] sm:text-xs font-bold text-[#536070] uppercase tracking-[0.25em]">
-            WELCOME TO
-          </div>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-16 sm:space-y-24">
+        {/* Top Brand Identity Center Lockup (Matching Official Brand Visual) */}
+        <div className="flex flex-col items-center justify-center text-center mb-10 sm:mb-14">
+          
+          {/* Row 1: Keystone Logo + ARKLINTECH Typography */}
+          <div className="flex flex-col items-center justify-center gap-2 sm:gap-3">
+            <div className="flex items-center justify-center gap-3 sm:gap-4">
+              <KeystoneMark className="w-8 h-8 sm:w-11 sm:h-11 lg:w-13 lg:h-13" />
 
-          {/* <span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: '0.12em' }} className="font-extrabold uppercase">ARKLINTECH</span> Exact Brand Logo Lockup (Optically Aligned) */}
-          <div className="flex flex-col items-center justify-center space-y-4">
-            <div className="flex flex-col items-center justify-center">
-              {/* Row 1: Icon and Main Wordmark perfectly centered together */}
-              <div className="flex items-center justify-center gap-3.5 sm:gap-5">
-                {/* Keystone Icon Mark with Cutout */}
-                <div className="shrink-0 flex items-center justify-center">
-                  <svg
-                    viewBox="270 20 430 365"
-                    className="w-8 h-8 sm:w-11 sm:h-11 lg:w-13 lg:h-13"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <defs>
-                      <linearGradient id="wwdKeystoneBlue" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#1463FF" />
-                        <stop offset="100%" stopColor="#0050E6" />
-                      </linearGradient>
-                    </defs>
-                    <path
-                      fill="url(#wwdKeystoneBlue)"
-                      d="
-                        M 402 27
-                        Q 394 27 388 37
-                        L 280 366
-                        L 440 366
-                        L 457 170
-                        L 411 133
-                        L 510 134
-                        L 510 294
-                        L 554 366
-                        L 682 366
-                        L 581 39
-                        Q 578 27 570 27
-                        Z
-                      "
-                    />
-                  </svg>
-                </div>
-
-                {/* Main Wordmark: ΛRKLINTECH in Deep Navy */}
-                <h1
-                  className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-[#111827] uppercase tracking-[0.22em] flex items-center leading-none"
-                  style={{
-                    fontFamily: "'Syncopate', var(--font-syncopate), sans-serif",
-                    paddingLeft: '0.22em',
-                  }}
-                >
-                  <svg
-                    viewBox="0 0 28 26"
-                    className="h-5 sm:h-7 lg:h-9 w-auto shrink-0 inline-block align-baseline mr-[0.22em]"
-                    fill="currentColor"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M 14,0 L 28,26 L 19.5,26 L 14,14.8 L 8.5,26 L 0,26 Z" />
-                  </svg>
-                  <span>RKLINTECH</span>
-                </h1>
-              </div>
-
-              {/* Row 2: TECHNOLOGY SYSTEMS Sub Descriptor with Blue Tapered Wings */}
-              <div className="flex items-center justify-center gap-2 sm:gap-3 mt-2.5 sm:mt-3.5 w-full">
-                {/* Left Tapered Wing */}
-                <svg
-                  viewBox="0 0 100 6"
-                  className="h-[2px] sm:h-[3px] w-8 sm:w-16 shrink-0"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <defs>
-                    <linearGradient id="taperLeft" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#1463FF" stopOpacity="0.1" />
-                      <stop offset="60%" stopColor="#1463FF" stopOpacity="0.9" />
-                      <stop offset="100%" stopColor="#38BDF8" stopOpacity="1" />
-                    </linearGradient>
-                  </defs>
-                  <polygon points="0,3 100,0.5 100,5.5" fill="url(#taperLeft)" />
-                </svg>
-
-                <span
-                  className="font-mono text-[9px] sm:text-xs lg:text-sm font-bold text-[#536070] uppercase tracking-[0.26em] whitespace-nowrap"
-                  style={{ paddingLeft: '0.26em' }}
-                >
-                  TECHNOLOGY SYSTEMS
-                </span>
-
-                {/* Right Tapered Wing */}
-                <svg
-                  viewBox="0 0 100 6"
-                  className="h-[2px] sm:h-[3px] w-8 sm:w-16 shrink-0"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <defs>
-                    <linearGradient id="taperRight" x1="100%" y1="0%" x2="0%" y2="0%">
-                      <stop offset="0%" stopColor="#1463FF" stopOpacity="0.1" />
-                      <stop offset="60%" stopColor="#1463FF" stopOpacity="0.9" />
-                      <stop offset="100%" stopColor="#38BDF8" stopOpacity="1" />
-                    </linearGradient>
-                  </defs>
-                  <polygon points="0,0.5 100,3 0,5.5" fill="url(#taperRight)" />
-                </svg>
-              </div>
+              {/* Main Wordmark: ARKLINTECH in Deep Navy */}
+              <h1
+                className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-[#111827] uppercase tracking-[0.22em] flex items-center leading-none"
+                style={{
+                  fontFamily: "'Syncopate', var(--font-syncopate), sans-serif",
+                  paddingLeft: '0.22em',
+                }}
+              >
+                <span>ARKLINTECH</span>
+              </h1>
             </div>
 
-            {/* Sub-Brand Core Motto: ENGINEER · ORCHESTRATE · EVOLVE */}
-            <div className="flex items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm lg:text-base font-mono font-bold uppercase tracking-[0.2em] pt-2">
-              <span className="text-[#111827]">ENGINEER</span>
-              <span className="text-[#1463FF]">·</span>
-              <span className="text-[#1463FF]">ORCHESTRATE</span>
-              <span className="text-[#1463FF]">·</span>
-              <span className="text-[#111827]">EVOLVE</span>
+            {/* Row 2: TECHNOLOGY SYSTEMS Sub Descriptor with Blue Tapered Wings */}
+            <div className="flex items-center justify-center gap-2 sm:gap-3 mt-2.5 sm:mt-3.5 w-full">
+              {/* Left Tapered Wing */}
+              <svg
+                viewBox="0 0 100 6"
+                className="h-[2px] sm:h-[3px] w-8 sm:w-16 shrink-0"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <defs>
+                  <linearGradient id="taperLeft" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#1463FF" stopOpacity="0.1" />
+                    <stop offset="60%" stopColor="#1463FF" stopOpacity="0.9" />
+                    <stop offset="100%" stopColor="#38BDF8" stopOpacity="1" />
+                  </linearGradient>
+                </defs>
+                <polygon points="0,3 100,0.5 100,5.5" fill="url(#taperLeft)" />
+              </svg>
+
+              <span
+                className="font-mono text-[9px] sm:text-xs lg:text-sm font-bold text-[#536070] uppercase tracking-[0.26em] whitespace-nowrap"
+                style={{ paddingLeft: '0.26em' }}
+              >
+                TECHNOLOGY SYSTEMS
+              </span>
+
+              {/* Right Tapered Wing */}
+              <svg
+                viewBox="0 0 100 6"
+                className="h-[2px] sm:h-[3px] w-8 sm:w-16 shrink-0"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <defs>
+                  <linearGradient id="taperRight" x1="100%" y1="0%" x2="0%" y2="0%">
+                    <stop offset="0%" stopColor="#1463FF" stopOpacity="0.1" />
+                    <stop offset="60%" stopColor="#1463FF" stopOpacity="0.9" />
+                    <stop offset="100%" stopColor="#38BDF8" stopOpacity="1" />
+                  </linearGradient>
+                </defs>
+                <polygon points="0,0.5 100,3 0,5.5" fill="url(#taperRight)" />
+              </svg>
             </div>
           </div>
 
-          <p className="text-sm sm:text-base lg:text-lg text-[#536070] font-body max-w-xl mx-auto leading-relaxed">
+          {/* Sub-Brand Core Motto: ENGINEER · ORCHESTRATE · EVOLVE */}
+          <div className="flex items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm lg:text-base font-mono font-bold uppercase tracking-[0.2em] pt-2">
+            <span className="text-[#111827]">ENGINEER</span>
+            <span className="text-[#1463FF]">·</span>
+            <span className="text-[#1463FF]">ORCHESTRATE</span>
+            <span className="text-[#1463FF]">·</span>
+            <span className="text-[#111827]">EVOLVE</span>
+          </div>
+
+          <p className="text-sm sm:text-base lg:text-lg text-[#536070] font-body max-w-xl mx-auto leading-relaxed mt-4">
             <span style={{ fontFamily: "'Caveat', var(--font-handwriting), cursive" }}>Intelligent systems engineered for how business actually operates.</span>
           </p>
 
@@ -450,11 +402,10 @@ export default function WhatWeDoExperience({ onOpenProjectModal }: WhatWeDoExper
         {/* ========================================================================= */}
         <div className="pt-4 pb-8 flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-[#D8D4C9]">
           <div className="flex items-center gap-3 sm:gap-4">
-            {/* Keystone Icon Mark */}
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#111827] flex items-center justify-center shrink-0">
-              <svg viewBox="270 20 430 365" className="w-5 h-5" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fill="#fff" d="M 402 27 Q 394 27 388 37 L 280 366 L 440 366 L 457 170 L 411 133 L 510 134 L 510 294 L 554 366 L 682 366 L 581 39 Q 578 27 570 27 Z" />
-              </svg>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#1463FF] flex items-center justify-center text-white shrink-0 shadow-md shadow-[#1463FF]/30 p-2">
+                <KeystoneMark className="w-full h-full" />
+              </div>
             </div>
             <div>
               <p className="text-sm sm:text-base font-display font-bold text-[#111827] uppercase tracking-tight">

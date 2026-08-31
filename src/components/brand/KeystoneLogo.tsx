@@ -19,7 +19,7 @@ interface KeystoneLogoProps {
 export function KeystoneMark({ className = 'w-7 h-7' }: { className?: string }) {
   return (
     <svg
-      viewBox="270 20 430 365"
+      viewBox="0 0 1000 850"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={`${className} shrink-0 block`}
@@ -30,27 +30,13 @@ export function KeystoneMark({ className = 'w-7 h-7' }: { className?: string }) 
       <defs>
         <linearGradient id="keystoneGradient" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#1463FF" />
-          <stop offset="100%" stopColor="#0050E6" />
+          <stop offset="100%" stopColor="#0052E0" />
         </linearGradient>
       </defs>
 
       <path
         fill="url(#keystoneGradient)"
-        d="
-          M 402 27
-          Q 394 27 388 37
-          L 280 366
-          L 440 366
-          L 457 170
-          L 411 133
-          L 510 134
-          L 510 294
-          L 554 366
-          L 682 366
-          L 581 39
-          Q 578 27 570 27
-          Z
-        "
+        d="M 309 17 C 298 17 288 23 281 37 L 25 822 L 404 821 L 444 357 L 336 268 L 572 271 L 572 652 L 676 822 L 979 822 L 741 39 C 735 25 726 17 714 17 Z"
       />
     </svg>
   );
