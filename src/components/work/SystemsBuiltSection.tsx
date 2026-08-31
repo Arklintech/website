@@ -18,8 +18,6 @@ import {
   GraduationCap,
   ChevronDown,
   Layers as LayersIcon,
-  ChevronLeft,
-  ChevronRight,
 } from 'lucide-react';
 
 interface SystemsBuiltSectionProps {
@@ -48,7 +46,6 @@ function ValueBlockIcon({ iconName, className = 'w-4 h-4 text-[#1463FF]' }: { ic
 export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuiltSectionProps) {
   const [activeProjectId, setActiveProjectId] = useState('daarayn');
   const [layerProgress, setLayerProgress] = useState(0);
-  const [mobileLayerIndex, setMobileLayerIndex] = useState(0);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const rafRef = useRef<number | null>(null);
@@ -61,7 +58,6 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
       if (proj && WORK_REVEAL_PROJECTS.some((p) => p.id === proj)) {
         setActiveProjectId(proj);
         setLayerProgress(0);
-        setMobileLayerIndex(0);
       }
     }
   }, []);
@@ -70,9 +66,9 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
   const activeLayers = activeProject.layers;
   const totalLayers = activeLayers.length;
 
-  // Calculate active layer index from scroll progress
+  // Calculate active layer index from scroll progress (shared across mobile & desktop)
   const activeLayerIndex = Math.min(totalLayers - 1, Math.floor(layerProgress * totalLayers));
-  const currentLayerIndex = typeof window !== 'undefined' && window.innerWidth < 1024 ? mobileLayerIndex : activeLayerIndex;
+  const currentLayerIndex = activeLayerIndex;
   const currentLayer = activeLayers[currentLayerIndex] ?? activeLayers[0];
 
   // Dynamic scroll scrub height per project based on layer count
@@ -85,7 +81,7 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
       rafRef.current = requestAnimationFrame(() => {
         if (!containerRef.current) return;
         const rect = containerRef.current.getBoundingClientRect();
-        const navbarHeight = 80;
+        const navbarHeight = window.innerWidth < 640 ? 64 : 80;
         const totalHeight = rect.height - (window.innerHeight - navbarHeight);
         if (totalHeight <= 0) return;
 
@@ -107,27 +103,14 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
     if (projectId === activeProjectId) return;
     setActiveProjectId(projectId);
     setLayerProgress(0);
-    setMobileLayerIndex(0);
 
     // Scroll smoothly to top of the work showcase
     if (containerRef.current) {
-      const navbarHeight = 80;
+      const navbarHeight = window.innerWidth < 640 ? 64 : 80;
       const targetTop = window.scrollY + containerRef.current.getBoundingClientRect().top - navbarHeight;
       window.scrollTo({ top: targetTop, behavior: 'smooth' });
     }
   }, [activeProjectId]);
-
-  const handleNextLayer = () => {
-    if (mobileLayerIndex < totalLayers - 1) {
-      setMobileLayerIndex(mobileLayerIndex + 1);
-    }
-  };
-
-  const handlePrevLayer = () => {
-    if (mobileLayerIndex > 0) {
-      setMobileLayerIndex(mobileLayerIndex - 1);
-    }
-  };
 
   return (
     <div
@@ -140,11 +123,10 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
     >
       {/* ═══ STICKY WORK EXPERIENCE VIEWPORT ═══ */}
       <div
-        className="sticky top-16 sm:top-20 flex flex-col justify-between bg-[#F5F1E8]"
-        style={{ height: 'calc(100vh - 5rem)', overflow: 'hidden' }}
+        className="sticky top-16 sm:top-20 flex flex-col justify-between bg-[#F5F1E8] h-[calc(100vh-4rem)] sm:h-[calc(100vh-5rem)] overflow-hidden"
       >
         {/* ── MOBILE HORIZONTAL PROJECT SELECTOR (< lg) ── */}
-        <div className="flex lg:hidden overflow-x-auto gap-2 px-4 py-2 scrollbar-none shrink-0 bg-white/70 border-b border-[#D8D4C9]">
+        <div className="flex lg:hidden overflow-x-auto gap-2 px-4 py-2 scrollbar-none shrink-0 bg-white/70 border-b border-[#D8D4C9] touch-pan-x">
           {WORK_REVEAL_PROJECTS.map((p) => {
             const isActive = p.id === activeProjectId;
             return (
@@ -445,33 +427,12 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
 
         </div>
 
-        {/* ── MOBILE LAYER CONTROLS & INFO BAR (< lg) ── */}
-        <div className="flex lg:hidden flex-col bg-white/95 backdrop-blur-md border-t border-[#D8D4C9] text-xs font-mono shrink-0 px-4 py-2.5 space-y-1.5 z-20">
-          <div className="flex items-center justify-between">
-            <button
-              onClick={handlePrevLayer}
-              disabled={mobileLayerIndex === 0}
-              className="px-3 py-1.5 rounded-lg bg-[#EAE5D8] disabled:opacity-40 font-bold uppercase flex items-center gap-1 text-[10px] transition-all"
-            >
-              <ChevronLeft className="w-3.5 h-3.5" /> PREV
-            </button>
-
-            <div className="text-center flex flex-col items-center">
-              <span className="text-[#1463FF] font-bold text-[11px] uppercase tracking-wider">
-                LAYER {currentLayer.number} / {String(totalLayers).padStart(2, '0')} · {currentLayer.name}
-              </span>
-            </div>
-
-            <button
-              onClick={handleNextLayer}
-              disabled={mobileLayerIndex === totalLayers - 1}
-              className="px-3 py-1.5 rounded-lg bg-[#1463FF] text-white disabled:opacity-40 font-bold uppercase flex items-center gap-1 text-[10px] transition-all shadow-xs"
-            >
-              NEXT <ChevronRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          <p className="text-[9.5px] text-[#475569] text-center font-sans font-medium line-clamp-1">
+        {/* ── MOBILE LAYER PROGRESS & INFO BAR (< lg) ── */}
+        <div className="flex lg:hidden flex-col items-center justify-center bg-white/95 backdrop-blur-md border-t border-[#D8D4C9] text-xs font-mono shrink-0 px-4 py-2.5 space-y-1 text-center z-20">
+          <span className="text-[#1463FF] font-bold text-[11px] sm:text-xs uppercase tracking-wider">
+            LAYER {currentLayer.number} / {String(totalLayers).padStart(2, '0')} · {currentLayer.name}
+          </span>
+          <p className="text-[9.5px] sm:text-[10px] text-[#475569] font-sans font-medium line-clamp-1">
             {currentLayer.description}
           </p>
         </div>
