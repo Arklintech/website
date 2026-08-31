@@ -52,10 +52,10 @@ export default function SelectedProductionSystemsSection() {
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* ═══ TOP TWO-COLUMN MASTER COMPOSITION (LEFT: Index · RIGHT: Showcase) ═══ */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 xl:gap-12 items-start">
           
           {/* ── LEFT COLUMN: Section Title & Vertical Project Index (4 cols) ── */}
-          <div className="lg:col-span-4 flex flex-col justify-between space-y-6">
+          <div className="xl:col-span-4 flex flex-col justify-between space-y-6">
             
             {/* Header Block */}
             <div className="space-y-3">
@@ -88,7 +88,7 @@ export default function SelectedProductionSystemsSection() {
             </div>
 
             {/* Mobile Horizontal Project Selector (< lg) */}
-            <div className="flex lg:hidden overflow-x-auto gap-2 py-1 scrollbar-none">
+            <div className="flex xl:hidden overflow-x-auto gap-2 py-1 scrollbar-none">
               {WORK_REVEAL_PROJECTS.map((project) => {
                 const isActive = project.id === activeProjectId;
                 return (
@@ -109,7 +109,7 @@ export default function SelectedProductionSystemsSection() {
             </div>
 
             {/* Vertical Project Index (8 Projects on Desktop lg+) */}
-            <div className="hidden lg:block space-y-1.5 pt-2">
+            <div className="hidden xl:block space-y-1.5 pt-2">
               {WORK_REVEAL_PROJECTS.map((project) => {
                 const isActive = project.id === activeProjectId;
                 return (
@@ -151,15 +151,15 @@ export default function SelectedProductionSystemsSection() {
           </div>
 
           {/* ── RIGHT COLUMN: Featured Interface Presentation (8 cols) ── */}
-          <div className="lg:col-span-8 space-y-4">
+          <div className="xl:col-span-8 space-y-4">
             
             {/* Top Philosophy Eyebrow Strip */}
-            <div className="flex items-center gap-3 pb-1">
+            <div className="flex items-center gap-3 pb-1 overflow-hidden">
               <Box className="w-4 h-4 text-[#1463FF] shrink-0" />
-              <span className="font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.18em] text-[#475569]">
-                08 SYSTEMS. DIFFERENT INDUSTRIES. ONE ENGINEERING PHILOSOPHY.
+              <span className="font-mono text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.12em] sm:tracking-[0.18em] text-[#475569] truncate">
+                08 SYSTEMS. DIFFERENT INDUSTRIES. ONE PHILOSOPHY.
               </span>
-              <div className="flex-1 h-[1px] bg-[#D8D4C9]/70 hidden sm:block" />
+              <div className="flex-1 h-[1px] bg-[#D8D4C9]/70 hidden md:block shrink-0" />
             </div>
 
             {/* ═══ MASTER SHOWCASE CARD CONTAINER ═══ */}
@@ -187,23 +187,35 @@ export default function SelectedProductionSystemsSection() {
               </div>
 
               {/* Bottom Information Panel (Project Identity + 3 Value Blocks + VIEW SYSTEM CTA) */}
-              <div className="p-6 sm:p-8 bg-white border-t border-[#E2E8F0] grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-                
-                {/* Left: Project Details (5 cols) */}
-                <div className="lg:col-span-5 space-y-1.5">
-                  <span className="font-mono text-[11px] font-bold text-[#1463FF] uppercase tracking-wider block">
-                    {activeProject.name}
-                  </span>
-                  <h3 className="text-xl sm:text-2xl font-bold text-[#0B132B] tracking-tight leading-tight font-display">
-                    {activeProject.systemType}
-                  </h3>
-                  <p className="text-xs sm:text-[13px] text-[#475569] leading-relaxed">
-                    {activeProject.description}
-                  </p>
+              <div className="p-5 sm:p-6 lg:p-8 bg-white border-t border-[#E2E8F0]">
+                {/* Top row: name + system type + description */}
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-5">
+                  <div className="space-y-1 flex-1 min-w-0">
+                    <span className="font-mono text-[11px] font-bold text-[#1463FF] uppercase tracking-wider block">
+                      {activeProject.name}
+                    </span>
+                    <h3 className="text-lg sm:text-xl font-bold text-[#0B132B] tracking-tight leading-tight font-display">
+                      {activeProject.systemType}
+                    </h3>
+                    <p className="text-xs sm:text-[13px] text-[#475569] leading-relaxed max-w-lg">
+                      {activeProject.description}
+                    </p>
+                  </div>
+
+                  {/* VIEW SYSTEM button — desktop top-right */}
+                  <div className="hidden sm:flex shrink-0 items-start pt-0.5">
+                    <Link
+                      href={`/work?project=${activeProject.id}`}
+                      className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#1463FF] hover:bg-[#004AD6] text-white font-mono text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-[#1463FF]/30 group whitespace-nowrap"
+                    >
+                      <span>VIEW SYSTEM</span>
+                      <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                    </Link>
+                  </div>
                 </div>
 
-                {/* Middle: 3 Structured Capability / Value Blocks (4 cols) */}
-                <div className="lg:col-span-4 space-y-3">
+                {/* Bottom row: 3 Value Blocks */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-[#F1F5F9]">
                   {activeProject.valueBlocks.map((block, idx) => (
                     <div key={idx} className="flex items-start gap-2.5">
                       <div className="w-6 h-6 rounded-lg bg-[#EDF4FF] border border-[#1463FF]/20 flex items-center justify-center text-[#1463FF] shrink-0 mt-0.5">
@@ -221,11 +233,11 @@ export default function SelectedProductionSystemsSection() {
                   ))}
                 </div>
 
-                {/* Right: VIEW SYSTEM Destination Button (3 cols) */}
-                <div className="lg:col-span-3 flex lg:justify-end">
+                {/* VIEW SYSTEM button — mobile full-width */}
+                <div className="sm:hidden mt-4">
                   <Link
                     href={`/work?project=${activeProject.id}`}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#1463FF] hover:bg-[#004AD6] text-white font-mono text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-[#1463FF]/30 group text-center"
+                    className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#1463FF] hover:bg-[#004AD6] text-white font-mono text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-[#1463FF]/30 group"
                   >
                     <span>VIEW SYSTEM</span>
                     <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
@@ -237,10 +249,10 @@ export default function SelectedProductionSystemsSection() {
         </div>
 
         {/* ═══ BOTTOM SUPPORTING PROOF / STATISTICS SECTION ═══ */}
-        <div className="rounded-3xl border border-[#D8D4C9] bg-white/70 backdrop-blur-xs p-6 sm:p-8 mt-10 sm:mt-14 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center shadow-xs">
+        <div className="rounded-3xl border border-[#D8D4C9] bg-white/70 backdrop-blur-xs p-6 sm:p-8 mt-10 sm:mt-14 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-12 gap-8 items-center shadow-xs">
           
           {/* Left Headline */}
-          <div className="lg:col-span-5 space-y-1">
+          <div className="xl:col-span-5 space-y-1">
             <span className="font-mono text-[10px] sm:text-xs font-bold text-[#1463FF] uppercase tracking-wider block">
               THE INTERFACE IS ONLY THE SURFACE.
             </span>
@@ -250,7 +262,7 @@ export default function SelectedProductionSystemsSection() {
           </div>
 
           {/* Right 4-Column Statistics Strip */}
-          <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
+          <div className="xl:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
             {[
               {
                 icon: <Box className="w-5 h-5 text-[#1463FF]" />,
