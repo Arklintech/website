@@ -48,3 +48,5 @@ scratch/
 .vercel
 .env*
 .data/
+*.json.key
+arklintech-data-set-*.json

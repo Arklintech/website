@@ -303,19 +303,19 @@ export default function IndustriesExperience({ onOpenProjectModal }: IndustriesE
           <div className="flex flex-col overflow-y-auto lg:overflow-hidden min-h-0 bg-[#F5F1E8]">
 
             {/* Upper Composition: Editorial Headline (Left) & Active Visual Stage (Right) */}
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 px-4 sm:px-6 py-3 sm:py-4 items-center overflow-visible lg:overflow-hidden min-h-0">
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-6 px-4 sm:px-6 py-3 sm:py-4 items-start lg:items-center overflow-visible lg:overflow-hidden min-h-0">
               
               {/* Left Column: Headline & Statement */}
-              <div className="lg:col-span-4 flex flex-col justify-center space-y-2 sm:space-y-3 pr-2">
+              <div className="lg:col-span-4 flex flex-col justify-center space-y-2 sm:space-y-3 pr-2 mb-2 lg:mb-0">
                 <div>
                   <h2
-                    className="text-lg sm:text-2xl xl:text-3xl font-black text-[#0B132B] uppercase tracking-tight leading-[0.92]"
+                    className="text-base sm:text-2xl xl:text-3xl font-black text-[#0B132B] uppercase tracking-tight leading-[0.95]"
                     style={{ fontFamily: "'Syncopate', sans-serif" }}
                   >
                     THE CONTEXT<br />CHANGES.
                   </h2>
                   <h2
-                    className="text-lg sm:text-2xl xl:text-3xl font-black text-[#1463FF] uppercase tracking-tight leading-[0.92] mt-1"
+                    className="text-base sm:text-2xl xl:text-3xl font-black text-[#1463FF] uppercase tracking-tight leading-[0.95] mt-1"
                     style={{ fontFamily: "'Syncopate', sans-serif" }}
                   >
                     THE SYSTEM<br />ADAPTS.
@@ -323,21 +323,21 @@ export default function IndustriesExperience({ onOpenProjectModal }: IndustriesE
                   <div className="w-8 h-[2px] bg-[#1463FF] mt-2 sm:mt-2.5" />
                 </div>
 
-                <p className="text-[10px] sm:text-[11px] text-[#4A5568] leading-relaxed max-w-sm">
+                <p className="text-[10.5px] sm:text-[11px] text-[#4A5568] leading-relaxed max-w-sm">
                   {activeIndustry.tagline}
                 </p>
               </div>
 
               {/* Right Column: Visual Stage & Feature Header */}
-              <div className="lg:col-span-8 flex flex-col justify-start lg:justify-center h-auto lg:h-full min-h-0 overflow-visible lg:overflow-hidden mt-4 lg:mt-0">
+              <div className="lg:col-span-8 flex flex-col justify-start lg:justify-center h-auto lg:h-full min-h-0 overflow-visible lg:overflow-hidden pt-4 lg:pt-0 border-t border-[#D8D4C9]/60 lg:border-t-0">
                 
                 {/* Active Industry Heading & Link Bar */}
                 <div className="shrink-0 flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-4 mb-2">
                   <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs sm:text-sm font-bold text-[#1463FF]">{activeIndustry.number} —</span>
+                    <div className="flex items-start gap-2">
+                      <span className="font-mono text-xs sm:text-sm font-bold text-[#1463FF] shrink-0 mt-0.5">{activeIndustry.number} —</span>
                       <h3
-                        className="text-xs sm:text-sm lg:text-base font-black text-[#0B132B] uppercase tracking-wider"
+                        className="text-xs sm:text-sm lg:text-base font-black text-[#0B132B] uppercase tracking-wider leading-snug"
                         style={{ fontFamily: "'Syncopate', sans-serif", letterSpacing: '0.04em' }}
                       >
                         {activeIndustry.name}
