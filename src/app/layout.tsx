@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import '@/styles/globals.css';
 
 export const metadata: Metadata = {
-  title: 'ARKLINTECH — Advanced Technology Systems & Engineering',
+  title: 'ARKLINTECH — Technology Systems & Engineering',
   description:
     'We architect intelligent systems, automate complex operations, and build software that drives real outcomes.',
   keywords: [
@@ -17,9 +17,9 @@ export const metadata: Metadata = {
   authors: [{ name: 'ARKLINTECH' }],
   creator: 'ARKLINTECH',
   publisher: 'ARKLINTECH',
-  metadataBase: new URL('https://arklintech.com'),
+  metadataBase: new URL('https://www.arklintech.com'),
   alternates: {
-    canonical: '/',
+    canonical: 'https://www.arklintech.com',
   },
   icons: {
     icon: [
@@ -35,26 +35,26 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://arklintech.com',
+    url: 'https://www.arklintech.com',
     siteName: 'ARKLINTECH',
-    title: 'ARKLINTECH — Advanced Technology Systems & Engineering',
+    title: 'ARKLINTECH — Technology Systems & Engineering',
     description:
       'We architect intelligent systems, automate complex operations, and build software that drives real outcomes.',
     images: [
       {
-        url: '/brand/og-image.png',
+        url: 'https://www.arklintech.com/brand/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'ARKLINTECH — Advanced Technology Systems',
+        alt: 'ARKLINTECH — Technology Systems & Engineering',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ARKLINTECH — Advanced Technology Systems & Engineering',
+    title: 'ARKLINTECH — Technology Systems & Engineering',
     description:
       'We architect intelligent systems, automate complex operations, and build software that drives real outcomes.',
-    images: ['/brand/og-image.png'],
+    images: ['https://www.arklintech.com/brand/og-image.png'],
   },
 };
 

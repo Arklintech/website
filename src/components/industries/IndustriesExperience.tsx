@@ -195,8 +195,7 @@ export default function IndustriesExperience({ onOpenProjectModal }: IndustriesE
       style={{ fontFamily: "'Inter', var(--font-inter), sans-serif", height: '320vh' }}
     >
       {/* Sticky Viewport locked below fixed Navbar (80px / 5rem) */}
-      <div className="sticky top-16 sm:top-20 flex flex-col justify-between bg-[#F5F1E8]"
-        style={{ height: 'calc(100vh - 5rem)', overflow: 'hidden' }}>
+      <div className="sticky top-16 sm:top-20 flex flex-col justify-between bg-[#F5F1E8] h-auto lg:h-[calc(100vh-5rem)] overflow-y-auto lg:overflow-hidden">
 
         {/* ── TOP BADGE STRIP ── */}
         <div className="shrink-0 flex items-center justify-between px-4 sm:px-6 py-2.5 bg-[#F5F1E8]">
@@ -221,10 +220,10 @@ export default function IndustriesExperience({ onOpenProjectModal }: IndustriesE
               <button
                 key={ind.id}
                 onClick={() => handleSelectIndustry(i)}
-                className={`px-3 py-1 rounded-full font-mono text-[9px] font-bold uppercase shrink-0 flex items-center gap-1.5 transition-all ${
+                className={`px-3 py-1.5 rounded-full font-mono text-[9px] font-bold uppercase shrink-0 flex items-center gap-1.5 transition-all whitespace-nowrap ${
                   isActive
                     ? 'bg-[#1463FF] text-white shadow-sm'
-                    : 'bg-white text-[#556375]'
+                    : 'bg-white text-[#556375] hover:bg-white/80'
                 }`}
               >
                 <span>{ind.number}</span>
@@ -235,7 +234,7 @@ export default function IndustriesExperience({ onOpenProjectModal }: IndustriesE
         </div>
 
         {/* ── MAIN COMPOSITION GRID ── */}
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-[260px_1fr] overflow-hidden min-h-0">
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-[260px_1fr] overflow-visible lg:overflow-hidden min-h-0">
 
           {/* ═══ LEFT COLUMN — Timeline Sidebar (Matching Image 2 Reference) ═══ */}
           <div className="hidden lg:flex flex-col bg-[#F5F1E8] overflow-hidden select-none pl-10 pr-4">
@@ -304,7 +303,7 @@ export default function IndustriesExperience({ onOpenProjectModal }: IndustriesE
           <div className="flex flex-col overflow-y-auto lg:overflow-hidden min-h-0 bg-[#F5F1E8]">
 
             {/* Upper Composition: Editorial Headline (Left) & Active Visual Stage (Right) */}
-            <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 px-4 sm:px-6 py-3 sm:py-4 items-center overflow-hidden min-h-0">
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 px-4 sm:px-6 py-3 sm:py-4 items-center overflow-visible lg:overflow-hidden min-h-0">
               
               {/* Left Column: Headline & Statement */}
               <div className="lg:col-span-4 flex flex-col justify-center space-y-2 sm:space-y-3 pr-2">
@@ -324,13 +323,13 @@ export default function IndustriesExperience({ onOpenProjectModal }: IndustriesE
                   <div className="w-8 h-[2px] bg-[#1463FF] mt-2 sm:mt-2.5" />
                 </div>
 
-                <p className="text-[9.5px] sm:text-[10px] text-[#4A5568] leading-relaxed max-w-xs">
+                <p className="text-[10px] sm:text-[11px] text-[#4A5568] leading-relaxed max-w-sm">
                   {activeIndustry.tagline}
                 </p>
               </div>
 
               {/* Right Column: Visual Stage & Feature Header */}
-              <div className="lg:col-span-8 flex flex-col justify-center h-full min-h-0 overflow-hidden">
+              <div className="lg:col-span-8 flex flex-col justify-start lg:justify-center h-auto lg:h-full min-h-0 overflow-visible lg:overflow-hidden mt-4 lg:mt-0">
                 
                 {/* Active Industry Heading & Link Bar */}
                 <div className="shrink-0 flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-4 mb-2">
@@ -344,14 +343,14 @@ export default function IndustriesExperience({ onOpenProjectModal }: IndustriesE
                         {activeIndustry.name}
                       </h3>
                     </div>
-                    <p className="text-[9px] sm:text-[10px] text-[#556375] font-medium leading-tight mt-0.5">
+                    <p className="text-[9.5px] sm:text-[10.5px] text-[#556375] font-medium leading-tight mt-1">
                       {activeIndustry.headline}
                     </p>
                   </div>
 
                   <button
                     onClick={onOpenProjectModal}
-                    className="shrink-0 inline-flex items-center gap-1 font-mono text-[8px] sm:text-[8.5px] font-bold text-[#1463FF] hover:text-[#004AD6] transition-colors mt-0.5 group"
+                    className="shrink-0 inline-flex items-center gap-1 font-mono text-[8.5px] sm:text-[9px] font-bold text-[#1463FF] hover:text-[#004AD6] transition-colors mt-0.5 group"
                   >
                     <span>EXPLORE THIS CONTEXT</span>
                     <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
@@ -359,7 +358,7 @@ export default function IndustriesExperience({ onOpenProjectModal }: IndustriesE
                 </div>
 
                 {/* Feature SVG Visual Viewport Container — Pre-rendered Stacks for 0ms Zero-Buffer Switch */}
-                <div className="flex-1 relative flex items-center justify-center p-2 overflow-hidden min-h-[180px] sm:min-h-[220px] max-h-[360px]">
+                <div className="flex-1 relative flex items-center justify-center p-2 overflow-hidden min-h-[160px] sm:min-h-[220px] h-[180px] sm:h-[240px] lg:h-full max-h-[360px] my-2 lg:my-0">
                   {INDUSTRIES.map((ind, idx) => {
                     const isVisible = idx === activeIndex;
                     return (

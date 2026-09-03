@@ -55,13 +55,16 @@ body {
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: var(--z-bg-primary);
 }
+
 ::-webkit-scrollbar-thumb {
   background: #D8D4C9;
   border-radius: 3px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--z-accent-primary);
 }
@@ -106,21 +109,25 @@ body {
     line-height: 1.05;
     letter-spacing: -0.025em;
   }
+
   .text-display-xl {
     font-size: clamp(2rem, 4vw, 3.25rem);
     line-height: 1.1;
     letter-spacing: -0.02em;
   }
+
   .text-display-l {
     font-size: clamp(1.65rem, 3vw, 2.5rem);
     line-height: 1.15;
     letter-spacing: -0.015em;
   }
+
   .text-display-m {
     font-size: clamp(1.25rem, 2vw, 1.75rem);
     line-height: 1.25;
     letter-spacing: -0.01em;
   }
+
   .font-arklintech {
     font-family: var(--font-space-grotesk), sans-serif;
     letter-spacing: 0.18em;
@@ -130,11 +137,13 @@ body {
 
 /* Button & Interaction Components */
 @layer components {
+
   /* 1. Primary: ARKLINTECH Blue Filled + White Text */
   .z-btn-primary {
     @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded font-mono text-xs uppercase tracking-wider font-semibold text-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1463FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F1E8];
     background-color: #1463FF;
   }
+
   .z-btn-primary:hover {
     background-color: #0050E6;
     box-shadow: 0 4px 15px rgba(20, 99, 255, 0.3);
@@ -147,6 +156,7 @@ body {
     background-color: #FFFFFF;
     border-color: #D8D4C9;
   }
+
   .z-btn-secondary:hover {
     border-color: #1463FF;
     background-color: #FBF9F3;
@@ -159,6 +169,7 @@ body {
     @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded font-mono text-xs uppercase tracking-wider font-semibold text-[#536070] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1463FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F5F1E8];
     background-color: transparent;
   }
+
   .z-btn-ghost:hover {
     color: #1463FF;
   }
@@ -168,6 +179,7 @@ body {
     background-color: #FBF9F3;
     border-color: #D8D4C9;
   }
+
   .z-card:hover {
     border-color: #1463FF;
     box-shadow: 0 4px 20px rgba(17, 24, 39, 0.06);
@@ -178,6 +190,7 @@ body {
   from {
     stroke-dashoffset: 40;
   }
+
   to {
     stroke-dashoffset: 0;
   }
@@ -192,7 +205,8 @@ body {
 }
 
 /* Global Brand Font Enforcement for ARKLINTECH */
-.font-syncopate, .font-logo {
+.font-syncopate,
+.font-logo {
   font-family: 'Syncopate', var(--font-syncopate), sans-serif !important;
 }
 
@@ -205,6 +219,7 @@ body {
 
 /* Reduced Motion Accessibility */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -214,4 +229,3 @@ body {
     scroll-behavior: auto !important;
   }
 }
-

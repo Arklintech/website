@@ -140,15 +140,15 @@ export default function KeystoneLogo({
   const titleColor = textColor || 'text-[#0B132B]';
 
   const content = (
-    <div className={`inline-flex items-center gap-3 sm:gap-3.5 group focus:outline-none select-none shrink-0 ${className}`}>
+    <div className={`inline-flex items-center gap-2.5 sm:gap-3 group focus:outline-none select-none shrink-0 ${className}`}>
       {/* 1. Keystone Icon Mark */}
-      <div className="relative shrink-0 flex items-center justify-center transition-transform duration-200 group-hover:scale-105">
+      <div className="relative shrink-0 flex items-center justify-center transition-transform duration-200 group-hover:scale-105 -mt-1 sm:-mt-1.5">
         <KeystoneMark className={markSizes[size]} />
       </div>
 
       {/* 2. Full Typography Lockup (Matching Reference Image 1:1) */}
       {showText && variant === 'full' && (
-        <div className="flex flex-col items-center justify-center text-center shrink-0">
+        <div className="flex flex-col items-start justify-center text-left shrink-0">
           
           {/* Row 1: ΛRKLINTECH in Deep Navy */}
           <div
