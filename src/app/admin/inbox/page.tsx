@@ -75,7 +75,7 @@ export default function InboxPage() {
   return (
     <div className="h-[calc(100vh-56px)] min-h-[500px] flex overflow-hidden">
       {/* Left: Conversation List */}
-      <div className="w-[320px] shrink-0 border-r border-[#E8E4DC] bg-white flex flex-col">
+      <div className={`w-full md:w-[320px] shrink-0 border-r border-[#E8E4DC] bg-white flex-col ${selected ? 'hidden md:flex' : 'flex'}`}>
         <div className="p-4 border-b border-[#E8E4DC]">
           <div className="flex items-center justify-between mb-3">
             <h1 className="font-bold text-sm text-[#0B132B]">Inbox</h1>
@@ -131,10 +131,10 @@ export default function InboxPage() {
       </div>
 
       {/* Middle: Thread */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className={`flex-1 flex flex-col min-w-0 ${!selected ? 'hidden md:flex' : 'flex'}`}>
         {!selected ? (
           <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
+            <div className="text-center p-4">
               <Inbox className="w-12 h-12 text-[#D8D4C9] mx-auto mb-3" />
               <p className="font-bold text-[#475569]">Select a conversation</p>
               <p className="text-sm text-[#94A3B8] mt-1">Click a conversation to read and reply.</p>
@@ -143,16 +143,21 @@ export default function InboxPage() {
         ) : (
           <>
             {/* Thread Header */}
-            <div className="px-6 py-4 border-b border-[#E8E4DC] bg-white">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="font-bold text-[#0B132B]">{selected.subject || 'Conversation'}</h2>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <StatusBadge status={selected.status} />
-                    <span className="font-mono text-[9px] text-[#94A3B8]">
-                      {selected.assigneeId ? 'Assigned' : 'Unassigned'}
-                    </span>
-                  </div>
+            <div className="px-4 md:px-6 py-4 border-b border-[#E8E4DC] bg-white flex items-center gap-3">
+              <button
+                onClick={() => setSelected(null)}
+                className="md:hidden p-1.5 rounded-lg text-[#64748B] hover:bg-[#F5F1E8]"
+                aria-label="Back to conversations"
+              >
+                ←
+              </button>
+              <div className="flex-1 min-w-0">
+                <h2 className="font-bold text-[#0B132B] truncate">{selected.subject || 'Conversation'}</h2>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <StatusBadge status={selected.status} />
+                  <span className="font-mono text-[9px] text-[#94A3B8]">
+                    {selected.assigneeId ? 'Assigned' : 'Unassigned'}
+                  </span>
                 </div>
               </div>
             </div>

@@ -72,7 +72,7 @@ export default function LeadsPage() {
   return (
     <div className="p-6 max-w-[1400px] mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="font-black text-2xl text-[#0B132B] tracking-tight" style={{ fontFamily: "'Syncopate', sans-serif" }}>Leads</h1>
           <p className="text-sm text-[#64748B] mt-0.5">{totalAll} total leads across all pipeline stages.</p>
@@ -207,7 +207,7 @@ export default function LeadsPage() {
                         className="bg-[#F7F4EC] border border-[#E8E4DC] rounded px-2 py-1 text-[11px] font-mono font-bold text-[#0B132B] focus:outline-none focus:border-[#1463FF]"
                       >
                         {['NEW', 'CONTACTED', 'QUALIFIED', 'DISCOVERY', 'PROPOSAL', 'ACTIVE', 'WON', 'LOST'].map(st => (
-                          <option key={st} value={st}>{st}</option>
+                          <option key={st} value={st} style={{ color: '#0B132B', backgroundColor: '#FFFFFF' }}>{st}</option>
                         ))}
                       </select>
                     </td>
