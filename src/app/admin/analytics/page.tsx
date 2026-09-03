@@ -4,20 +4,50 @@ import React, { useState, useEffect } from 'react';
 import { BarChart3, TrendingUp, Users, Globe, Clock, Eye, ArrowUpRight, ArrowDownRight, RefreshCw, Calendar } from 'lucide-react';
 import MetricSparkline from '@/components/admin/shared/MetricSparkline';
 
+interface TopPage {
+  path: string;
+  title: string;
+  views: number;
+  pct: number;
+  avgTime: string;
+}
+
+interface DeviceStat {
+  type: string;
+  pct: number;
+  count: number;
+  color?: string;
+}
+
 export default function AnalyticsPage() {
   const [period, setPeriod] = useState<'7d' | '30d' | '90d'>('30d');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [analyticsData, setAnalyticsData] = useState<any>(null);
+
+  useEffect(() => {
+    const key = sessionStorage.getItem('ark_admin_pass') || '';
+    fetch(`/api/admin/analytics?key=${encodeURIComponent(key)}`)
+      .then(r => r.json())
+      .then(d => { setAnalyticsData(d); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, [period]);
 
   const stats = {
-    totalViews: 14820,
-    uniqueVisitors: 6420,
-    avgDuration: '3m 42s',
-    bounceRate: '28.4%',
+    totalViews: analyticsData?.totalViews || 14820,
+    uniqueVisitors: analyticsData?.uniqueVisitors || 6420,
+    avgDuration: analyticsData?.avgDuration || '3m 42s',
+    bounceRate: analyticsData?.bounceRate || '28.4%',
     viewsTrend: [820, 940, 1100, 1050, 1280, 1420, 1380, 1550, 1620, 1840],
     visitorsTrend: [340, 410, 480, 450, 560, 620, 590, 680, 710, 820],
   };
 
-  const topPages = [
+  const topPages: TopPage[] = analyticsData?.topPages?.length ? analyticsData.topPages.map((p: any) => ({
+    path: p.path,
+    title: p.path === '/' ? 'Home' : p.path.split('/').pop()?.replace(/-/g, ' ').toUpperCase() || p.path,
+    views: p.views,
+    pct: p.pct,
+    avgTime: '2m 14s',
+  })) : [
     { path: '/work', title: 'Selected Systems & Case Studies', views: 4210, pct: 28.4, avgTime: '2m 14s' },
     { path: '/what-we-do/ai-intelligence', title: 'AI & Intelligence Engineering', views: 3150, pct: 21.2, avgTime: '3m 08s' },
     { path: '/start-a-system', title: 'System Inquiry Console', views: 2480, pct: 16.7, avgTime: '4m 12s' },
@@ -25,7 +55,7 @@ export default function AnalyticsPage() {
     { path: '/about', title: 'About ARKLINTECH', views: 1420, pct: 9.5, avgTime: '1m 50s' },
   ];
 
-  const deviceBreakdown = [
+  const deviceBreakdown: DeviceStat[] = analyticsData?.deviceBreakdown || [
     { type: 'Desktop', pct: 64, count: 9484, color: 'bg-[#1463FF]' },
     { type: 'Mobile', pct: 31, count: 4594, color: 'bg-emerald-500' },
     { type: 'Tablet', pct: 5, count: 742, color: 'bg-amber-400' },
@@ -106,7 +136,7 @@ export default function AnalyticsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#F8F5F0]">
-                {topPages.map((page) => (
+                {topPages.map((page: TopPage) => (
                   <tr key={page.path} className="hover:bg-[#FDFBF7] transition-colors">
                     <td className="px-4 py-3.5 font-mono text-[11px] text-[#1463FF] font-bold">{page.path}</td>
                     <td className="px-4 py-3.5 text-xs text-[#0B132B] font-medium">{page.title}</td>
@@ -133,7 +163,7 @@ export default function AnalyticsPage() {
           <div className="bg-white rounded-xl border border-[#E8E4DC] p-5 space-y-4">
             <h2 className="font-bold text-sm text-[#0B132B]">Device Breakdown</h2>
             <div className="space-y-3">
-              {deviceBreakdown.map((dev) => (
+              {deviceBreakdown.map((dev: DeviceStat) => (
                 <div key={dev.type} className="space-y-1">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-medium text-[#0B132B]">{dev.type}</span>

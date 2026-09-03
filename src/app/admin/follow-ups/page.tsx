@@ -29,6 +29,11 @@ export default function FollowUpsPage() {
     const key = sessionStorage.getItem('ark_admin_pass') || '';
     // Optimistic update
     setFollowups(prev => prev.map(f => f.id === id ? { ...f, status } : f));
+    await fetch(`/api/admin/followups/${id}?key=${encodeURIComponent(key)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status }),
+    }).catch(err => console.error('Failed to update followup status:', err));
   };
 
   const filtered = filter === 'ALL' ? followups : followups.filter(f => f.status === filter);

@@ -1,24 +1,79 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FileBarChart2, Download, Calendar, CheckCircle2, FileText } from 'lucide-react';
+import { Download, FileText } from 'lucide-react';
 
 export default function ReportsPage() {
   const [generating, setGenerating] = useState<string | null>(null);
 
   const reports = [
-    { id: 'leads', title: 'Monthly Lead Generation & Pipeline Report', period: 'August 2026', format: 'CSV / PDF', size: '2.4 MB' },
-    { id: 'traffic', title: 'Website Traffic & Visitor Behavior Audit', period: 'Last 30 Days', format: 'CSV', size: '1.8 MB' },
-    { id: 'conversion', title: 'System Conversion & Drop-off Analysis', period: 'Q3 2026', format: 'PDF', size: '4.1 MB' },
-    { id: 'followups', title: 'Follow-up Task Completion & SLA Audit', period: 'August 2026', format: 'CSV', size: '840 KB' },
+    { id: 'leads', title: 'Monthly Lead Generation & Pipeline Report', period: 'Real-time', format: 'CSV', size: 'Live Data' },
+    { id: 'traffic', title: 'Website Traffic & Visitor Behavior Audit', period: 'Real-time', format: 'CSV', size: 'Live Data' },
+    { id: 'contacts', title: 'Client Contacts & Company Roster', period: 'Real-time', format: 'CSV', size: 'Live Data' },
+    { id: 'followups', title: 'Follow-up Task Completion & SLA Audit', period: 'Real-time', format: 'CSV', size: 'Live Data' },
   ];
 
-  const handleDownload = (id: string) => {
+  const handleDownload = async (id: string) => {
     setGenerating(id);
-    setTimeout(() => {
+    const key = sessionStorage.getItem('ark_admin_pass') || '';
+    
+    try {
+      let csvContent = '';
+      let filename = `report_${id}_${new Date().toISOString().split('T')[0]}.csv`;
+
+      if (id === 'leads') {
+        const res = await fetch(`/api/admin/leads?key=${encodeURIComponent(key)}&limit=1000`);
+        const data = await res.json();
+        const leads = data.data || [];
+        const headers = ['ID', 'Name', 'Email', 'Company', 'Industry', 'Service', 'Budget', 'Status', 'Priority', 'Created At'];
+        const rows = leads.map((l: any) => [
+          l.id, `"${l.name}"`, `"${l.email}"`, `"${l.company || ''}"`, `"${l.industry || ''}"`,
+          `"${l.interest || l.projectType || ''}"`, `"${l.budget || ''}"`, l.status, l.priority, l.createdAt
+        ]);
+        csvContent = [headers.join(','), ...rows.map((r: any) => r.join(','))].join('\n');
+      } else if (id === 'contacts') {
+        const res = await fetch(`/api/admin/contacts?key=${encodeURIComponent(key)}`);
+        const data = await res.json();
+        const contacts = data.data || [];
+        const headers = ['ID', 'Name', 'Email', 'Phone', 'Company', 'Industry', 'Created At'];
+        const rows = contacts.map((c: any) => [
+          c.id, `"${c.name}"`, `"${c.email}"`, `"${c.phone || ''}"`, `"${c.company || ''}"`, `"${c.industry || ''}"`, c.createdAt
+        ]);
+        csvContent = [headers.join(','), ...rows.map((r: any) => r.join(','))].join('\n');
+      } else if (id === 'followups') {
+        const res = await fetch(`/api/admin/followups?key=${encodeURIComponent(key)}`);
+        const data = await res.json();
+        const followups = data.data || [];
+        const headers = ['ID', 'Title', 'Due Date', 'Priority', 'Status', 'Owner', 'Created At'];
+        const rows = followups.map((f: any) => [
+          f.id, `"${f.title}"`, f.dueDate, f.priority, f.status, `"${f.owner || ''}"`, f.createdAt
+        ]);
+        csvContent = [headers.join(','), ...rows.map((r: any) => r.join(','))].join('\n');
+      } else {
+        const res = await fetch(`/api/admin/visitors?key=${encodeURIComponent(key)}`);
+        const data = await res.json();
+        const visitors = data.data || [];
+        const headers = ['ID', 'Session ID', 'Current Page', 'Pages Visited Count', 'Duration (s)', 'Intent', 'Device', 'First Seen'];
+        const rows = visitors.map((v: any) => [
+          v.id, v.sessionId, `"${v.currentPage || ''}"`, v.pagesVisited?.length || 0, v.durationSeconds || 0, v.intent, `"${v.device || ''}"`, v.firstSeen
+        ]);
+        csvContent = [headers.join(','), ...rows.map((r: any) => r.join(','))].join('\n');
+      }
+
+      // Trigger download
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error('Failed to generate CSV export:', err);
+    } finally {
       setGenerating(null);
-      alert('Report exported successfully.');
-    }, 1200);
+    }
   };
 
   return (
@@ -27,7 +82,7 @@ export default function ReportsPage() {
         <h1 className="font-black text-2xl text-[#0B132B] tracking-tight" style={{ fontFamily: "'Syncopate', sans-serif" }}>
           Reports Generator
         </h1>
-        <p className="text-sm text-[#64748B] mt-0.5">Export structured data reports for business audits and performance reviews.</p>
+        <p className="text-sm text-[#64748B] mt-0.5">Export structured data reports in CSV format for audit and external record keeping.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

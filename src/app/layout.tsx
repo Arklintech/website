@@ -58,6 +58,8 @@ export const metadata: Metadata = {
   },
 };
 
+import VisitorTracker from '@/components/VisitorTracker';
+
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -80,6 +82,7 @@ export default function RootLayout({
         className="bg-[#F5F1E8] text-[#111827] font-body antialiased min-h-screen"
         style={{ backgroundColor: '#F5F1E8', color: '#111827', margin: 0 }}
       >
+        <VisitorTracker />
         {children}
       </body>
     </html>

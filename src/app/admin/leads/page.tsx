@@ -191,7 +191,25 @@ export default function LeadsPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3.5">
-                      <StatusBadge status={lead.status} />
+                      <select
+                        value={lead.status}
+                        onChange={async (e) => {
+                          const newStatus = e.target.value as LeadStatus;
+                          const key = sessionStorage.getItem('ark_admin_pass') || '';
+                          setLeads(prev => prev.map(l => l.id === lead.id ? { ...l, status: newStatus } : l));
+                          await fetch(`/api/admin/leads/${lead.id}?key=${encodeURIComponent(key)}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ status: newStatus }),
+                          });
+                          fetchLeads();
+                        }}
+                        className="bg-[#F7F4EC] border border-[#E8E4DC] rounded px-2 py-1 text-[11px] font-mono font-bold text-[#0B132B] focus:outline-none focus:border-[#1463FF]"
+                      >
+                        {['NEW', 'CONTACTED', 'QUALIFIED', 'DISCOVERY', 'PROPOSAL', 'ACTIVE', 'WON', 'LOST'].map(st => (
+                          <option key={st} value={st}>{st}</option>
+                        ))}
+                      </select>
                     </td>
                     <td className="px-4 py-3.5">
                       <span className={`font-mono text-[9px] font-bold uppercase ${PRIORITY_COLORS[lead.priority] || 'text-[#94A3B8]'}`}>
