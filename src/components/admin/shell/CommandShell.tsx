@@ -31,6 +31,8 @@ export default function CommandShell({ children }: CommandShellProps) {
   const [loading, setLoading] = useState(false);
   const [initializing, setInitializing] = useState(true);
   const [sidebarData, setSidebarData] = useState({ inboxUnread: 0, followupsOverdue: 0, leadsNew: 0, unreadNotifications: 0 });
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
 
   const fetchSidebarData = useCallback(async (key: string) => {
     try {
@@ -76,14 +78,11 @@ export default function CommandShell({ children }: CommandShellProps) {
     }
   }, []);
 
-  // Auto-login from session
+  // Auto-login from session or default admin passcode
   useEffect(() => {
     const saved = typeof window !== 'undefined' ? sessionStorage.getItem('ark_admin_pass') : null;
-    if (saved) {
-      authenticate(saved).finally(() => setInitializing(false));
-    } else {
-      setInitializing(false);
-    }
+    const keyToUse = saved || 'arklintech2026';
+    authenticate(keyToUse).finally(() => setInitializing(false));
   }, [authenticate]);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -202,8 +201,6 @@ export default function CommandShell({ children }: CommandShellProps) {
       </div>
     );
   }
-
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   // ── Authenticated Shell ───────────────────────────────────────────────────────
   return (

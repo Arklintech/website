@@ -2,21 +2,27 @@
 import React, { useState, useEffect } from 'react';
 import { BookUser, Plus, Search, Mail, Phone, Building2 } from 'lucide-react';
 
+import { getStoredAdminKey } from '@/lib/admin-auth';
+
 export default function ContactsPage() {
   const [contacts, setContacts] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const key = sessionStorage.getItem('ark_admin_pass') || '';
+    const key = getStoredAdminKey();
     fetch(`/api/admin/contacts?key=${encodeURIComponent(key)}`)
-      .then(r => r.json()).then(d => { setContacts(d.data || []); setLoading(false); })
+      .then(r => r.json()).then(d => { setContacts(Array.isArray(d?.data) ? d.data : []); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
 
   const filtered = contacts.filter(c => {
+    if (!c) return false;
     const q = search.toLowerCase();
-    return c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q) || (c.company || '').toLowerCase().includes(q);
+    const name = (c.name || '').toLowerCase();
+    const email = (c.email || '').toLowerCase();
+    const company = (c.company || '').toLowerCase();
+    return name.includes(q) || email.includes(q) || company.includes(q);
   });
 
   return (
@@ -48,12 +54,14 @@ export default function ContactsPage() {
         ) : (
           <div className="divide-y divide-[#F1EDE4]">
             {filtered.map(c => (
-              <div key={c.id} className="flex items-center gap-4 px-5 py-4 hover:bg-[#FDFBF7] transition-colors">
-                <div className="w-9 h-9 rounded-full bg-[#EDF4FF] border border-[#1463FF]/15 flex items-center justify-center text-[#1463FF] font-bold text-sm shrink-0">{c.name.charAt(0)}</div>
+              <div key={c.id || Math.random()} className="flex items-center gap-4 px-5 py-4 hover:bg-[#FDFBF7] transition-colors">
+                <div className="w-9 h-9 rounded-full bg-[#EDF4FF] border border-[#1463FF]/15 flex items-center justify-center text-[#1463FF] font-bold text-sm shrink-0">
+                  {(c.name || 'C').charAt(0).toUpperCase()}
+                </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-[13px] text-[#0B132B]">{c.name}</p>
+                  <p className="font-semibold text-[13px] text-[#0B132B]">{c.name || 'Unnamed Contact'}</p>
                   <div className="flex items-center gap-3 mt-0.5">
-                    <span className="flex items-center gap-1 text-[11px] text-[#64748B]"><Mail className="w-3 h-3" />{c.email}</span>
+                    {c.email && <span className="flex items-center gap-1 text-[11px] text-[#64748B]"><Mail className="w-3 h-3" />{c.email}</span>}
                     {c.phone && <span className="flex items-center gap-1 text-[11px] text-[#64748B]"><Phone className="w-3 h-3" />{c.phone}</span>}
                     {c.company && <span className="flex items-center gap-1 text-[11px] text-[#64748B]"><Building2 className="w-3 h-3" />{c.company}</span>}
                   </div>

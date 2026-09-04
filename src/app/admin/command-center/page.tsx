@@ -5,13 +5,18 @@ import Link from 'next/link';
 import {
   Users, MessageSquare, FileText, TrendingUp, Activity, Zap,
   ArrowRight, ArrowUpRight, ChevronRight, RefreshCw, Calendar,
-  Globe, AlertTriangle, CheckCircle2, Clock, MapPin, Eye,
-  Radio, GitBranch, BarChart2, AlertCircle
+  Radio, GitBranch, BarChart2, AlertCircle, Eye, AlertTriangle,
+  CheckCircle2, Clock, Globe
 } from 'lucide-react';
+
 import MetricSparkline from '@/components/admin/shared/MetricSparkline';
 import { StatusBadge, IntentDot } from '@/components/admin/shared/StatusBadge';
+import { getStoredAdminKey } from '@/lib/admin-auth';
+
+
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
+
 
 function timeAgo(ts: string): string {
   const diff = Date.now() - new Date(ts).getTime();
@@ -133,16 +138,20 @@ export default function CommandCenterPage() {
   const fetchData = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
     try {
-      // Get key from shell data attribute or session
+      // Get key from shell data attribute or session or default fallback
       const key = (document.querySelector('[data-admin-key]') as HTMLElement)?.dataset.adminKey
-        || sessionStorage.getItem('ark_admin_pass') || '';
+        || getStoredAdminKey();
       adminKeyRef.current = key;
       const res = await fetch(`/api/admin/stats?key=${encodeURIComponent(key)}`);
-      if (res.ok) setData(await res.json());
+      if (res.ok) {
+        const d = await res.json();
+        if (d && !d.error) setData(d);
+      }
     } catch {}
     setLoading(false);
     setRefreshing(false);
   }, []);
+
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
@@ -279,15 +288,16 @@ export default function CommandCenterPage() {
                   className="flex items-center gap-3 px-5 py-3 hover:bg-[#FDFBF7] transition-colors group"
                 >
                   <div className="w-8 h-8 rounded-full bg-[#EDF4FF] border border-[#1463FF]/20 flex items-center justify-center text-[#1463FF] font-bold text-[11px] shrink-0">
-                    {lead.name.charAt(0)}
+                    {(lead.name || 'L').charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-[13px] text-[#0B132B] truncate">{lead.name}</span>
+                      <span className="font-semibold text-[13px] text-[#0B132B] truncate">{lead.name || 'Unnamed Lead'}</span>
                       <StatusBadge status={lead.status} />
                     </div>
-                    <p className="text-[11px] text-[#64748B] truncate">{lead.company} · {lead.interest || lead.projectType || 'System Inquiry'}</p>
+                    <p className="text-[11px] text-[#64748B] truncate">{lead.company || 'Direct'} · {lead.interest || lead.projectType || 'System Inquiry'}</p>
                   </div>
+
                   <div className="text-right shrink-0">
                     <span className="font-mono text-[10px] text-[#94A3B8]">{timeAgo(lead.createdAt)}</span>
                     <ChevronRight className="w-3.5 h-3.5 text-[#D8D4C9] group-hover:text-[#1463FF] mt-0.5 ml-auto transition-colors" />

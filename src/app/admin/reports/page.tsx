@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Download, FileText } from 'lucide-react';
+import { getStoredAdminKey } from '@/lib/admin-auth';
 
 export default function ReportsPage() {
   const [generating, setGenerating] = useState<string | null>(null);
@@ -15,7 +16,8 @@ export default function ReportsPage() {
 
   const handleDownload = async (id: string) => {
     setGenerating(id);
-    const key = sessionStorage.getItem('ark_admin_pass') || '';
+    const key = getStoredAdminKey();
+
     
     try {
       let csvContent = '';

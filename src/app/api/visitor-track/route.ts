@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/admin-db';
+import { sheetsDb } from '@/lib/sheets-db';
 
 export async function POST(req: NextRequest) {
   try {
@@ -28,6 +29,26 @@ export async function POST(req: NextRequest) {
       intent = 'HIGH';
     } else if (pagesVisited.length > 2) {
       intent = 'MEDIUM';
+    }
+
+    // Sync to Google Sheets (Visitors & Sessions tabs)
+    try {
+      const visitor = await sheetsDb.visitors.upsertVisitor({
+        landing_page: existing?.landingPage || pathname || '/',
+        device: device || (userAgent?.includes('Mobile') ? 'Mobile' : 'Desktop'),
+        browser: userAgent?.includes('Firefox') ? 'Firefox' : userAgent?.includes('Safari') && !userAgent?.includes('Chrome') ? 'Safari' : 'Chrome',
+        location: ip,
+        intent_level: intent,
+      });
+
+      await sheetsDb.sessions.createSession({
+        session_id: sessionId,
+        visitor_id: visitor.visitor_id,
+        landing_page: pathname || '/',
+        device: device || 'Desktop',
+      });
+    } catch (sheetsErr) {
+      console.error('Google Sheets visitor tracking error:', sheetsErr);
     }
 
     await adminDb.visitors.upsertSession(sessionId, {

@@ -7,6 +7,7 @@ import {
   ChevronRight, ArrowUpRight, Building2, Mail, Phone, Calendar, User
 } from 'lucide-react';
 import { StatusBadge } from '@/components/admin/shared/StatusBadge';
+import { getStoredAdminKey } from '@/lib/admin-auth';
 import type { LeadRecord, LeadStatus } from '@/lib/admin-db';
 
 const STAGES: { value: LeadStatus | 'ALL'; label: string }[] = [
@@ -46,12 +47,12 @@ export default function LeadsPage() {
   const fetchLeads = useCallback(async () => {
     setLoading(true);
     try {
-      const key = sessionStorage.getItem('ark_admin_pass') || '';
+      const key = getStoredAdminKey();
       const statusParam = filter !== 'ALL' ? `&status=${filter}` : '';
       const res = await fetch(`/api/admin/leads?key=${encodeURIComponent(key)}${statusParam}&limit=100`);
       if (res.ok) {
         const d = await res.json();
-        setLeads(d.data || []);
+        setLeads(Array.isArray(d?.data) ? d.data : []);
         if (d.byStatus) setByStatus(d.byStatus);
       }
     } catch {}
@@ -61,11 +62,16 @@ export default function LeadsPage() {
   useEffect(() => { fetchLeads(); }, [fetchLeads]);
 
   const filtered = leads.filter(l => {
+    if (!l) return false;
     if (!search.trim()) return true;
     const q = search.toLowerCase();
-    return l.name.toLowerCase().includes(q) || l.email.toLowerCase().includes(q)
-      || (l.company || '').toLowerCase().includes(q) || (l.interest || '').toLowerCase().includes(q);
+    const name = (l.name || '').toLowerCase();
+    const email = (l.email || '').toLowerCase();
+    const company = (l.company || '').toLowerCase();
+    const interest = (l.interest || '').toLowerCase();
+    return name.includes(q) || email.includes(q) || company.includes(q) || interest.includes(q);
   });
+
 
   const totalAll = Object.values(byStatus).reduce((a, b) => a + b, 0);
 

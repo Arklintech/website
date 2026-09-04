@@ -2,12 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { CalendarCheck, Plus, AlertCircle, Clock, CheckCircle2 } from 'lucide-react';
 import { StatusBadge } from '@/components/admin/shared/StatusBadge';
+import { getStoredAdminKey } from '@/lib/admin-auth';
 
 function formatDate(d: string) {
+  if (!d) return '—';
   return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-function isOverdue(d: string) { return new Date(d) < new Date(); }
+function isOverdue(d: string) { if (!d) return false; return new Date(d) < new Date(); }
 
 const PRIORITY_COLORS: Record<string, string> = { HIGH: 'text-rose-600 bg-rose-50 border-rose-200', MEDIUM: 'text-amber-600 bg-amber-50 border-amber-200', LOW: 'text-[#64748B] bg-[#F7F4EC] border-[#D8D4C9]' };
 
@@ -18,15 +20,19 @@ export default function FollowUpsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const key = sessionStorage.getItem('ark_admin_pass') || '';
+    const key = getStoredAdminKey();
     fetch(`/api/admin/followups?key=${encodeURIComponent(key)}`)
       .then(r => r.json())
-      .then(d => { setFollowups(d.data || []); if (d.counts) setCounts(d.counts); setLoading(false); })
+      .then(d => {
+        setFollowups(Array.isArray(d?.data) ? d.data : []);
+        if (d?.counts) setCounts(d.counts);
+        setLoading(false);
+      })
       .catch(() => setLoading(false));
   }, []);
 
   const mark = async (id: string, status: string) => {
-    const key = sessionStorage.getItem('ark_admin_pass') || '';
+    const key = getStoredAdminKey();
     // Optimistic update
     setFollowups(prev => prev.map(f => f.id === id ? { ...f, status } : f));
     await fetch(`/api/admin/followups/${id}?key=${encodeURIComponent(key)}`, {
@@ -35,6 +41,7 @@ export default function FollowUpsPage() {
       body: JSON.stringify({ status }),
     }).catch(err => console.error('Failed to update followup status:', err));
   };
+
 
   const filtered = filter === 'ALL' ? followups : followups.filter(f => f.status === filter);
   const total = counts.overdue + counts.dueToday + counts.dueThisWeek + counts.upcoming;

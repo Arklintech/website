@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Building2, Plus, Search, Globe, Users, Calendar } from 'lucide-react';
+import { getStoredAdminKey } from '@/lib/admin-auth';
 import type { CompanyRecord } from '@/lib/admin-db';
 
 export default function CompaniesPage() {
@@ -10,17 +11,21 @@ export default function CompaniesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const key = sessionStorage.getItem('ark_admin_pass') || '';
+    const key = getStoredAdminKey();
     fetch(`/api/admin/companies?key=${encodeURIComponent(key)}`)
       .then(r => r.json())
-      .then(d => { setCompanies(d.data || []); setLoading(false); })
+      .then(d => { setCompanies(Array.isArray(d?.data) ? d.data : []); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
 
   const filtered = companies.filter(c => {
+    if (!c) return false;
     const q = search.toLowerCase();
-    return c.name.toLowerCase().includes(q) || (c.industry || '').toLowerCase().includes(q);
+    const name = (c.name || '').toLowerCase();
+    const industry = (c.industry || '').toLowerCase();
+    return name.includes(q) || industry.includes(q);
   });
+
 
   return (
     <div className="p-6 max-w-[1200px] mx-auto">

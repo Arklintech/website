@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, Edit2, Trash2, Plus, CheckCircle2, ArrowRight, Building2, Mail, Phone, Globe, MessageSquare, Calendar, Flag } from 'lucide-react';
 import { StatusBadge } from '@/components/admin/shared/StatusBadge';
+import { getStoredAdminKey } from '@/lib/admin-auth';
 import type { LeadRecord, LeadStatus, Priority } from '@/lib/admin-db';
 
 const STAGES: LeadStatus[] = ['NEW', 'CONTACTED', 'QUALIFIED', 'DISCOVERY', 'PROPOSAL', 'ACTIVE', 'WON', 'LOST'];
@@ -18,19 +19,19 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
   const [savingNotes, setSavingNotes] = useState(false);
 
   useEffect(() => {
-    const key = sessionStorage.getItem('ark_admin_pass') || '';
+    const key = getStoredAdminKey();
     fetch(`/api/admin/leads/${params.id}?key=${encodeURIComponent(key)}`)
       .then(r => r.json())
       .then(d => {
-        setLead(d.data);
-        setNotesValue(d.data?.notes || '');
+        setLead(d?.data || null);
+        setNotesValue(d?.data?.notes || '');
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }, [params.id]);
 
   const updateStatus = async (status: LeadStatus) => {
-    const key = sessionStorage.getItem('ark_admin_pass') || '';
+    const key = getStoredAdminKey();
     const res = await fetch(`/api/admin/leads/${params.id}?key=${encodeURIComponent(key)}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -40,7 +41,7 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
   };
 
   const updatePriority = async (priority: Priority) => {
-    const key = sessionStorage.getItem('ark_admin_pass') || '';
+    const key = getStoredAdminKey();
     const res = await fetch(`/api/admin/leads/${params.id}?key=${encodeURIComponent(key)}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -51,7 +52,7 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
 
   const saveNotes = async () => {
     setSavingNotes(true);
-    const key = sessionStorage.getItem('ark_admin_pass') || '';
+    const key = getStoredAdminKey();
     const res = await fetch(`/api/admin/leads/${params.id}?key=${encodeURIComponent(key)}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -60,6 +61,7 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
     if (res.ok) { setLead(prev => prev ? { ...prev, notes: notesValue } : null); setEditingNotes(false); }
     setSavingNotes(false);
   };
+
 
   if (loading) return (
     <div className="flex items-center justify-center min-h-[400px]">

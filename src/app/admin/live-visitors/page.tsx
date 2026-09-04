@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Radio, Eye, MapPin } from 'lucide-react';
 import { IntentDot } from '@/components/admin/shared/StatusBadge';
+import { getStoredAdminKey } from '@/lib/admin-auth';
 
 const DEMO_VISITORS = [
   { id: 'v1', location: 'Mumbai, India', country: '🇮🇳', currentPage: '/work', source: 'Organic', durationSeconds: 285, pagesVisited: ['/', '/work', '/work/daarayn'], intent: 'HIGH', device: 'Desktop' },
@@ -19,17 +20,19 @@ export default function LiveVisitorsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const key = sessionStorage.getItem('ark_admin_pass') || '';
+    const key = getStoredAdminKey();
     fetch(`/api/admin/visitors?active=true&key=${encodeURIComponent(key)}`)
       .then(r => r.json())
-      .then(d => { setVisitors(d.data?.length ? d.data : DEMO_VISITORS); setLoading(false); })
+      .then(d => { setVisitors(Array.isArray(d?.data) && d.data.length ? d.data : DEMO_VISITORS); setLoading(false); })
       .catch(() => { setVisitors(DEMO_VISITORS); setLoading(false); });
     const t = setInterval(async () => {
-      const r = await fetch(`/api/admin/visitors?active=true&key=${encodeURIComponent(key)}`).catch(() => null);
-      if (r?.ok) { const d = await r.json(); if (d.data?.length) setVisitors(d.data); }
+      const currentKey = getStoredAdminKey();
+      const r = await fetch(`/api/admin/visitors?active=true&key=${encodeURIComponent(currentKey)}`).catch(() => null);
+      if (r?.ok) { const d = await r.json(); if (Array.isArray(d?.data) && d.data.length) setVisitors(d.data); }
     }, 30000);
     return () => clearInterval(t);
   }, []);
+
 
   return (
     <div className="p-6 max-w-[1400px] mx-auto">

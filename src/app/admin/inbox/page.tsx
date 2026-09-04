@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Inbox, MessageSquare, Search, ArrowRight, User, Clock } from 'lucide-react';
 import { StatusBadge } from '@/components/admin/shared/StatusBadge';
+import { getStoredAdminKey } from '@/lib/admin-auth';
 import type { ConversationRecord, MessageRecord } from '@/lib/admin-db';
 
 function timeAgo(ts: string): string {
@@ -24,27 +25,27 @@ export default function InboxPage() {
   const [sendingReply, setSendingReply] = useState(false);
 
   useEffect(() => {
-    const key = sessionStorage.getItem('ark_admin_pass') || '';
+    const key = getStoredAdminKey();
     fetch(`/api/admin/conversations?key=${encodeURIComponent(key)}`)
       .then(r => r.json())
-      .then(d => { setConversations(d.data || []); setLoading(false); })
+      .then(d => { setConversations(Array.isArray(d?.data) ? d.data : []); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
 
   const openConversation = async (conv: ConversationRecord) => {
     setSelected(conv);
-    const key = sessionStorage.getItem('ark_admin_pass') || '';
+    const key = getStoredAdminKey();
     const res = await fetch(`/api/admin/conversations/${conv.id}?key=${encodeURIComponent(key)}`);
     if (res.ok) {
       const d = await res.json();
-      setMessages(d.messages || []);
+      setMessages(Array.isArray(d?.messages) ? d.messages : []);
     }
   };
 
   const sendReply = async () => {
     if (!selected || !replyBody.trim()) return;
     setSendingReply(true);
-    const key = sessionStorage.getItem('ark_admin_pass') || '';
+    const key = getStoredAdminKey();
     const res = await fetch(`/api/admin/messages?key=${encodeURIComponent(key)}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -58,11 +59,12 @@ export default function InboxPage() {
     });
     if (res.ok) {
       const d = await res.json();
-      setMessages(prev => [...prev, d.data]);
+      if (d?.data) setMessages(prev => [...prev, d.data]);
       setReplyBody('');
     }
     setSendingReply(false);
   };
+
 
   const DEMO_CONVS: any[] = [
     { id: 'c1', subject: 'Re: Automation System Proposal', status: 'OPEN', unreadCount: 2, lastMessageAt: new Date(Date.now() - 300000).toISOString(), contactId: null, updatedAt: new Date(Date.now() - 300000).toISOString(), createdAt: new Date(Date.now() - 86400000).toISOString(), leadId: null, companyId: null, assigneeId: null },

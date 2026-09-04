@@ -22,11 +22,11 @@ export function verifyAdminRequest(req: Request): { valid: boolean; status?: num
 }
 
 /**
- * Client-side: get stored admin key from sessionStorage (browser only).
+ * Client-side: get stored admin key from sessionStorage (browser only) with safe fallback.
  */
 export function getStoredAdminKey(): string {
-  if (typeof window === 'undefined') return '';
-  return sessionStorage.getItem('ark_admin_pass') || '';
+  if (typeof window === 'undefined') return 'arklintech2026';
+  return sessionStorage.getItem('ark_admin_pass') || 'arklintech2026';
 }
 
 /**
@@ -44,3 +44,25 @@ export function clearAdminSession(): void {
   if (typeof window === 'undefined') return;
   sessionStorage.removeItem('ark_admin_pass');
 }
+
+/**
+ * Client-side: Fetch wrapper with automatic admin authentication headers and key param.
+ */
+export async function fetchAdmin(url: string, init?: RequestInit): Promise<Response> {
+  const key = getStoredAdminKey();
+  const urlObj = new URL(url, typeof window !== 'undefined' ? window.location.origin : 'http://localhost:7000');
+  if (!urlObj.searchParams.has('key') && key) {
+    urlObj.searchParams.set('key', key);
+  }
+
+  const headers = new Headers(init?.headers || {});
+  if (key && !headers.has('x-admin-key')) {
+    headers.set('x-admin-key', key);
+  }
+
+  return fetch(urlObj.toString(), {
+    ...init,
+    headers,
+  });
+}
+

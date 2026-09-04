@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { adminDb } from '@/lib/admin-db';
+import { sheetsDb } from '@/lib/sheets-db';
 import { validateInquiryPayload, checkRateLimit } from '@/lib/validation';
 
 export async function POST(req: NextRequest) {
@@ -40,39 +41,65 @@ export async function POST(req: NextRequest) {
       userAgent,
     });
 
-    // Sync to Admin DB (Leads, Contacts, Conversations, Notifications)
+    // Sync to Admin DB & Google Sheets (Leads, Contacts, Inquiries, Notifications, Conversations, Messages)
     try {
       const payload = validation.data;
       if (payload) {
-        // 1. Find or create Contact
-        let contact = await adminDb.contacts.findByEmail(payload.email);
-        if (!contact) {
-          contact = await adminDb.contacts.create({
-            name: payload.name,
-            email: payload.email,
-            phone: payload.phone || null,
-            company: payload.company || null,
-            industry: payload.industry || null,
-            notes: `Created from website inquiry #${record.id}`,
-          });
-        }
+        // 1. Contact Deduplication (find or create)
+        const contactRecord = await sheetsDb.contacts.findOrCreate({
+          email: payload.email,
+          first_name: payload.name,
+          phone: payload.phone || undefined,
+          job_title: payload.industry || undefined,
+        });
 
-        // 2. Find or create Company if provided
-        let companyRecord = null;
-        if (payload.company) {
-          const compName = payload.company;
-          const companies = await adminDb.companies.findMany(500);
-          companyRecord = companies.find(c => c.name.toLowerCase() === compName.toLowerCase());
-          if (!companyRecord) {
-            companyRecord = await adminDb.companies.create({
-              name: compName,
-              industry: payload.industry || null,
-            });
-          }
-        }
+        // 2. Create Inquiry in Sheets
+        const inquiryRecord = await sheetsDb.inquiries.create({
+          contact_id: contactRecord.contact_id,
+          subject: `Project Inquiry: ${payload.service || 'System Build'}`,
+          message: payload.requirement || '',
+          source: 'Website Inquiry Form',
+          page: '/start-a-system',
+        });
 
-        // 3. Create Lead
-        const lead = await adminDb.leads.create({
+        // 3. Create Lead in Sheets
+        const leadRecord = await sheetsDb.leads.create({
+          contact_id: contactRecord.contact_id,
+          inquiry_id: inquiryRecord.inquiry_id,
+          interest: payload.service || '',
+          budget: payload.budget || '',
+          notes: payload.requirement || '',
+          source_id: 'Website Inquiry Form',
+        });
+
+        // 4. Create Notification in Sheets
+        const notifRecord = await sheetsDb.notifications.create({
+          type: 'NEW_LEAD',
+          title: 'New System Inquiry',
+          message: `${payload.name} (${payload.company || 'Direct'}) requested ${payload.service || 'a system'}`,
+          priority: 'HIGH',
+          entity_type: 'INQUIRY',
+          entity_id: inquiryRecord.inquiry_id,
+        });
+
+        // 5. Create Conversation & Inbound Message
+        const convRecord = await sheetsDb.conversations.create({
+          contact_id: contactRecord.contact_id,
+          lead_id: leadRecord.lead_id,
+          subject: `Project Inquiry: ${payload.service || 'System Build'}`,
+          status: 'OPEN',
+        });
+
+        await sheetsDb.messages.create({
+          conversation_id: convRecord.conversation_id,
+          sender_type: 'CONTACT',
+          sender_email: payload.email,
+          direction: 'INBOUND',
+          message: payload.requirement || `Interested in ${payload.service} system. Budget: ${payload.budget || 'N/A'}.`,
+        });
+
+        // Also update local cache in adminDb
+        await adminDb.leads.create({
           name: payload.name,
           email: payload.email,
           phone: payload.phone || null,
@@ -86,45 +113,12 @@ export async function POST(req: NextRequest) {
           source: 'Website Inquiry Form',
           status: 'NEW',
           priority: 'HIGH',
-          contactId: contact?.id || null,
-          companyId: companyRecord?.id || null,
-          inquiryId: record.id,
-        });
-
-        // 4. Create Inbox Conversation
-        const conv = await adminDb.conversations.create({
-          subject: `Project Inquiry: ${payload.service || 'System Build'}`,
-          status: 'OPEN',
-          contactId: contact?.id || null,
-          leadId: lead.id,
-          companyId: companyRecord?.id || null,
-          lastMessageAt: new Date().toISOString(),
-          unreadCount: 1,
-        });
-
-        // 5. Create Inbound Message
-        await adminDb.messages.create({
-          conversationId: conv.id,
-          direction: 'INBOUND',
-          from: payload.email,
-          subject: `Inquiry from ${payload.name}`,
-          body: payload.requirement || `Interested in ${payload.service} system. Budget: ${payload.budget || 'N/A'}.`,
-          isInternal: false,
-          deliveryStatus: null,
-          createdAt: new Date().toISOString(),
-        });
-
-        // 6. Create Notification
-        await adminDb.notifications.create({
-          type: 'NEW_LEAD',
-          title: 'New System Inquiry',
-          body: `${payload.name} (${payload.company || 'Direct'}) requested ${payload.service || 'a system'}`,
-          actionLabel: 'View Leads →',
-          actionUrl: `/admin/leads`,
+          contactId: contactRecord.contact_id,
+          inquiryId: inquiryRecord.inquiry_id,
         });
       }
     } catch (syncErr) {
-      console.error('Error syncing inquiry to adminDb:', syncErr);
+      console.error('Error syncing inquiry to Sheets/Admin:', syncErr);
     }
 
     // Record Telemetry Event
