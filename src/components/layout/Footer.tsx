@@ -154,10 +154,6 @@ export default function Footer() {
               <Link href="/trust-security" className="hover:text-[#536070] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Privacy Policy</Link>
               <span>•</span>
               <Link href="/trust-security" className="hover:text-[#536070] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Terms of Service</Link>
-              <span>•</span>
-              <Link href="/admin" className="hover:text-[#1463FF] text-[#1463FF] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded font-mono text-[9.5px] uppercase font-bold flex items-center gap-1">
-                <span>Command Platform →</span>
-              </Link>
             </div>
           </div>
         </div>

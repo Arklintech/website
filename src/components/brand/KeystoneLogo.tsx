@@ -146,17 +146,15 @@ export default function KeystoneLogo({
         <KeystoneMark className={markSizes[size]} />
       </div>
 
-      {/* 2. Full Typography Lockup (Matching Reference Image 1:1) */}
+      {/* 2. Full Typography Lockup (Matching Reference Image 1:1, Centered) */}
       {showText && variant === 'full' && (
-        <div className="flex flex-col items-start justify-center text-left shrink-0">
+        <div className="flex flex-col items-center justify-center text-center shrink-0">
           
           {/* Row 1: ΛRKLINTECH in Deep Navy */}
           <div
-            className={`font-black uppercase group-hover:text-[#1463FF] transition-colors leading-none flex items-center justify-center text-center ${titleColor} ${textSizes[size].title}`}
+            className={`font-black uppercase group-hover:text-[#1463FF] transition-colors leading-none flex items-center justify-center text-center w-full ${titleColor} ${textSizes[size].title}`}
             style={{
               fontFamily: "'Syncopate', sans-serif",
-              letterSpacing: '0.24em',
-              paddingLeft: '0.24em',
             }}
           >
             <ChevronA className={textSizes[size].glyphA} />
@@ -167,12 +165,7 @@ export default function KeystoneLogo({
           <div className={`flex items-center justify-center ${textSizes[size].gap} mt-1 sm:mt-1.5 w-full`}>
             <BlueTaperWing direction="left" className={textSizes[size].wing} />
             <span
-              className="font-mono font-bold text-[#536070] uppercase leading-none whitespace-nowrap text-center"
-              style={{
-                fontSize: textSizes[size].sub.split(' ')[0].replace('text-[', '').replace(']', ''),
-                letterSpacing: '0.28em',
-                paddingLeft: '0.28em',
-              }}
+              className={`font-mono font-bold text-[#536070] uppercase leading-none whitespace-nowrap text-center ${textSizes[size].sub}`}
             >
               TECHNOLOGY SYSTEMS
             </span>
