@@ -5,8 +5,16 @@ import { verifyAdminRequest } from '@/lib/admin-auth';
 export async function GET(req: NextRequest) {
   const auth = verifyAdminRequest(req);
   if (!auth.valid) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  const contacts = await adminDb.contacts.findMany();
-  return NextResponse.json({ data: contacts, total: contacts.length });
+  try {
+    const contacts = await adminDb.contacts.findMany();
+    return NextResponse.json({ data: contacts, total: contacts.length });
+  } catch (err: any) {
+    console.error('Error fetching admin contacts:', err?.message || err);
+    return NextResponse.json({
+      error: 'Unable to load data right now. Please try again.',
+      isProviderError: true
+    }, { status: 503 });
+  }
 }
 
 export async function POST(req: NextRequest) {

@@ -8,12 +8,30 @@ export default function ContactsPage() {
   const [contacts, setContacts] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchContacts = () => {
+    setLoading(true);
+    setErrorMsg(null);
     const key = getStoredAdminKey();
     fetch(`/api/admin/contacts?key=${encodeURIComponent(key)}`)
-      .then(r => r.json()).then(d => { setContacts(Array.isArray(d?.data) ? d.data : []); setLoading(false); })
-      .catch(() => setLoading(false));
+      .then(r => r.json())
+      .then(d => {
+        if (d && !d.error) {
+          setContacts(Array.isArray(d?.data) ? d.data : []);
+        } else {
+          setErrorMsg(d?.error || 'Unable to load data right now. Please try again.');
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        setErrorMsg('Unable to load data right now. Please try again.');
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchContacts();
   }, []);
 
   const filtered = contacts.filter(c => {
@@ -45,6 +63,18 @@ export default function ContactsPage() {
       <div className="bg-white rounded-xl border border-[#E8E4DC] overflow-hidden">
         {loading ? (
           <div className="p-16 text-center"><div className="w-8 h-8 border-2 border-[#1463FF] border-t-transparent rounded-full animate-spin mx-auto" /></div>
+        ) : errorMsg ? (
+          <div className="p-16 text-center bg-rose-50/50">
+            <BookUser className="w-10 h-10 text-rose-500 mx-auto mb-3" />
+            <p className="font-bold text-rose-900 mb-1">{errorMsg}</p>
+            <p className="text-sm text-rose-600 mb-4">Google Sheets operational store could not be reached.</p>
+            <button
+              onClick={fetchContacts}
+              className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold font-mono transition-all"
+            >
+              Try Again
+            </button>
+          </div>
         ) : filtered.length === 0 ? (
           <div className="p-16 text-center">
             <BookUser className="w-10 h-10 text-[#D8D4C9] mx-auto mb-3" />

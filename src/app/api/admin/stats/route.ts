@@ -104,8 +104,11 @@ export async function GET(req: NextRequest) {
       journeys,
       needsAttention,
     });
-  } catch (err) {
-    console.error('Stats error:', err);
-    return NextResponse.json({ error: 'Failed to load stats' }, { status: 500 });
+  } catch (err: any) {
+    console.error('Stats error:', err?.message || err);
+    return NextResponse.json({
+      error: 'Unable to load data right now. Please try again.',
+      isProviderError: true
+    }, { status: 503 });
   }
 }

@@ -42,20 +42,26 @@ export default function LeadsPage() {
   const [filter, setFilter] = useState<LeadStatus | 'ALL'>('ALL');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [view, setView] = useState<'list' | 'board'>('list');
 
   const fetchLeads = useCallback(async () => {
     setLoading(true);
+    setErrorMsg(null);
     try {
       const key = getStoredAdminKey();
       const statusParam = filter !== 'ALL' ? `&status=${filter}` : '';
       const res = await fetch(`/api/admin/leads?key=${encodeURIComponent(key)}${statusParam}&limit=100`);
-      if (res.ok) {
-        const d = await res.json();
+      const d = await res.json().catch(() => null);
+      if (res.ok && d && !d.error) {
         setLeads(Array.isArray(d?.data) ? d.data : []);
         if (d.byStatus) setByStatus(d.byStatus);
+      } else {
+        setErrorMsg(d?.error || 'Unable to load data right now. Please try again.');
       }
-    } catch {}
+    } catch {
+      setErrorMsg('Unable to load data right now. Please try again.');
+    }
     setLoading(false);
   }, [filter]);
 
@@ -152,6 +158,18 @@ export default function LeadsPage() {
           <div className="p-16 text-center">
             <div className="w-8 h-8 border-2 border-[#1463FF] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
             <p className="font-mono text-xs text-[#94A3B8] uppercase">Loading leads...</p>
+          </div>
+        ) : errorMsg ? (
+          <div className="p-16 text-center bg-rose-50/50">
+            <RefreshCw className="w-10 h-10 text-rose-500 mx-auto mb-3" />
+            <p className="font-bold text-rose-900 mb-1">{errorMsg}</p>
+            <p className="text-sm text-rose-600 mb-4">Google Sheets operational store could not be reached.</p>
+            <button
+              onClick={() => fetchLeads()}
+              className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold font-mono transition-all"
+            >
+              Try Again
+            </button>
           </div>
         ) : filtered.length === 0 ? (
           <div className="p-16 text-center">

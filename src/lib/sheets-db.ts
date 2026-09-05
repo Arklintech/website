@@ -1,5 +1,97 @@
 import { getSheetsClient, SPREADSHEET_ID, REQUIRED_TABS } from './google';
 
+export class SheetsProviderError extends Error {
+  public status?: number;
+  public code?: string | number;
+  public tabName?: string;
+  public isTransient: boolean;
+
+  constructor(message: string, opts?: { status?: number; code?: string | number; tabName?: string; isTransient?: boolean }) {
+    super(message);
+    this.name = 'SheetsProviderError';
+    this.status = opts?.status;
+    this.code = opts?.code;
+    this.tabName = opts?.tabName;
+    this.isTransient = opts?.isTransient ?? false;
+  }
+}
+
+function isTransientError(err: any): boolean {
+  if (!err) return false;
+
+  const status = err.status || err.code || err.response?.status;
+  if (status === 429 || status === 'RESOURCE_EXHAUSTED' || status === 500 || status === 502 || status === 503 || status === 504) {
+    return true;
+  }
+
+  const msg = (err.message || '').toLowerCase();
+  if (
+    msg.includes('quota exceeded') ||
+    msg.includes('too many requests') ||
+    msg.includes('resource_exhausted') ||
+    msg.includes('rate limit') ||
+    msg.includes('econnreset') ||
+    msg.includes('etimedout') ||
+    msg.includes('enotfound') ||
+    msg.includes('fetch failed') ||
+    msg.includes('network error')
+  ) {
+    return true;
+  }
+
+  if (err.cause) {
+    const causeMsg = (err.cause.message || '').toLowerCase();
+    if (causeMsg.includes('quota exceeded') || causeMsg.includes('resource_exhausted')) return true;
+  }
+
+  return false;
+}
+
+function sanitizeErrorMessage(err: any, tabName?: string): string {
+  const status = err?.status || err?.code || err?.response?.status || '503';
+  let message = `Google Sheets provider error (${status})`;
+  if (tabName) {
+    message += ` for tab "${tabName}"`;
+  }
+  return message;
+}
+
+export async function executeWithRetry<T>(
+  operation: () => Promise<T>,
+  opts?: { maxRetries?: number; initialDelayMs?: number; tabName?: string }
+): Promise<T> {
+  const maxRetries = opts?.maxRetries ?? 3;
+  let delay = opts?.initialDelayMs ?? 300;
+  let lastError: any = null;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await operation();
+    } catch (err: any) {
+      lastError = err;
+      const transient = isTransientError(err);
+
+      if (!transient || attempt === maxRetries) {
+        throw new SheetsProviderError(sanitizeErrorMessage(err, opts?.tabName), {
+          status: err?.status || err?.response?.status || 503,
+          code: err?.code || 'SHEETS_PROVIDER_FAILURE',
+          tabName: opts?.tabName,
+          isTransient: transient,
+        });
+      }
+
+      const jitter = Math.random() * 50;
+      await new Promise(resolve => setTimeout(resolve, delay + jitter));
+      delay *= 2;
+    }
+  }
+
+  throw new SheetsProviderError(sanitizeErrorMessage(lastError, opts?.tabName), {
+    tabName: opts?.tabName,
+    isTransient: true,
+  });
+}
+
 function uid(prefix: string): string {
   return `${prefix}_${Math.random().toString(36).substring(2, 9)}${Date.now().toString(36)}`;
 }
@@ -23,23 +115,30 @@ function objectToRow(tabName: string, obj: Record<string, any>): any[] {
 export const sheetsDb = {
   // Read all rows from a tab
   readTab: async (tabName: string): Promise<Record<string, any>[]> => {
-    try {
+    const rows = await executeWithRetry(async () => {
       const sheets = await getSheetsClient();
       const res = await sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
         range: `'${tabName}'!A2:Z`,
       });
-      const rows = res.data.values || [];
-      return rows.map(r => rowToObject(tabName, r));
-    } catch (err) {
-      console.error(`Error reading tab "${tabName}" from Google Sheets:`, err);
-      return [];
+      return res.data.values || [];
+    }, { tabName });
+
+    return rows.map(r => rowToObject(tabName, r));
+  },
+
+  // Batch read multiple tabs sequentially to avoid quota bursts
+  readTabs: async (tabNames: string[]): Promise<Record<string, Record<string, any>[]>> => {
+    const resMap: Record<string, Record<string, any>[]> = {};
+    for (const tab of tabNames) {
+      resMap[tab] = await sheetsDb.readTab(tab);
     }
+    return resMap;
   },
 
   // Append a row to a tab
   appendRow: async (tabName: string, recordObj: Record<string, any>): Promise<Record<string, any>> => {
-    try {
+    return executeWithRetry(async () => {
       const sheets = await getSheetsClient();
       const rowData = objectToRow(tabName, recordObj);
       await sheets.spreadsheets.values.append({
@@ -51,15 +150,12 @@ export const sheetsDb = {
         },
       });
       return recordObj;
-    } catch (err) {
-      console.error(`Error appending row to tab "${tabName}" in Google Sheets:`, err);
-      throw err;
-    }
+    }, { tabName });
   },
 
   // Update a row by ID column
   updateRowById: async (tabName: string, idColumn: string, idValue: string, updates: Record<string, any>): Promise<boolean> => {
-    try {
+    return executeWithRetry(async () => {
       const sheets = await getSheetsClient();
       const res = await sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
@@ -87,15 +183,12 @@ export const sheetsDb = {
         },
       });
       return true;
-    } catch (err) {
-      console.error(`Error updating row in tab "${tabName}":`, err);
-      return false;
-    }
+    }, { tabName });
   },
 
   // Delete a row by ID column
   deleteRowById: async (tabName: string, idColumn: string, idValue: string): Promise<boolean> => {
-    try {
+    return executeWithRetry(async () => {
       const sheets = await getSheetsClient();
       const res = await sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
@@ -133,10 +226,7 @@ export const sheetsDb = {
         },
       });
       return true;
-    } catch (err) {
-      console.error(`Error deleting row from tab "${tabName}":`, err);
-      return false;
-    }
+    }, { tabName });
   },
 
   // Specialized Contact Deduplication (by email)
@@ -314,7 +404,7 @@ export const sheetsDb = {
 
   // Specialized Notifications Creation & Updating
   notifications: {
-    create: async (data: { type: string; title: string; message: string; priority?: string; entity_type?: string; entity_id?: string }): Promise<Record<string, any>> => {
+    create: async (data: { type: string; title: string; message: string; priority?: string; entity_type?: string; entity_id?: string; action_label?: string; action_url?: string }): Promise<Record<string, any>> => {
       const now = new Date().toISOString();
       const record = {
         notification_id: uid('notif'),
@@ -324,6 +414,8 @@ export const sheetsDb = {
         priority: data.priority || 'HIGH',
         entity_type: data.entity_type || 'INQUIRY',
         entity_id: data.entity_id || '',
+        action_label: data.action_label || (data.entity_id ? 'View Lead' : ''),
+        action_url: data.action_url || (data.entity_id ? `/admin/leads/${data.entity_id}` : ''),
         assigned_to: '',
         status: 'UNREAD',
         created_at: now,
@@ -393,4 +485,3 @@ export const sheetsDb = {
     },
   },
 };
-

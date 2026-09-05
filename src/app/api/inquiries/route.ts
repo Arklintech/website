@@ -72,14 +72,24 @@ export async function POST(req: NextRequest) {
           source_id: 'Website Inquiry Form',
         });
 
-        // 4. Create Notification in Sheets
+        // 4. Create Notification in Sheets & Admin DB
         const notifRecord = await sheetsDb.notifications.create({
           type: 'NEW_LEAD',
           title: 'New System Inquiry',
           message: `${payload.name} (${payload.company || 'Direct'}) requested ${payload.service || 'a system'}`,
           priority: 'HIGH',
-          entity_type: 'INQUIRY',
-          entity_id: inquiryRecord.inquiry_id,
+          entity_type: 'LEAD',
+          entity_id: leadRecord.lead_id,
+          action_label: 'View Lead',
+          action_url: `/admin/leads/${leadRecord.lead_id}`,
+        });
+
+        await adminDb.notifications.create({
+          type: 'NEW_LEAD',
+          title: 'New System Inquiry',
+          body: `${payload.name} (${payload.company || 'Direct'}) requested ${payload.service || 'a system'}`,
+          actionLabel: 'View Lead',
+          actionUrl: `/admin/leads/${leadRecord.lead_id}`,
         });
 
         // 5. Create Conversation & Inbound Message
@@ -117,8 +127,16 @@ export async function POST(req: NextRequest) {
           inquiryId: inquiryRecord.inquiry_id,
         });
       }
-    } catch (syncErr) {
-      console.error('Error syncing inquiry to Sheets/Admin:', syncErr);
+    } catch (syncErr: any) {
+      console.error('Error syncing inquiry to Sheets/Admin:', syncErr?.message || syncErr);
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Unable to save inquiry to operational system right now. Please try again in a moment.',
+          isProviderError: true,
+        },
+        { status: 503 }
+      );
     }
 
     // Record Telemetry Event

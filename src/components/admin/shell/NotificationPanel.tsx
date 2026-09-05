@@ -147,7 +147,10 @@ export default function NotificationPanel({ adminKey, onClose }: NotificationPan
                     {notif.actionUrl && notif.actionLabel && (
                       <Link
                         href={notif.actionUrl}
-                        onClick={onClose}
+                        onClick={() => {
+                          markRead(notif.id);
+                          onClose();
+                        }}
                         className="text-[10px] font-bold font-mono text-[#1463FF] hover:text-[#004AD6] transition-colors"
                       >
                         {notif.actionLabel}

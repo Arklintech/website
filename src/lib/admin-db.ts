@@ -189,121 +189,178 @@ const FILES = {
   reviews: path.join(DATA_DIR, 'reviews.json'),
 };
 
-// ─── Sheets Data Fetchers & Converters ───────────────────────────────────────
+
+
+// ─── Merged Data & In-Memory Cache (2s TTL) ─────────────────────────
+
+let leadsCache: { data: LeadRecord[]; timestamp: number } | null = null;
+let contactsCache: { data: ContactRecord[]; timestamp: number } | null = null;
+let notificationsCache: { data: NotificationRecord[]; timestamp: number } | null = null;
+const CACHE_TTL_MS = 2000;
+
+export function invalidateAdminDbCache() {
+  leadsCache = null;
+  contactsCache = null;
+  notificationsCache = null;
+}
 
 async function getMergedLeads(): Promise<LeadRecord[]> {
-  const localLeads = readJSON<LeadRecord>(FILES.leads, []);
-  try {
-    const sheetsLeads = await sheetsDb.readTab('Leads');
-    const sheetsContacts = await sheetsDb.readTab('Contacts');
-    const sheetsInquiries = await sheetsDb.readTab('Inquiries');
-
-    const contactMap = new Map<string, any>();
-    sheetsContacts.forEach(c => contactMap.set(c.contact_id, c));
-
-    const inquiryMap = new Map<string, any>();
-    sheetsInquiries.forEach(i => inquiryMap.set(i.inquiry_id, i));
-
-    if (sheetsLeads.length > 0) {
-      const converted: LeadRecord[] = sheetsLeads.map(sl => {
-        const contact = contactMap.get(sl.contact_id);
-        const inquiry = inquiryMap.get(sl.inquiry_id);
-        const name = contact ? `${contact.first_name || ''} ${contact.last_name || ''}`.trim() : (sl.notes ? sl.notes.split('\n')[0] : 'Inquiry Contact');
-        const email = contact ? contact.email : '';
-        const phone = contact ? contact.phone : '';
-
-        return {
-          id: sl.lead_id || uid('lead'),
-          name: name || 'Lead',
-          email: email || '',
-          phone: phone || null,
-          company: sl.company_id || null,
-          industry: contact?.job_title || null,
-          projectType: sl.interest || null,
-          interest: sl.interest || null,
-          budget: sl.budget || null,
-          timeline: sl.timeline || null,
-          problem: sl.notes || inquiry?.message || null,
-          message: sl.notes || inquiry?.message || null,
-          source: sl.source_id || 'Website',
-          status: (sl.status as LeadStatus) || 'NEW',
-          owner: sl.owner_id || null,
-          priority: sl.urgency === 'HIGH' ? 'HIGH' : sl.urgency === 'LOW' ? 'LOW' : 'MEDIUM',
-          nextAction: sl.next_action || null,
-          notes: sl.notes || null,
-          contactId: sl.contact_id || null,
-          companyId: sl.company_id || null,
-          inquiryId: sl.inquiry_id || null,
-          createdAt: sl.created_at || new Date().toISOString(),
-          updatedAt: sl.updated_at || new Date().toISOString(),
-        };
-      });
-
-      // Merge with local records (sheets take precedence if same ID)
-      const mergedMap = new Map<string, LeadRecord>();
-      localLeads.forEach(l => mergedMap.set(l.id, l));
-      converted.forEach(l => mergedMap.set(l.id, l));
-      return Array.from(mergedMap.values());
-    }
-  } catch (err) {
-    console.error('Failed to sync leads from Sheets (using local cache):', err);
+  const now = Date.now();
+  if (leadsCache && now - leadsCache.timestamp < CACHE_TTL_MS) {
+    return leadsCache.data;
   }
-  return localLeads;
+
+  const localLeads = readJSON<LeadRecord>(FILES.leads, []);
+
+  let tabsData: Record<string, Record<string, any>[]>;
+  try {
+    tabsData = await sheetsDb.readTabs(['Leads', 'Contacts', 'Inquiries']);
+  } catch (err) {
+    throw err;
+  }
+
+  const sheetsLeads = tabsData['Leads'] || [];
+  const sheetsContacts = tabsData['Contacts'] || [];
+  const sheetsInquiries = tabsData['Inquiries'] || [];
+
+  const contactMap = new Map<string, Record<string, any>>();
+  sheetsContacts.forEach(c => {
+    if (c.contact_id) contactMap.set(c.contact_id, c);
+  });
+
+  const inquiryMap = new Map<string, Record<string, any>>();
+  sheetsInquiries.forEach(i => {
+    if (i.inquiry_id) inquiryMap.set(i.inquiry_id, i);
+  });
+
+  const mergedMap = new Map<string, LeadRecord>();
+
+  localLeads.forEach(l => {
+    mergedMap.set(l.id, l);
+  });
+
+  sheetsLeads.forEach(sl => {
+    const contact = contactMap.get(sl.contact_id);
+    const inquiry = inquiryMap.get(sl.inquiry_id);
+
+    const email = contact?.email || sl.email || '';
+    const name = contact ? `${contact.first_name || ''} ${contact.last_name || ''}`.trim() : (sl.name || 'Unknown');
+
+    const leadRecord: LeadRecord = {
+      id: sl.lead_id || uid('lead'),
+      name: name || 'Anonymous',
+      email: email,
+      phone: contact?.phone || sl.phone || null,
+      company: contact?.company_id || sl.company || null,
+      industry: contact?.job_title || sl.industry || null,
+      projectType: sl.interest || inquiry?.subject || null,
+      interest: sl.interest || null,
+      budget: sl.budget || null,
+      timeline: sl.timeline || null,
+      problem: sl.notes || inquiry?.message || null,
+      message: inquiry?.message || sl.notes || null,
+      source: sl.source_id || inquiry?.source || 'Website',
+      status: (sl.status as LeadStatus) || 'NEW',
+      owner: sl.owner_id || null,
+      priority: (sl.urgency as Priority) || 'HIGH',
+      nextAction: sl.next_action || null,
+      notes: sl.notes || null,
+      contactId: sl.contact_id || null,
+      companyId: contact?.company_id || null,
+      inquiryId: sl.inquiry_id || null,
+      createdAt: sl.created_at || new Date().toISOString(),
+      updatedAt: sl.updated_at || sl.created_at || new Date().toISOString(),
+    };
+
+    mergedMap.set(leadRecord.id, leadRecord);
+  });
+
+  const result = Array.from(mergedMap.values());
+  leadsCache = { data: result, timestamp: now };
+  return result;
 }
 
 async function getMergedContacts(): Promise<ContactRecord[]> {
-  const localContacts = readJSON<ContactRecord>(FILES.contacts, []);
-  try {
-    const sheetsContacts = await sheetsDb.readTab('Contacts');
-    if (sheetsContacts.length > 0) {
-      const converted: ContactRecord[] = sheetsContacts.map(sc => ({
-        id: sc.contact_id || uid('cnt'),
-        name: `${sc.first_name || ''} ${sc.last_name || ''}`.trim() || sc.email,
-        email: sc.email,
-        phone: sc.phone || null,
-        company: sc.company_id || null,
-        industry: sc.job_title || null,
-        notes: null,
-        createdAt: sc.created_at || new Date().toISOString(),
-        updatedAt: sc.updated_at || new Date().toISOString(),
-      }));
-
-      const mergedMap = new Map<string, ContactRecord>();
-      localContacts.forEach(c => mergedMap.set(c.id, c));
-      converted.forEach(c => mergedMap.set(c.id, c));
-      return Array.from(mergedMap.values());
-    }
-  } catch (err) {
-    console.error('Failed to sync contacts from Sheets (using local cache):', err);
+  const now = Date.now();
+  if (contactsCache && now - contactsCache.timestamp < CACHE_TTL_MS) {
+    return contactsCache.data;
   }
-  return localContacts;
+
+  const localContacts = readJSON<ContactRecord>(FILES.contacts, []);
+
+  let sheetsContacts: Record<string, any>[];
+  try {
+    sheetsContacts = await sheetsDb.readTab('Contacts');
+  } catch (err) {
+    throw err;
+  }
+
+  const mergedMap = new Map<string, ContactRecord>();
+
+  localContacts.forEach(c => mergedMap.set(c.id, c));
+
+  sheetsContacts.forEach(sc => {
+    const id = sc.contact_id || uid('cnt');
+    const name = `${sc.first_name || ''} ${sc.last_name || ''}`.trim() || 'Anonymous';
+    mergedMap.set(id, {
+      id,
+      name,
+      email: sc.email || '',
+      phone: sc.phone || null,
+      company: sc.company_id || null,
+      industry: sc.job_title || null,
+      notes: sc.notes || null,
+      createdAt: sc.created_at || new Date().toISOString(),
+      updatedAt: sc.updated_at || sc.created_at || new Date().toISOString(),
+    });
+  });
+
+  const result = Array.from(mergedMap.values());
+  contactsCache = { data: result, timestamp: now };
+  return result;
 }
 
 async function getMergedNotifications(): Promise<NotificationRecord[]> {
-  const localNotifs = readJSON<NotificationRecord>(FILES.notifications, []);
-  try {
-    const sheetsNotifs = await sheetsDb.readTab('Notifications');
-    if (sheetsNotifs.length > 0) {
-      const converted: NotificationRecord[] = sheetsNotifs.map(sn => ({
-        id: sn.notification_id || uid('notif'),
-        type: (sn.type as NotificationType) || 'SYSTEM',
-        title: sn.title,
-        body: sn.message,
-        actionLabel: 'View Item →',
-        actionUrl: sn.entity_type === 'INQUIRY' || sn.entity_type === 'LEAD' ? '/admin/leads' : '/admin/command-center',
-        isRead: sn.status === 'READ' || Boolean(sn.read_at),
-        createdAt: sn.created_at || new Date().toISOString(),
-      }));
-
-      const mergedMap = new Map<string, NotificationRecord>();
-      localNotifs.forEach(n => mergedMap.set(n.id, n));
-      converted.forEach(n => mergedMap.set(n.id, n));
-      return Array.from(mergedMap.values());
-    }
-  } catch (err) {
-    console.error('Failed to sync notifications from Sheets (using local cache):', err);
+  const now = Date.now();
+  if (notificationsCache && now - notificationsCache.timestamp < CACHE_TTL_MS) {
+    return notificationsCache.data;
   }
-  return localNotifs;
+
+  const localNotifs = readJSON<NotificationRecord>(FILES.notifications, []);
+
+  let sheetsNotifs: Record<string, any>[];
+  try {
+    sheetsNotifs = await sheetsDb.readTab('Notifications');
+  } catch (err) {
+    throw err;
+  }
+
+  const mergedMap = new Map<string, NotificationRecord>();
+
+  localNotifs.forEach(n => mergedMap.set(n.id, n));
+
+  sheetsNotifs.forEach(sn => {
+    const id = sn.notification_id || uid('notif');
+    const isRead = String(sn.status).toUpperCase() === 'READ' || String(sn.is_read).toLowerCase() === 'true';
+    const entityId = sn.entity_id || '';
+    const actionUrl = sn.action_url || (entityId ? `/admin/leads/${entityId}` : null);
+    const actionLabel = sn.action_label || (entityId ? 'View Lead' : null);
+
+    mergedMap.set(id, {
+      id,
+      type: (sn.type as NotificationType) || 'NEW_LEAD',
+      title: sn.title || 'Notification',
+      body: sn.message || '',
+      actionLabel: actionLabel,
+      actionUrl: actionUrl,
+      isRead: isRead,
+      createdAt: sn.created_at || new Date().toISOString(),
+    });
+  });
+
+  const result = Array.from(mergedMap.values()).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  notificationsCache = { data: result, timestamp: now };
+  return result;
 }
 
 // ─── Admin DB ─────────────────────────────────────────────────────────────────
@@ -359,6 +416,7 @@ export const adminDb = {
         console.error('Error persisting lead to Sheets:', err);
       }
 
+      invalidateAdminDbCache();
       return record;
     },
     update: async (id: string, updates: Partial<LeadRecord>): Promise<LeadRecord | null> => {
@@ -387,6 +445,7 @@ export const adminDb = {
         console.error('Error updating lead in Sheets:', err);
       }
 
+      invalidateAdminDbCache();
       return updatedRecord || { id, ...updates, updatedAt: now } as LeadRecord;
     },
     delete: async (id: string): Promise<boolean> => {
@@ -399,6 +458,7 @@ export const adminDb = {
       } catch (err) {
         console.error('Error deleting lead from Sheets:', err);
       }
+      invalidateAdminDbCache();
       return true;
     },
   },
@@ -704,6 +764,8 @@ export const adminDb = {
           type: data.type,
           title: data.title,
           message: data.body,
+          action_label: data.actionLabel || undefined,
+          action_url: data.actionUrl || undefined,
         });
       } catch (err) {
         console.error('Error persisting notification to Sheets:', err);
@@ -721,11 +783,24 @@ export const adminDb = {
       } catch (err) {
         console.error('Error marking notification read in Sheets:', err);
       }
+      invalidateAdminDbCache();
     },
     markAllRead: async (): Promise<void> => {
       const records = readJSON<NotificationRecord>(FILES.notifications, []);
       records.forEach(r => { r.isRead = true; });
       writeJSON(FILES.notifications, records);
+
+      try {
+        const notifs = await sheetsDb.readTab('Notifications');
+        for (const n of notifs) {
+          if (n.notification_id && String(n.status).toUpperCase() !== 'READ') {
+            await sheetsDb.notifications.markRead(n.notification_id);
+          }
+        }
+      } catch (err) {
+        console.error('Error marking all notifications read in Sheets:', err);
+      }
+      invalidateAdminDbCache();
     },
   },
 

@@ -26,23 +26,54 @@ export async function uploadFileToDrive(
   subfolder: 'Assets' | 'Images' | 'Attachments' | 'Documents' | 'Avatars' = 'Documents'
 ): Promise<DriveFileMetadata> {
   const drive = await getDriveClient();
-  const parentFolderId = SUBFOLDER_MAP[subfolder] || DRIVE_FOLDER_ID;
+  let parentFolderId = SUBFOLDER_MAP[subfolder] || DRIVE_FOLDER_ID;
 
-  const stream = new Readable();
-  stream.push(buffer);
-  stream.push(null);
+  let response;
+  try {
+    const stream = new Readable();
+    stream.push(buffer);
+    stream.push(null);
 
-  const response = await drive.files.create({
-    requestBody: {
-      name: filename,
-      parents: [parentFolderId],
-    },
-    media: {
-      mimeType,
-      body: stream,
-    },
-    fields: 'id, name, mimeType, webViewLink, size, createdTime',
-  });
+    response = await drive.files.create({
+      requestBody: {
+        name: filename,
+        parents: [parentFolderId],
+      },
+      media: {
+        mimeType,
+        body: stream,
+      },
+      fields: 'id, name, mimeType, webViewLink, size, createdTime',
+      supportsAllDrives: true,
+      supportsTeamDrives: true,
+    });
+  } catch (firstErr: any) {
+    if (parentFolderId !== DRIVE_FOLDER_ID) {
+      try {
+        const stream = new Readable();
+        stream.push(buffer);
+        stream.push(null);
+
+        response = await drive.files.create({
+          requestBody: {
+            name: filename,
+            parents: [DRIVE_FOLDER_ID],
+          },
+          media: {
+            mimeType,
+            body: stream,
+          },
+          fields: 'id, name, mimeType, webViewLink, size, createdTime',
+          supportsAllDrives: true,
+          supportsTeamDrives: true,
+        });
+      } catch (secondErr: any) {
+        throw secondErr;
+      }
+    } else {
+      throw firstErr;
+    }
+  }
 
   const file = response.data;
   return {
@@ -62,6 +93,8 @@ export async function getDriveFileMetadata(fileId: string): Promise<Partial<Driv
     const res = await drive.files.get({
       fileId,
       fields: 'id, name, mimeType, webViewLink, size, createdTime',
+      supportsAllDrives: true,
+      supportsTeamDrives: true,
     });
     const file = res.data;
     return {

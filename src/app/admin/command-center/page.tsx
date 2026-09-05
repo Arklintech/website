@@ -126,6 +126,7 @@ export default function CommandCenterPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [now, setNow] = useState(new Date());
   const adminKeyRef = useRef<string>('');
 
@@ -137,17 +138,22 @@ export default function CommandCenterPage() {
 
   const fetchData = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
+    setErrorMsg(null);
     try {
       // Get key from shell data attribute or session or default fallback
       const key = (document.querySelector('[data-admin-key]') as HTMLElement)?.dataset.adminKey
         || getStoredAdminKey();
       adminKeyRef.current = key;
       const res = await fetch(`/api/admin/stats?key=${encodeURIComponent(key)}`);
-      if (res.ok) {
-        const d = await res.json();
-        if (d && !d.error) setData(d);
+      const d = await res.json().catch(() => null);
+      if (res.ok && d && !d.error) {
+        setData(d);
+      } else {
+        setErrorMsg(d?.error || 'Unable to load data right now. Please try again.');
       }
-    } catch {}
+    } catch {
+      setErrorMsg('Unable to load data right now. Please try again.');
+    }
     setLoading(false);
     setRefreshing(false);
   }, []);
@@ -190,6 +196,23 @@ export default function CommandCenterPage() {
 
   return (
     <div className="p-6 max-w-[1400px] mx-auto">
+      {errorMsg && (
+        <div className="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-xl flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-rose-500 shrink-0" />
+            <div>
+              <p className="font-bold text-sm text-rose-900">{errorMsg}</p>
+              <p className="text-xs text-rose-600">Google Sheets provider state could not be loaded.</p>
+            </div>
+          </div>
+          <button
+            onClick={() => fetchData(true)}
+            className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold font-mono transition-all"
+          >
+            Retry
+          </button>
+        </div>
+      )}
       {/* Page Header */}
       <div className="flex items-start justify-between mb-6">
         <div>

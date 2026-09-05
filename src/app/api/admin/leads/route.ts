@@ -11,11 +11,19 @@ export async function GET(req: NextRequest) {
   const limit = parseInt(searchParams.get('limit') || '50');
   const offset = parseInt(searchParams.get('offset') || '0');
 
-  const leads = await adminDb.leads.findMany({ status: status || undefined, limit, offset });
-  const total = await adminDb.leads.count(status || undefined);
-  const byStatus = await adminDb.leads.countByStatus();
+  try {
+    const leads = await adminDb.leads.findMany({ status: status || undefined, limit, offset });
+    const total = await adminDb.leads.count(status || undefined);
+    const byStatus = await adminDb.leads.countByStatus();
 
-  return NextResponse.json({ data: leads, total, byStatus });
+    return NextResponse.json({ data: leads, total, byStatus });
+  } catch (err: any) {
+    console.error('Error fetching admin leads:', err?.message || err);
+    return NextResponse.json({
+      error: 'Unable to load data right now. Please try again.',
+      isProviderError: true
+    }, { status: 503 });
+  }
 }
 
 export async function POST(req: NextRequest) {
