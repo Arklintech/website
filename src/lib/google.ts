@@ -57,6 +57,26 @@ export const REQUIRED_TABS: Record<string, string[]> = {
   ]
 };
 
+export function cleanPrivateKey(key: string): string {
+  let cleaned = key.trim();
+  while ((cleaned.startsWith('"') && cleaned.endsWith('"')) || (cleaned.startsWith("'") && cleaned.endsWith("'"))) {
+    cleaned = cleaned.slice(1, -1).trim();
+  }
+  // Replace any sequence of backslashes followed by n or r with real newline
+  cleaned = cleaned.replace(/\\+n/g, '\n');
+  cleaned = cleaned.replace(/\\+r/g, '');
+  cleaned = cleaned.replace(/\r\n/g, '\n');
+  cleaned = cleaned.replace(/\r/g, '\n');
+
+  if (!cleaned.includes('\n') && cleaned.includes('-----BEGIN PRIVATE KEY-----')) {
+    cleaned = cleaned
+      .replace('-----BEGIN PRIVATE KEY-----', '-----BEGIN PRIVATE KEY-----\n')
+      .replace('-----END PRIVATE KEY-----', '\n-----END PRIVATE KEY-----');
+  }
+
+  return cleaned;
+}
+
 export function getGoogleAuth() {
   const email = process.env.GOOGLE_CLIENT_EMAIL;
   let key = process.env.GOOGLE_PRIVATE_KEY;
@@ -68,7 +88,7 @@ export function getGoogleAuth() {
       return new google.auth.GoogleAuth({
         credentials: {
           client_email: parsed.client_email || email,
-          private_key: (parsed.private_key || '').replace(/\\n/g, '\n'),
+          private_key: cleanPrivateKey(parsed.private_key || ''),
         },
         scopes: [
           'https://www.googleapis.com/auth/spreadsheets',
@@ -86,7 +106,7 @@ export function getGoogleAuth() {
         return new google.auth.GoogleAuth({
           credentials: {
             client_email: parsed.client_email || email,
-            private_key: (parsed.private_key || '').replace(/\\n/g, '\n'),
+            private_key: cleanPrivateKey(parsed.private_key || ''),
           },
           scopes: [
             'https://www.googleapis.com/auth/spreadsheets',
@@ -96,10 +116,7 @@ export function getGoogleAuth() {
       } catch {}
     }
 
-    // Strip wrapping quotes
-    key = key.replace(/^["']|["']$/g, '').trim();
-    // Replace literal escaped newlines with actual newlines
-    key = key.replace(/\\n/g, '\n').replace(/\\r/g, '');
+    key = cleanPrivateKey(key);
   }
 
   // Fallback to credential file if env variables not supplied
