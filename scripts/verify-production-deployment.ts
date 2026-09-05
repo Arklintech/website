@@ -20,6 +20,8 @@ async function runLiveVerification() {
   try {
     const healthRes = await fetch(`${LIVE_BASE_URL}/api/health`);
     console.log(`Health endpoint status: ${healthRes.status} ${healthRes.statusText}`);
+    const healthData = await healthRes.json().catch(() => null);
+    console.log('Health Data:', JSON.stringify(healthData, null, 2));
     const siteRes = await fetch(LIVE_BASE_URL);
     console.log(`Website root status: ${siteRes.status} ${siteRes.statusText}`);
     if (!siteRes.ok) {
