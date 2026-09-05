@@ -60,9 +60,46 @@ export const REQUIRED_TABS: Record<string, string[]> = {
 export function getGoogleAuth() {
   const email = process.env.GOOGLE_CLIENT_EMAIL;
   let key = process.env.GOOGLE_PRIVATE_KEY;
+  const jsonCreds = process.env.GOOGLE_SERVICE_ACCOUNT_KEY || process.env.GOOGLE_CREDENTIALS;
 
-  if (key && key.includes('\\n')) {
-    key = key.replace(/\\n/g, '\n');
+  if (jsonCreds) {
+    try {
+      const parsed = typeof jsonCreds === 'string' ? JSON.parse(jsonCreds) : jsonCreds;
+      return new google.auth.GoogleAuth({
+        credentials: {
+          client_email: parsed.client_email || email,
+          private_key: (parsed.private_key || '').replace(/\\n/g, '\n'),
+        },
+        scopes: [
+          'https://www.googleapis.com/auth/spreadsheets',
+          'https://www.googleapis.com/auth/drive',
+        ],
+      });
+    } catch {}
+  }
+
+  if (key) {
+    // If key is a JSON string
+    if (key.trim().startsWith('{')) {
+      try {
+        const parsed = JSON.parse(key);
+        return new google.auth.GoogleAuth({
+          credentials: {
+            client_email: parsed.client_email || email,
+            private_key: (parsed.private_key || '').replace(/\\n/g, '\n'),
+          },
+          scopes: [
+            'https://www.googleapis.com/auth/spreadsheets',
+            'https://www.googleapis.com/auth/drive',
+          ],
+        });
+      } catch {}
+    }
+
+    // Strip wrapping quotes
+    key = key.replace(/^["']|["']$/g, '').trim();
+    // Replace literal escaped newlines with actual newlines
+    key = key.replace(/\\n/g, '\n').replace(/\\r/g, '');
   }
 
   // Fallback to credential file if env variables not supplied

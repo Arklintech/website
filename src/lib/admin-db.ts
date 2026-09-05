@@ -744,7 +744,11 @@ export const adminDb = {
   },
 
   notifications: {
-    findAll: async (limit = 50): Promise<NotificationRecord[]> => {
+    findAll: async (limit = 100): Promise<NotificationRecord[]> => {
+      const records = await getMergedNotifications();
+      return records.slice(0, limit);
+    },
+    findMany: async (limit = 100): Promise<NotificationRecord[]> => {
       const records = await getMergedNotifications();
       return records.slice(0, limit);
     },
@@ -758,19 +762,7 @@ export const adminDb = {
       records.unshift(record);
       if (records.length > 200) records.length = 200;
       writeJSON(FILES.notifications, records);
-
-      try {
-        await sheetsDb.notifications.create({
-          type: data.type,
-          title: data.title,
-          message: data.body,
-          action_label: data.actionLabel || undefined,
-          action_url: data.actionUrl || undefined,
-        });
-      } catch (err) {
-        console.error('Error persisting notification to Sheets:', err);
-      }
-
+      invalidateAdminDbCache();
       return record;
     },
     markRead: async (id: string): Promise<void> => {
