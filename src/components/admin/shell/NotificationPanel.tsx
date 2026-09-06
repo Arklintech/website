@@ -70,7 +70,7 @@ export default function NotificationPanel({ adminKey, onClose }: NotificationPan
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   return (
-    <div className="fixed right-4 top-16 w-[380px] bg-white border border-[#E8E4DC] rounded-2xl shadow-2xl shadow-black/10 z-50 overflow-hidden flex flex-col max-h-[600px]">
+    <div className="fixed right-2 sm:right-4 top-16 w-[380px] max-w-[calc(100vw-1rem)] bg-white border border-[#E8E4DC] rounded-2xl shadow-2xl shadow-black/10 z-50 overflow-hidden flex flex-col max-h-[600px]">
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E4DC]">
         <div className="flex items-center gap-2">

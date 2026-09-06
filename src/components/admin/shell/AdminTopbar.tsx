@@ -36,37 +36,37 @@ export default function AdminTopbar({ unreadNotifications = 0, adminKey, onLogou
         )}
 
         {/* Search */}
-        <div className="flex-1 max-w-[480px] relative">
-          <Search className="w-3.5 h-3.5 text-[#94A3B8] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+        <div className="flex-1 max-w-[180px] sm:max-w-[480px] min-w-[100px] relative">
+          <Search className="w-3.5 h-3.5 text-[#94A3B8] absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
             placeholder="Search..."
-            className="w-full bg-[#F7F4EC] border border-[#E8E4DC] rounded-lg pl-9 pr-10 sm:pr-14 py-2 text-xs sm:text-sm text-[#0B132B] placeholder-[#94A3B8] focus:outline-none focus:border-[#1463FF] focus:ring-1 focus:ring-[#1463FF]/20 transition-all"
+            className="w-full bg-[#F7F4EC] border border-[#E8E4DC] rounded-lg pl-8 sm:pl-9 pr-2 sm:pr-14 py-1.5 sm:py-2 text-xs sm:text-sm text-[#0B132B] placeholder-[#94A3B8] focus:outline-none focus:border-[#1463FF] focus:ring-1 focus:ring-[#1463FF]/20 transition-all"
           />
           <span className="hidden sm:inline-block absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[9px] font-bold text-[#94A3B8] bg-[#E8E4DC] px-1.5 py-0.5 rounded">
             ⌘K
           </span>
         </div>
 
-        <div className="flex-1" />
+        <div className="flex-1 min-w-[8px]" />
 
         {/* Actions */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 shrink-0">
           {/* Notifications Bell */}
           <button
             onClick={() => setShowNotifications(!showNotifications)}
-            className="relative w-9 h-9 rounded-lg flex items-center justify-center text-[#475569] hover:bg-[#F7F4EC] hover:text-[#0B132B] transition-all"
+            className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center text-[#475569] hover:bg-[#F7F4EC] hover:text-[#0B132B] transition-all"
           >
-            <Bell className="w-4.5 h-4.5" />
+            <Bell className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
             {unreadNotifications > 0 && (
-              <span className="absolute top-1 right-1 min-w-[16px] h-4 rounded-full bg-[#1463FF] text-white text-[9px] font-bold font-mono flex items-center justify-center px-1 leading-none">
+              <span className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 min-w-[15px] h-3.5 sm:h-4 rounded-full bg-[#1463FF] text-white text-[8px] sm:text-[9px] font-bold font-mono flex items-center justify-center px-1 leading-none">
                 {unreadNotifications > 9 ? '9+' : unreadNotifications}
               </span>
             )}
           </button>
 
           {/* Help */}
-          <button className="w-9 h-9 rounded-lg flex items-center justify-center text-[#475569] hover:bg-[#F7F4EC] hover:text-[#0B132B] transition-all">
+          <button className="hidden sm:flex w-9 h-9 rounded-lg items-center justify-center text-[#475569] hover:bg-[#F7F4EC] hover:text-[#0B132B] transition-all">
             <HelpCircle className="w-4 h-4" />
           </button>
 
@@ -75,10 +75,10 @@ export default function AdminTopbar({ unreadNotifications = 0, adminKey, onLogou
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 h-8 rounded-lg border border-[#E8E4DC] text-[11px] font-bold font-mono text-[#475569] hover:border-[#1463FF] hover:text-[#1463FF] transition-all"
+            className="flex items-center gap-1.5 px-2 sm:px-3 h-7 sm:h-8 rounded-lg border border-[#E8E4DC] text-[10px] sm:text-[11px] font-bold font-mono text-[#475569] hover:border-[#1463FF] hover:text-[#1463FF] transition-all"
           >
             <ExternalLink className="w-3 h-3" />
-            <span>SITE</span>
+            <span className="hidden xs:inline sm:inline">SITE</span>
           </a>
 
           {/* User Menu */}

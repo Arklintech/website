@@ -108,68 +108,68 @@ export default function KeystoneLogo({
 
   const textSizes = {
     sm: {
-      title: 'text-xs sm:text-[13px] tracking-[0.24em]',
-      glyphA: 'h-[10px] w-[11px] mr-[0.16em]',
-      sub: 'text-[7px] sm:text-[7.5px] tracking-[0.28em]',
-      wing: 'h-[1.5px] w-4 sm:w-6',
-      gap: 'gap-1.5',
+      title: 'text-[11px] sm:text-xs tracking-[0.16em] sm:tracking-[0.18em]',
+      glyphA: 'h-[9px] w-[10px] mr-[0.14em]',
+      sub: 'text-[6.5px] sm:text-[7px] tracking-[0.2em] sm:tracking-[0.22em]',
+      wing: 'h-[1.5px] w-3 sm:w-4',
+      gap: 'gap-1',
     },
     md: {
-      title: 'text-sm sm:text-[15px] tracking-[0.26em]',
-      glyphA: 'h-[12px] w-[13px] mr-[0.18em]',
-      sub: 'text-[8px] sm:text-[8.5px] tracking-[0.3em]',
-      wing: 'h-[1.8px] w-5 sm:w-8',
-      gap: 'gap-2',
+      title: 'text-xs sm:text-sm tracking-[0.2em] sm:tracking-[0.22em]',
+      glyphA: 'h-[11px] w-[12px] mr-[0.16em]',
+      sub: 'text-[7.5px] sm:text-[8px] tracking-[0.24em] sm:tracking-[0.26em]',
+      wing: 'h-[1.8px] w-4 sm:w-6',
+      gap: 'gap-1.5',
     },
     lg: {
-      title: 'text-lg sm:text-xl tracking-[0.28em]',
-      glyphA: 'h-[15px] w-[16px] mr-[0.2em]',
-      sub: 'text-[9.5px] sm:text-[10px] tracking-[0.32em]',
-      wing: 'h-[2px] w-7 sm:w-10',
-      gap: 'gap-2.5',
+      title: 'text-base sm:text-lg tracking-[0.24em]',
+      glyphA: 'h-[14px] w-[15px] mr-[0.18em]',
+      sub: 'text-[8.5px] sm:text-[9px] tracking-[0.28em]',
+      wing: 'h-[2px] w-6 sm:w-8',
+      gap: 'gap-2',
     },
     xl: {
-      title: 'text-2xl sm:text-3xl tracking-[0.3em]',
-      glyphA: 'h-[20px] w-[22px] mr-[0.22em]',
-      sub: 'text-xs sm:text-sm tracking-[0.34em]',
-      wing: 'h-[2.5px] w-10 sm:w-14',
-      gap: 'gap-3',
+      title: 'text-xl sm:text-2xl tracking-[0.26em]',
+      glyphA: 'h-[18px] w-[20px] mr-[0.2em]',
+      sub: 'text-[10px] sm:text-xs tracking-[0.3em]',
+      wing: 'h-[2.5px] w-8 sm:w-12',
+      gap: 'gap-2.5',
     },
   };
 
   const titleColor = textColor || 'text-[#0B132B]';
 
   const content = (
-    <div className={`inline-flex items-center gap-2.5 sm:gap-3 group focus:outline-none select-none shrink-0 ${className}`}>
+    <div className={`inline-flex items-center gap-2 sm:gap-2.5 group focus:outline-none select-none max-w-full min-w-0 ${className}`}>
       {/* 1. Keystone Icon Mark */}
-      <div className="relative shrink-0 flex items-center justify-center transition-transform duration-200 group-hover:scale-105 -mt-1 sm:-mt-1.5">
+      <div className="relative shrink-0 flex items-center justify-center transition-transform duration-200 group-hover:scale-105 -mt-0.5">
         <KeystoneMark className={markSizes[size]} />
       </div>
 
       {/* 2. Full Typography Lockup (Matching Reference Image 1:1, Centered) */}
       {showText && variant === 'full' && (
-        <div className="flex flex-col items-center justify-center text-center shrink-0">
+        <div className="flex flex-col items-center justify-center text-center min-w-0 flex-1">
           
           {/* Row 1: ΛRKLINTECH in Deep Navy */}
           <div
-            className={`font-black uppercase group-hover:text-[#1463FF] transition-colors leading-none flex items-center justify-center text-center w-full ${titleColor} ${textSizes[size].title}`}
+            className={`font-black uppercase group-hover:text-[#1463FF] transition-colors leading-none flex items-center justify-center text-center w-full min-w-0 ${titleColor} ${textSizes[size].title}`}
             style={{
               fontFamily: "'Syncopate', sans-serif",
             }}
           >
             <ChevronA className={textSizes[size].glyphA} />
-            <span>RKLINTECH</span>
+            <span className="truncate -mr-[0.16em]">RKLINTECH</span>
           </div>
 
           {/* Row 2: Flanking Blue Wings + TECHNOLOGY SYSTEMS */}
-          <div className={`flex items-center justify-center ${textSizes[size].gap} mt-1 sm:mt-1.5 w-full`}>
-            <BlueTaperWing direction="left" className={textSizes[size].wing} />
+          <div className={`flex items-center justify-center ${textSizes[size].gap} mt-1 sm:mt-1.5 w-full min-w-0`}>
+            <BlueTaperWing direction="left" className={`${textSizes[size].wing} shrink`} />
             <span
               className={`font-mono font-bold text-[#536070] uppercase leading-none whitespace-nowrap text-center ${textSizes[size].sub}`}
             >
               TECHNOLOGY SYSTEMS
             </span>
-            <BlueTaperWing direction="right" className={textSizes[size].wing} />
+            <BlueTaperWing direction="right" className={`${textSizes[size].wing} shrink`} />
           </div>
 
         </div>
@@ -179,7 +179,7 @@ export default function KeystoneLogo({
 
   if (href) {
     return (
-      <Link href={href} className="inline-flex items-center focus:outline-none shrink-0" aria-label="ARKLINTECH Technology Systems Homepage">
+      <Link href={href} className="inline-flex items-center focus:outline-none max-w-full min-w-0 shrink-0" aria-label="ARKLINTECH Technology Systems Homepage">
         {content}
       </Link>
     );

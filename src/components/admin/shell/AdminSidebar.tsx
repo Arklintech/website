@@ -110,12 +110,14 @@ export default function AdminSidebar({
   const sidebarContent = (
     <div className="flex flex-col h-full bg-white">
       {/* Logo */}
-      <div className="px-4 py-4 border-b border-[#E8E4DC] flex items-center justify-between">
-        <KeystoneLogo size="sm" href="/admin/command-center" />
+      <div className="px-3.5 py-3.5 border-b border-[#E8E4DC] flex items-center justify-between min-w-0">
+        <div className="min-w-0 flex-1 overflow-hidden">
+          <KeystoneLogo size="sm" href="/admin/command-center" />
+        </div>
         {onCloseMobile && (
           <button
             onClick={onCloseMobile}
-            className="md:hidden p-1 rounded-lg text-[#64748B] hover:bg-[#F5F1E8]"
+            className="md:hidden p-1.5 rounded-lg text-[#64748B] hover:bg-[#F5F1E8] shrink-0 ml-1"
             aria-label="Close Sidebar"
           >
             ✕
@@ -188,7 +190,7 @@ export default function AdminSidebar({
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="w-[220px] shrink-0 h-screen sticky top-0 hidden md:flex flex-col bg-white border-r border-[#E8E4DC] z-20 overflow-hidden">
+      <aside className="w-[235px] shrink-0 h-screen sticky top-0 hidden md:flex flex-col bg-white border-r border-[#E8E4DC] z-20 overflow-hidden">
         {sidebarContent}
       </aside>
 
