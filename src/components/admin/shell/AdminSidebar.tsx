@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Users, Inbox, BookUser, Building2, CalendarCheck,
   Radio, Activity, GitBranch, BarChart3, TrendingUp, Filter,
   Globe, FileBarChart2, UserCog, ShieldCheck, Lock, Settings,
-  ChevronRight, Zap
+  ChevronRight, Zap, Briefcase, Receipt
 } from 'lucide-react';
 
 import KeystoneLogo from '@/components/brand/KeystoneLogo';
@@ -58,6 +58,13 @@ const NAV: NavSection[] = [
       { href: '/admin/contacts', label: 'Contacts', icon: <BookUser className="w-4 h-4" /> },
       { href: '/admin/companies', label: 'Companies', icon: <Building2 className="w-4 h-4" /> },
       { href: '/admin/follow-ups', label: 'Follow-ups', icon: <CalendarCheck className="w-4 h-4" /> },
+    ],
+  },
+  {
+    section: 'OPERATIONS',
+    items: [
+      { href: '/admin/projects', label: 'Projects', icon: <Briefcase className="w-4 h-4" /> },
+      { href: '/admin/billing', label: 'Billing', icon: <Receipt className="w-4 h-4" /> },
     ],
   },
   {

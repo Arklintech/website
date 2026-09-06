@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, Edit2, Trash2, Plus, CheckCircle2, ArrowRight, Building2, Mail, Phone, Globe, MessageSquare, Calendar, Flag } from 'lucide-react';
 import { StatusBadge } from '@/components/admin/shared/StatusBadge';
-import { getStoredAdminKey } from '@/lib/admin-auth';
+import { fetchAdmin } from '@/lib/admin-client';
 import type { LeadRecord, LeadStatus, Priority } from '@/lib/admin-db';
 
 const STAGES: LeadStatus[] = ['NEW', 'CONTACTED', 'QUALIFIED', 'DISCOVERY', 'PROPOSAL', 'ACTIVE', 'WON', 'LOST'];
@@ -19,8 +19,7 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
   const [savingNotes, setSavingNotes] = useState(false);
 
   useEffect(() => {
-    const key = getStoredAdminKey();
-    fetch(`/api/admin/leads/${params.id}?key=${encodeURIComponent(key)}`)
+    fetchAdmin(`/api/admin/leads/${params.id}`)
       .then(r => r.json())
       .then(d => {
         setLead(d?.data || null);
@@ -31,8 +30,7 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
   }, [params.id]);
 
   const updateStatus = async (status: LeadStatus) => {
-    const key = getStoredAdminKey();
-    const res = await fetch(`/api/admin/leads/${params.id}?key=${encodeURIComponent(key)}`, {
+    const res = await fetchAdmin(`/api/admin/leads/${params.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status }),
@@ -41,8 +39,7 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
   };
 
   const updatePriority = async (priority: Priority) => {
-    const key = getStoredAdminKey();
-    const res = await fetch(`/api/admin/leads/${params.id}?key=${encodeURIComponent(key)}`, {
+    const res = await fetchAdmin(`/api/admin/leads/${params.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ priority }),
@@ -52,8 +49,7 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
 
   const saveNotes = async () => {
     setSavingNotes(true);
-    const key = getStoredAdminKey();
-    const res = await fetch(`/api/admin/leads/${params.id}?key=${encodeURIComponent(key)}`, {
+    const res = await fetchAdmin(`/api/admin/leads/${params.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ notes: notesValue }),

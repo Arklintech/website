@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { CalendarCheck, Plus, AlertCircle, Clock, CheckCircle2 } from 'lucide-react';
 import { StatusBadge } from '@/components/admin/shared/StatusBadge';
-import { getStoredAdminKey } from '@/lib/admin-auth';
+import { fetchAdmin } from '@/lib/admin-client';
 
 function formatDate(d: string) {
   if (!d) return '—';
@@ -20,8 +20,7 @@ export default function FollowUpsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const key = getStoredAdminKey();
-    fetch(`/api/admin/followups?key=${encodeURIComponent(key)}`)
+    fetchAdmin('/api/admin/followups')
       .then(r => r.json())
       .then(d => {
         setFollowups(Array.isArray(d?.data) ? d.data : []);
@@ -32,10 +31,9 @@ export default function FollowUpsPage() {
   }, []);
 
   const mark = async (id: string, status: string) => {
-    const key = getStoredAdminKey();
     // Optimistic update
     setFollowups(prev => prev.map(f => f.id === id ? { ...f, status } : f));
-    await fetch(`/api/admin/followups/${id}?key=${encodeURIComponent(key)}`, {
+    await fetchAdmin(`/api/admin/followups/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status }),

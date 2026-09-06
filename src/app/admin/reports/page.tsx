@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Download, FileText } from 'lucide-react';
-import { getStoredAdminKey } from '@/lib/admin-auth';
+import { fetchAdmin } from '@/lib/admin-client';
 
 export default function ReportsPage() {
   const [generating, setGenerating] = useState<string | null>(null);
@@ -16,15 +16,13 @@ export default function ReportsPage() {
 
   const handleDownload = async (id: string) => {
     setGenerating(id);
-    const key = getStoredAdminKey();
 
-    
     try {
       let csvContent = '';
       let filename = `report_${id}_${new Date().toISOString().split('T')[0]}.csv`;
 
       if (id === 'leads') {
-        const res = await fetch(`/api/admin/leads?key=${encodeURIComponent(key)}&limit=1000`);
+        const res = await fetchAdmin('/api/admin/leads?limit=1000');
         const data = await res.json();
         const leads = data.data || [];
         const headers = ['ID', 'Name', 'Email', 'Company', 'Industry', 'Service', 'Budget', 'Status', 'Priority', 'Created At'];
@@ -34,7 +32,7 @@ export default function ReportsPage() {
         ]);
         csvContent = [headers.join(','), ...rows.map((r: any) => r.join(','))].join('\n');
       } else if (id === 'contacts') {
-        const res = await fetch(`/api/admin/contacts?key=${encodeURIComponent(key)}`);
+        const res = await fetchAdmin('/api/admin/contacts');
         const data = await res.json();
         const contacts = data.data || [];
         const headers = ['ID', 'Name', 'Email', 'Phone', 'Company', 'Industry', 'Created At'];
@@ -43,7 +41,7 @@ export default function ReportsPage() {
         ]);
         csvContent = [headers.join(','), ...rows.map((r: any) => r.join(','))].join('\n');
       } else if (id === 'followups') {
-        const res = await fetch(`/api/admin/followups?key=${encodeURIComponent(key)}`);
+        const res = await fetchAdmin('/api/admin/followups');
         const data = await res.json();
         const followups = data.data || [];
         const headers = ['ID', 'Title', 'Due Date', 'Priority', 'Status', 'Owner', 'Created At'];
@@ -52,7 +50,7 @@ export default function ReportsPage() {
         ]);
         csvContent = [headers.join(','), ...rows.map((r: any) => r.join(','))].join('\n');
       } else {
-        const res = await fetch(`/api/admin/visitors?key=${encodeURIComponent(key)}`);
+        const res = await fetchAdmin('/api/admin/visitors');
         const data = await res.json();
         const visitors = data.data || [];
         const headers = ['ID', 'Session ID', 'Current Page', 'Pages Visited Count', 'Duration (s)', 'Intent', 'Device', 'First Seen'];

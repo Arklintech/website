@@ -1,5 +1,36 @@
 [
   {
+    "eventType": "INQUIRY_SUBMITTED",
+    "pathname": "/api/inquiries",
+    "metadata": "{\"inquiryId\":\"inq_2p0xe0jmtq5js7q\",\"service\":\"Website Design & Development\"}",
+    "id": "tel_nc5x957",
+    "timestamp": "2026-09-06T18:35:45.318Z"
+  },
+  {
+    "eventType": "INQUIRY_SUBMITTED",
+    "pathname": "/api/inquiries",
+    "metadata": "{\"inquiryId\":\"inq_kktvhftmtq0j0oi\",\"service\":\"Healthcare Technology System\"}",
+    "userAgent": "node",
+    "id": "tel_zn96cab",
+    "timestamp": "2026-09-06T16:15:12.685Z"
+  },
+  {
+    "eventType": "INQUIRY_SUBMITTED",
+    "pathname": "/api/inquiries",
+    "metadata": "{\"inquiryId\":\"inq_s0gi86mmtpymk51\",\"industry\":\"Technology\",\"service\":\"Core Engineering Systems\"}",
+    "userAgent": "node",
+    "id": "tel_0741aw5",
+    "timestamp": "2026-09-06T15:21:56.663Z"
+  },
+  {
+    "eventType": "INQUIRY_SUBMITTED",
+    "pathname": "/api/inquiries",
+    "metadata": "{\"inquiryId\":\"inq_2mhwh83mtpyf4s3\",\"industry\":\"Technology\",\"service\":\"Core Engineering Systems\"}",
+    "userAgent": "node",
+    "id": "tel_vaw8c78",
+    "timestamp": "2026-09-06T15:16:10.775Z"
+  },
+  {
     "eventType": "SYSTEM_TEST",
     "pathname": "/work",
     "metadata": "{\"status\":\"ok\"}",

@@ -3,15 +3,15 @@ import { adminDb } from '@/lib/admin-db';
 import { verifyAdminRequest } from '@/lib/admin-auth';
 
 export async function GET(req: NextRequest) {
-  const auth = verifyAdminRequest(req);
-  if (!auth.valid) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const auth = await verifyAdminRequest(req);
+  if (!auth.valid) return NextResponse.json({ error: auth.status === 403 ? 'Forbidden: Access denied' : 'Unauthorized' }, { status: auth.status || 401 });
   const companies = await adminDb.companies.findMany();
   return NextResponse.json({ data: companies, total: companies.length });
 }
 
 export async function POST(req: NextRequest) {
-  const auth = verifyAdminRequest(req);
-  if (!auth.valid) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const auth = await verifyAdminRequest(req);
+  if (!auth.valid) return NextResponse.json({ error: auth.status === 403 ? 'Forbidden: Access denied' : 'Unauthorized' }, { status: auth.status || 401 });
   try {
     const { name, website, industry, size, notes } = await req.json();
     if (!name) return NextResponse.json({ error: 'Company name required' }, { status: 400 });

@@ -113,18 +113,54 @@ function objectToRow(tabName: string, obj: Record<string, any>): any[] {
 }
 
 export const sheetsDb = {
+  // Ensure a sheet tab exists with headers
+  ensureTab: async (tabName: string): Promise<void> => {
+    try {
+      const sheets = await getSheetsClient();
+      const meta = await sheets.spreadsheets.get({ spreadsheetId: SPREADSHEET_ID });
+      const existing = (meta.data.sheets || []).map(s => s.properties?.title);
+      if (!existing.includes(tabName)) {
+        await sheets.spreadsheets.batchUpdate({
+          spreadsheetId: SPREADSHEET_ID,
+          requestBody: {
+            requests: [{ addSheet: { properties: { title: tabName } } }],
+          },
+        });
+        const headers = REQUIRED_TABS[tabName] || [];
+        if (headers.length) {
+          await sheets.spreadsheets.values.update({
+            spreadsheetId: SPREADSHEET_ID,
+            range: `'${tabName}'!A1:Z1`,
+            valueInputOption: 'USER_ENTERED',
+            requestBody: { values: [headers] },
+          });
+        }
+      }
+    } catch (err) {
+      // Non-fatal warning
+      console.warn(`Could not ensure tab ${tabName}:`, err);
+    }
+  },
+
   // Read all rows from a tab
   readTab: async (tabName: string): Promise<Record<string, any>[]> => {
-    const rows = await executeWithRetry(async () => {
-      const sheets = await getSheetsClient();
-      const res = await sheets.spreadsheets.values.get({
-        spreadsheetId: SPREADSHEET_ID,
-        range: `'${tabName}'!A2:Z`,
-      });
-      return res.data.values || [];
-    }, { tabName });
+    try {
+      const rows = await executeWithRetry(async () => {
+        const sheets = await getSheetsClient();
+        const res = await sheets.spreadsheets.values.get({
+          spreadsheetId: SPREADSHEET_ID,
+          range: `'${tabName}'!A2:Z`,
+        });
+        return res.data.values || [];
+      }, { tabName });
 
-    return rows.map(r => rowToObject(tabName, r));
+      return rows.map(r => rowToObject(tabName, r));
+    } catch (err: any) {
+      try {
+        await sheetsDb.ensureTab(tabName);
+      } catch {}
+      return [];
+    }
   },
 
   // Batch read multiple tabs sequentially to avoid quota bursts
@@ -141,14 +177,26 @@ export const sheetsDb = {
     return executeWithRetry(async () => {
       const sheets = await getSheetsClient();
       const rowData = objectToRow(tabName, recordObj);
-      await sheets.spreadsheets.values.append({
-        spreadsheetId: SPREADSHEET_ID,
-        range: `'${tabName}'!A:Z`,
-        valueInputOption: 'USER_ENTERED',
-        requestBody: {
-          values: [rowData],
-        },
-      });
+      try {
+        await sheets.spreadsheets.values.append({
+          spreadsheetId: SPREADSHEET_ID,
+          range: `'${tabName}'!A:Z`,
+          valueInputOption: 'USER_ENTERED',
+          requestBody: {
+            values: [rowData],
+          },
+        });
+      } catch (err: any) {
+        await sheetsDb.ensureTab(tabName);
+        await sheets.spreadsheets.values.append({
+          spreadsheetId: SPREADSHEET_ID,
+          range: `'${tabName}'!A:Z`,
+          valueInputOption: 'USER_ENTERED',
+          requestBody: {
+            values: [rowData],
+          },
+        });
+      }
       return recordObj;
     }, { tabName });
   },

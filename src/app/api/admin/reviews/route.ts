@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/admin-db';
+import { verifyAdminRequest } from '@/lib/admin-auth';
 
 export async function GET(req: NextRequest) {
+  const auth = await verifyAdminRequest(req);
+  if (!auth.valid) return NextResponse.json({ error: auth.status === 403 ? 'Forbidden: Access denied' : 'Unauthorized' }, { status: auth.status || 401 });
+
   try {
     const reviews = await adminDb.reviews.findMany();
     return NextResponse.json({ success: true, reviews });
@@ -11,6 +15,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const auth = await verifyAdminRequest(req);
+  if (!auth.valid) return NextResponse.json({ error: auth.status === 403 ? 'Forbidden: Access denied' : 'Unauthorized' }, { status: auth.status || 401 });
   try {
     const body = await req.json();
     const { authorName, authorTitle, authorCompany, rating, comment, source, published } = body;

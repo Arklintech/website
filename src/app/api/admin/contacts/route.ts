@@ -3,8 +3,8 @@ import { adminDb } from '@/lib/admin-db';
 import { verifyAdminRequest } from '@/lib/admin-auth';
 
 export async function GET(req: NextRequest) {
-  const auth = verifyAdminRequest(req);
-  if (!auth.valid) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const auth = await verifyAdminRequest(req);
+  if (!auth.valid) return NextResponse.json({ error: auth.status === 403 ? 'Forbidden: Access denied' : 'Unauthorized' }, { status: auth.status || 401 });
   try {
     const contacts = await adminDb.contacts.findMany();
     return NextResponse.json({ data: contacts, total: contacts.length });
@@ -18,8 +18,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const auth = verifyAdminRequest(req);
-  if (!auth.valid) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const auth = await verifyAdminRequest(req);
+  if (!auth.valid) return NextResponse.json({ error: auth.status === 403 ? 'Forbidden: Access denied' : 'Unauthorized' }, { status: auth.status || 401 });
   try {
     const { name, email, phone, company, industry, notes } = await req.json();
     if (!name || !email) return NextResponse.json({ error: 'name and email required' }, { status: 400 });

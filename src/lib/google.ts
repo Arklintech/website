@@ -54,6 +54,37 @@ export const REQUIRED_TABS: Record<string, string[]> = {
   ],
   Settings: [
     'setting_key', 'setting_value', 'description', 'updated_at'
+  ],
+  Projects: [
+    'project_id', 'name', 'client_name', 'company_id', 'description', 'industry',
+    'project_type', 'technologies', 'team', 'priority', 'status', 'start_date',
+    'target_date', 'project_ref', 'project_value', 'progress', 'current_stage',
+    'created_at', 'updated_at'
+  ],
+  ProjectMilestones: [
+    'milestone_id', 'project_id', 'title', 'description', 'due_date', 'status',
+    'created_at', 'updated_at'
+  ],
+  ProjectUpdates: [
+    'update_id', 'project_id', 'progress', 'stage', 'notes', 'author', 'created_at'
+  ],
+  ProjectFiles: [
+    'file_id', 'project_id', 'name', 'drive_url', 'size_bytes', 'mime_type', 'created_at'
+  ],
+  ProjectNotes: [
+    'note_id', 'project_id', 'title', 'content', 'author', 'created_at', 'updated_at'
+  ],
+  Invoices: [
+    'invoice_id', 'invoice_number', 'project_id', 'company_id', 'client_name',
+    'client_address', 'client_email', 'client_phone', 'invoice_date', 'due_date',
+    'payment_terms', 'currency', 'subtotal', 'discount', 'tax_pct', 'tax_amount',
+    'total', 'amount_in_words', 'status', 'notes', 'pdf_drive_url', 'created_at', 'updated_at'
+  ],
+  InvoiceItems: [
+    'item_id', 'invoice_id', 'service_name', 'description', 'qty', 'rate', 'amount'
+  ],
+  Services: [
+    'service_id', 'name', 'description', 'category', 'created_at'
   ]
 };
 

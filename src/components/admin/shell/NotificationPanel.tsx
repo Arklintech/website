@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { X, Bell, Zap, MessageSquare, Clock, AlertCircle, Mail, Users } from 'lucide-react';
 import type { NotificationRecord, NotificationType } from '@/lib/admin-db';
 import Link from 'next/link';
+import { fetchAdmin } from '@/lib/admin-client';
 
 const NOTIF_ICONS: Record<NotificationType, React.ReactNode> = {
   NEW_LEAD: <Zap className="w-4 h-4 text-[#1463FF]" />,
@@ -50,19 +51,19 @@ export default function NotificationPanel({ adminKey, onClose }: NotificationPan
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`/api/admin/notifications?key=${encodeURIComponent(adminKey)}`)
+    fetchAdmin('/api/admin/notifications')
       .then(r => r.json())
       .then(d => { setNotifications(d.data || []); setLoading(false); })
       .catch(() => setLoading(false));
   }, [adminKey]);
 
   const markAllRead = async () => {
-    await fetch(`/api/admin/notifications?key=${encodeURIComponent(adminKey)}`, { method: 'PATCH' });
+    await fetchAdmin('/api/admin/notifications', { method: 'PATCH' });
     setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
   };
 
   const markRead = async (id: string) => {
-    await fetch(`/api/admin/notifications?id=${id}&key=${encodeURIComponent(adminKey)}`, { method: 'PATCH' });
+    await fetchAdmin(`/api/admin/notifications?id=${id}`, { method: 'PATCH' });
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n));
   };
 

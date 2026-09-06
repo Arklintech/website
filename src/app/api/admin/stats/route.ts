@@ -4,8 +4,8 @@ import { db } from '@/lib/db';
 import { verifyAdminRequest } from '@/lib/admin-auth';
 
 export async function GET(req: NextRequest) {
-  const auth = verifyAdminRequest(req);
-  if (!auth.valid) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const auth = await verifyAdminRequest(req);
+  if (!auth.valid) return NextResponse.json({ error: auth.status === 403 ? 'Forbidden: Access denied' : 'Unauthorized' }, { status: auth.status || 401 });
 
   try {
     const [
@@ -88,13 +88,11 @@ export async function GET(req: NextRequest) {
       },
       pipeline,
       recentLeads,
-      topSources: [
-        { source: 'Organic Search', visits: Math.floor(Math.random() * 800) + 400, pct: 42 },
-        { source: 'Direct', visits: Math.floor(Math.random() * 400) + 200, pct: 24 },
-        { source: 'Referral', visits: Math.floor(Math.random() * 200) + 100, pct: 18 },
-        { source: 'Social Media', visits: Math.floor(Math.random() * 150) + 80, pct: 11 },
-        { source: 'Other', visits: Math.floor(Math.random() * 50) + 20, pct: 5 },
-      ],
+      topSources: Object.entries(sourceCounts).map(([source, visits]) => ({
+        source,
+        visits,
+        pct: telemetry.length > 0 ? Math.round((visits / telemetry.length) * 100) : 0,
+      })),
       followups: {
         counts: followupCounts,
         total: followupCounts.overdue + followupCounts.dueToday + followupCounts.dueThisWeek + followupCounts.upcoming,

@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Inbox, MessageSquare, Search, ArrowRight, User, Clock } from 'lucide-react';
+import { Inbox, MessageSquare, Search, ArrowRight, User, Clock, FileText } from 'lucide-react';
 import { StatusBadge } from '@/components/admin/shared/StatusBadge';
-import { getStoredAdminKey } from '@/lib/admin-auth';
+import { fetchAdmin } from '@/lib/admin-client';
 import type { ConversationRecord, MessageRecord } from '@/lib/admin-db';
 
 function timeAgo(ts: string): string {
@@ -23,38 +23,40 @@ export default function InboxPage() {
   const [loading, setLoading] = useState(true);
   const [replyBody, setReplyBody] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    const key = getStoredAdminKey();
-    fetch(`/api/admin/conversations?key=${encodeURIComponent(key)}`)
+  const loadConversations = () => {
+    fetchAdmin('/api/admin/conversations')
       .then(r => r.json())
       .then(d => { setConversations(Array.isArray(d?.data) ? d.data : []); setLoading(false); })
       .catch(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadConversations();
   }, []);
 
   const openConversation = async (conv: ConversationRecord) => {
     setSelected(conv);
-    const key = getStoredAdminKey();
-    const res = await fetch(`/api/admin/conversations/${conv.id}?key=${encodeURIComponent(key)}`);
+    const res = await fetchAdmin(`/api/admin/conversations/${conv.id}`);
     if (res.ok) {
       const d = await res.json();
       setMessages(Array.isArray(d?.messages) ? d.messages : []);
     }
   };
 
-  const sendReply = async () => {
+  const addInternalNote = async () => {
     if (!selected || !replyBody.trim()) return;
     setSendingReply(true);
-    const key = getStoredAdminKey();
-    const res = await fetch(`/api/admin/messages?key=${encodeURIComponent(key)}`, {
+    const res = await fetchAdmin('/api/admin/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         conversationId: selected.id,
         body: replyBody,
-        direction: 'OUTBOUND',
-        isInternal: false,
-        from: 'admin@arklintech.com',
+        direction: 'INTERNAL',
+        isInternal: true,
+        from: 'work@arklintech.com',
       }),
     });
     if (res.ok) {
@@ -65,14 +67,11 @@ export default function InboxPage() {
     setSendingReply(false);
   };
 
-
-  const DEMO_CONVS: any[] = [
-    { id: 'c1', subject: 'Re: Automation System Proposal', status: 'OPEN', unreadCount: 2, lastMessageAt: new Date(Date.now() - 300000).toISOString(), contactId: null, updatedAt: new Date(Date.now() - 300000).toISOString(), createdAt: new Date(Date.now() - 86400000).toISOString(), leadId: null, companyId: null, assigneeId: null },
-    { id: 'c2', subject: 'ERP Platform Query', status: 'WAITING_FOR_THEM', unreadCount: 0, lastMessageAt: new Date(Date.now() - 3600000).toISOString(), contactId: null, updatedAt: new Date(Date.now() - 3600000).toISOString(), createdAt: new Date(Date.now() - 172800000).toISOString(), leadId: null, companyId: null, assigneeId: null },
-    { id: 'c3', subject: 'Healthcare Platform Discussion', status: 'OPEN', unreadCount: 1, lastMessageAt: new Date(Date.now() - 7200000).toISOString(), contactId: null, updatedAt: new Date(Date.now() - 7200000).toISOString(), createdAt: new Date(Date.now() - 259200000).toISOString(), leadId: null, companyId: null, assigneeId: null },
-  ];
-
-  const displayConvs = conversations.length > 0 ? conversations : DEMO_CONVS;
+  const filteredConvs = conversations.filter(c => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return (c.subject || '').toLowerCase().includes(q) || (c.id || '').toLowerCase().includes(q);
+  });
 
   return (
     <div className="h-[calc(100vh-56px)] min-h-[500px] flex overflow-hidden">
@@ -82,13 +81,15 @@ export default function InboxPage() {
           <div className="flex items-center justify-between mb-3">
             <h1 className="font-bold text-sm text-[#0B132B]">Inbox</h1>
             <span className="font-mono text-[9px] font-bold text-[#94A3B8] bg-[#F7F4EC] px-2 py-0.5 rounded-full">
-              {displayConvs.filter((c: any) => c.unreadCount > 0).length} UNREAD
+              {conversations.filter(c => c.unreadCount > 0).length} UNREAD
             </span>
           </div>
           <div className="relative">
             <Search className="w-3.5 h-3.5 text-[#94A3B8] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
               placeholder="Search conversations..."
               className="w-full bg-[#F7F4EC] border border-[#E8E4DC] rounded-lg pl-9 pr-3 py-2 text-sm text-[#0B132B] placeholder-[#94A3B8] focus:outline-none focus:border-[#1463FF] transition-all"
             />
@@ -100,35 +101,43 @@ export default function InboxPage() {
             <div className="p-8 text-center">
               <div className="w-6 h-6 border-2 border-[#1463FF] border-t-transparent rounded-full animate-spin mx-auto" />
             </div>
-          ) : displayConvs.map((conv: any) => (
-            <button
-              key={conv.id}
-              onClick={() => openConversation(conv)}
-              className={`w-full text-left px-4 py-3.5 transition-all hover:bg-[#FDFBF7] ${selected?.id === conv.id ? 'bg-[#EDF4FF]' : ''}`}
-            >
-              <div className="flex items-start gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-[#EDF4FF] border border-[#1463FF]/15 flex items-center justify-center text-[#1463FF] font-bold text-[11px] shrink-0">
-                  <User className="w-4 h-4" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-1 mb-0.5">
-                    <span className={`font-semibold text-[12px] truncate ${conv.unreadCount > 0 ? 'text-[#0B132B]' : 'text-[#475569]'}`}>
-                      {conv.subject || `Conversation ${conv.id.slice(-4)}`}
-                    </span>
-                    <span className="font-mono text-[9px] text-[#94A3B8] whitespace-nowrap">{timeAgo(conv.lastMessageAt || conv.updatedAt)}</span>
+          ) : filteredConvs.length === 0 ? (
+            <div className="p-8 text-center">
+              <Inbox className="w-8 h-8 text-[#D8D4C9] mx-auto mb-2" />
+              <p className="font-bold text-xs text-[#0B132B]">No conversations found</p>
+              <p className="text-[11px] text-[#94A3B8] mt-1">Inquiries from the website will generate conversation threads here.</p>
+            </div>
+          ) : (
+            filteredConvs.map(conv => (
+              <button
+                key={conv.id}
+                onClick={() => openConversation(conv)}
+                className={`w-full text-left px-4 py-3.5 transition-all hover:bg-[#FDFBF7] ${selected?.id === conv.id ? 'bg-[#EDF4FF]' : ''}`}
+              >
+                <div className="flex items-start gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-[#EDF4FF] border border-[#1463FF]/15 flex items-center justify-center text-[#1463FF] font-bold text-[11px] shrink-0">
+                    <User className="w-4 h-4" />
                   </div>
-                  <div className="flex items-center justify-between gap-1">
-                    <StatusBadge status={conv.status} />
-                    {conv.unreadCount > 0 && (
-                      <span className="min-w-[18px] h-[18px] rounded-full bg-[#1463FF] text-white text-[9px] font-bold font-mono flex items-center justify-center px-1">
-                        {conv.unreadCount}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-1 mb-0.5">
+                      <span className={`font-semibold text-[12px] truncate ${conv.unreadCount > 0 ? 'text-[#0B132B]' : 'text-[#475569]'}`}>
+                        {conv.subject || `Conversation ${conv.id.slice(-4)}`}
                       </span>
-                    )}
+                      <span className="font-mono text-[9px] text-[#94A3B8] whitespace-nowrap">{timeAgo(conv.lastMessageAt || conv.updatedAt)}</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-1">
+                      <StatusBadge status={conv.status} />
+                      {conv.unreadCount > 0 && (
+                        <span className="min-w-[18px] h-[18px] rounded-full bg-[#1463FF] text-white text-[9px] font-bold font-mono flex items-center justify-center px-1">
+                          {conv.unreadCount}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </button>
-          ))}
+              </button>
+            ))
+          )}
         </div>
       </div>
 
@@ -139,7 +148,7 @@ export default function InboxPage() {
             <div className="text-center p-4">
               <Inbox className="w-12 h-12 text-[#D8D4C9] mx-auto mb-3" />
               <p className="font-bold text-[#475569]">Select a conversation</p>
-              <p className="text-sm text-[#94A3B8] mt-1">Click a conversation to read and reply.</p>
+              <p className="text-sm text-[#94A3B8] mt-1">Review inquiries, record internal notes, and manage status.</p>
             </div>
           </div>
         ) : (
@@ -169,7 +178,7 @@ export default function InboxPage() {
               {messages.length === 0 ? (
                 <div className="text-center py-12">
                   <MessageSquare className="w-8 h-8 text-[#D8D4C9] mx-auto mb-2" />
-                  <p className="text-sm text-[#94A3B8] font-mono">No messages yet. Send the first reply below.</p>
+                  <p className="text-sm text-[#94A3B8] font-mono">No messages logged yet. Record an internal note below.</p>
                 </div>
               ) : (
                 messages.map(msg => (
@@ -199,39 +208,27 @@ export default function InboxPage() {
               )}
             </div>
 
-            {/* Reply Input */}
+            {/* Internal Note & Journal Input */}
             <div className="p-4 border-t border-[#E8E4DC] bg-white">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="font-mono text-[9px] font-bold text-[#64748B] uppercase">Internal Operational Note (work@arklintech.com)</span>
+                <span className="text-[10px] text-[#94A3B8]">Replies sent manually via corporate mailbox</span>
+              </div>
               <div className="flex gap-3">
                 <textarea
                   value={replyBody}
                   onChange={e => setReplyBody(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter' && e.metaKey) sendReply(); }}
-                  rows={3}
-                  placeholder="Write a reply... (⌘+Enter to send)"
-                  className="flex-1 bg-[#F7F4EC] border border-[#D8D4C9] rounded-xl px-4 py-3 text-sm text-[#0B132B] placeholder-[#94A3B8] focus:outline-none focus:border-[#1463FF] focus:ring-1 focus:ring-[#1463FF]/20 resize-none"
+                  rows={2}
+                  placeholder="Record an internal operational note or call summary..."
+                  className="flex-1 bg-[#F7F4EC] border border-[#D8D4C9] rounded-xl px-4 py-2.5 text-sm text-[#0B132B] placeholder-[#94A3B8] focus:outline-none focus:border-[#1463FF] resize-none"
                 />
-                <div className="flex flex-col gap-2">
-                  <button
-                    onClick={sendReply}
-                    disabled={sendingReply || !replyBody.trim()}
-                    className="px-4 py-2 bg-[#1463FF] hover:bg-[#004AD6] text-white text-[11px] font-bold font-mono rounded-lg transition-all disabled:opacity-50 flex items-center gap-1.5"
-                  >
-                    {sendingReply ? 'SENDING...' : 'SEND'} <ArrowRight className="w-3 h-3" />
-                  </button>
-                  <button
-                    className="px-4 py-2 border border-[#D8D4C9] text-[11px] font-bold font-mono rounded-lg text-amber-600 border-amber-200 bg-amber-50 hover:bg-amber-100 transition-all"
-                    onClick={async () => {
-                      const key = sessionStorage.getItem('ark_admin_pass') || '';
-                      await fetch(`/api/admin/messages?key=${encodeURIComponent(key)}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ conversationId: selected.id, body: replyBody, direction: 'INTERNAL', isInternal: true }),
-                      });
-                    }}
-                  >
-                    NOTE
-                  </button>
-                </div>
+                <button
+                  onClick={addInternalNote}
+                  disabled={sendingReply || !replyBody.trim()}
+                  className="px-4 py-2 bg-[#1463FF] hover:bg-[#004AD6] text-white text-[11px] font-bold font-mono rounded-lg transition-all disabled:opacity-50 flex items-center gap-1.5 shrink-0 self-end"
+                >
+                  {sendingReply ? 'SAVING...' : 'SAVE NOTE'} <ArrowRight className="w-3 h-3" />
+                </button>
               </div>
             </div>
           </>
@@ -252,8 +249,7 @@ export default function InboxPage() {
                   <button
                     key={s}
                     onClick={async () => {
-                      const key = sessionStorage.getItem('ark_admin_pass') || '';
-                      const res = await fetch(`/api/admin/conversations/${selected.id}?key=${encodeURIComponent(key)}`, {
+                      const res = await fetchAdmin(`/api/admin/conversations/${selected.id}`, {
                         method: 'PATCH',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ status: s }),

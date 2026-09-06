@@ -16,7 +16,7 @@ export default function RolesPage() {
     { name: 'Manage Leads & Pipeline', superAdmin: true, sales: true, dev: false, viewer: false },
     { name: 'Access Inbox & Reply', superAdmin: true, sales: true, dev: false, viewer: false },
     { name: 'View Telemetry & Health', superAdmin: true, sales: false, dev: true, viewer: false },
-    { name: 'Modify System Passcode', superAdmin: true, sales: false, dev: false, viewer: false },
+    { name: 'Manage Security & Firebase Auth', superAdmin: true, sales: false, dev: false, viewer: false },
     { name: 'Export Reports', superAdmin: true, sales: true, dev: true, viewer: true },
   ];
 

@@ -7,7 +7,7 @@ import {
   ChevronRight, ArrowUpRight, Building2, Mail, Phone, Calendar, User
 } from 'lucide-react';
 import { StatusBadge } from '@/components/admin/shared/StatusBadge';
-import { getStoredAdminKey } from '@/lib/admin-auth';
+import { fetchAdmin } from '@/lib/admin-client';
 import type { LeadRecord, LeadStatus } from '@/lib/admin-db';
 
 const STAGES: { value: LeadStatus | 'ALL'; label: string }[] = [
@@ -49,9 +49,8 @@ export default function LeadsPage() {
     setLoading(true);
     setErrorMsg(null);
     try {
-      const key = getStoredAdminKey();
-      const statusParam = filter !== 'ALL' ? `&status=${filter}` : '';
-      const res = await fetch(`/api/admin/leads?key=${encodeURIComponent(key)}${statusParam}&limit=100`);
+      const statusParam = filter !== 'ALL' ? `?status=${filter}&limit=100` : '?limit=100';
+      const res = await fetchAdmin(`/api/admin/leads${statusParam}`);
       const d = await res.json().catch(() => null);
       if (res.ok && d && !d.error) {
         setLeads(Array.isArray(d?.data) ? d.data : []);
@@ -219,9 +218,8 @@ export default function LeadsPage() {
                         value={lead.status}
                         onChange={async (e) => {
                           const newStatus = e.target.value as LeadStatus;
-                          const key = sessionStorage.getItem('ark_admin_pass') || '';
                           setLeads(prev => prev.map(l => l.id === lead.id ? { ...l, status: newStatus } : l));
-                          await fetch(`/api/admin/leads/${lead.id}?key=${encodeURIComponent(key)}`, {
+                          await fetchAdmin(`/api/admin/leads/${lead.id}`, {
                             method: 'PATCH',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ status: newStatus }),

@@ -1,23 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { verifyAdminRequest } from '@/lib/admin-auth';
 
 export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = params;
-    const { searchParams } = new URL(req.url);
-    const key = req.headers.get('x-admin-key') || searchParams.get('key');
-    const adminPasscode = process.env.ADMIN_PASSCODE || 'arklintech2026';
-
-    if (key !== adminPasscode) {
+    const auth = await verifyAdminRequest(req);
+    if (!auth.valid) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized.' },
-        { status: 401 }
+        { success: false, error: auth.status === 403 ? 'Forbidden' : 'Unauthorized.' },
+        { status: auth.status || 401 }
       );
     }
 
+    const { id } = params;
     const body = await req.json();
     const { status, notes } = body;
 
@@ -56,17 +54,15 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = params;
-    const { searchParams } = new URL(req.url);
-    const key = req.headers.get('x-admin-key') || searchParams.get('key');
-    const adminPasscode = process.env.ADMIN_PASSCODE || 'arklintech2026';
-
-    if (key !== adminPasscode) {
+    const auth = await verifyAdminRequest(req);
+    if (!auth.valid) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized.' },
-        { status: 401 }
+        { success: false, error: auth.status === 403 ? 'Forbidden' : 'Unauthorized.' },
+        { status: auth.status || 401 }
       );
     }
+
+    const { id } = params;
 
     const deleted = await db.inquiries.delete(id);
     if (!deleted) {

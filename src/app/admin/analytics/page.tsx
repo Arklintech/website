@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart3, TrendingUp, Users, Globe, Clock, Eye, ArrowUpRight, ArrowDownRight, RefreshCw, Calendar } from 'lucide-react';
 import MetricSparkline from '@/components/admin/shared/MetricSparkline';
-import { getStoredAdminKey } from '@/lib/admin-auth';
+import { fetchAdmin } from '@/lib/admin-client';
 
 interface TopPage {
   path: string;
@@ -26,8 +26,7 @@ export default function AnalyticsPage() {
   const [analyticsData, setAnalyticsData] = useState<any>(null);
 
   useEffect(() => {
-    const key = getStoredAdminKey();
-    fetch(`/api/admin/analytics?key=${encodeURIComponent(key)}`)
+    fetchAdmin('/api/admin/analytics')
       .then(r => r.json())
       .then(d => { setAnalyticsData(d); setLoading(false); })
       .catch(() => setLoading(false));

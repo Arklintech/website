@@ -3,8 +3,8 @@ import { adminDb } from '@/lib/admin-db';
 import { verifyAdminRequest } from '@/lib/admin-auth';
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const auth = verifyAdminRequest(req);
-  if (!auth.valid) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const auth = await verifyAdminRequest(req);
+  if (!auth.valid) return NextResponse.json({ error: auth.status === 403 ? 'Forbidden: Access denied' : 'Unauthorized' }, { status: auth.status || 401 });
 
   const lead = await adminDb.leads.findById(params.id);
   if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
@@ -12,8 +12,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
-  const auth = verifyAdminRequest(req);
-  if (!auth.valid) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const auth = await verifyAdminRequest(req);
+  if (!auth.valid) return NextResponse.json({ error: auth.status === 403 ? 'Forbidden: Access denied' : 'Unauthorized' }, { status: auth.status || 401 });
 
   try {
     const updates = await req.json();
@@ -27,8 +27,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-  const auth = verifyAdminRequest(req);
-  if (!auth.valid) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const auth = await verifyAdminRequest(req);
+  if (!auth.valid) return NextResponse.json({ error: auth.status === 403 ? 'Forbidden: Access denied' : 'Unauthorized' }, { status: auth.status || 401 });
 
   const success = await adminDb.leads.delete(params.id);
   if (!success) return NextResponse.json({ error: 'Lead not found' }, { status: 404 });

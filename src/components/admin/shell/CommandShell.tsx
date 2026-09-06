@@ -1,22 +1,13 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { ArrowRight, Lock, ShieldCheck, Eye, EyeOff } from 'lucide-react';
-import { storeAdminKey, clearAdminSession } from '@/lib/admin-auth';
+import { ArrowRight, Lock, ShieldCheck, Eye, EyeOff, User } from 'lucide-react';
+import { auth } from '@/lib/firebase';
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { logoutAdmin } from '@/lib/admin-client';
 import AdminSidebar from './AdminSidebar';
 import KeystoneLogo from '@/components/brand/KeystoneLogo';
 import AdminTopbar from './AdminTopbar';
-
-// Keystone logo inline
-function KeystoneMark() {
-  return (
-    <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
-      <path d="M4 28L10 8h12l6 20H4z" fill="#1463FF" opacity="0.12" />
-      <path d="M4 28L10 8h12l6 20" stroke="#1463FF" strokeWidth="2.5" strokeLinejoin="round" fill="none" />
-      <path d="M9 18h14" stroke="#1463FF" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 interface CommandShellProps {
   children: React.ReactNode;
@@ -25,7 +16,8 @@ interface CommandShellProps {
 export default function CommandShell({ children }: CommandShellProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [adminKey, setAdminKey] = useState('');
-  const [passcode, setPasscode] = useState('arklintech2026');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState('');
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -33,69 +25,129 @@ export default function CommandShell({ children }: CommandShellProps) {
   const [sidebarData, setSidebarData] = useState({ inboxUnread: 0, followupsOverdue: 0, leadsNew: 0, unreadNotifications: 0 });
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
-
-  const fetchSidebarData = useCallback(async (key: string) => {
-    try {
-      const res = await fetch(`/api/admin/stats?key=${encodeURIComponent(key)}`);
-      if (res.ok) {
-        const data = await res.json();
-        setSidebarData({
-          inboxUnread: data.kpis?.conversations ?? 0,
-          followupsOverdue: data.followups?.counts?.overdue ?? 0,
-          leadsNew: data.kpis?.leads ?? 0,
-          unreadNotifications: data.kpis?.unreadNotifications ?? 0,
-        });
-      }
-    } catch {}
-  }, []);
-
-  const authenticate = useCallback(async (key: string) => {
-    setLoading(true);
-    setAuthError('');
-    try {
-      const res = await fetch(`/api/admin/stats?key=${encodeURIComponent(key)}`, { cache: 'no-store' });
-      if (res.ok) {
-        storeAdminKey(key);
-        setAdminKey(key);
-        setIsAuthenticated(true);
-        const data = await res.json();
-        setSidebarData({
-          inboxUnread: data.kpis?.conversations ?? 0,
-          followupsOverdue: data.followups?.counts?.overdue ?? 0,
-          leadsNew: data.kpis?.leads ?? 0,
-          unreadNotifications: data.kpis?.unreadNotifications ?? 0,
-        });
-      } else if (res.status === 401) {
-        setAuthError('Access denied: Invalid administrator passcode.');
-      } else {
-        setAuthError('Server response error. Please try again.');
-      }
-    } catch (err) {
-      console.error('Auth error:', err);
-      setAuthError('Connection error. Please refresh the page and try again.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  // Auto-login from session or default admin passcode
+  // Authenticate session state via Firebase onAuthStateChanged
   useEffect(() => {
-    const saved = typeof window !== 'undefined' ? sessionStorage.getItem('ark_admin_pass') : null;
-    const keyToUse = saved || 'arklintech2026';
-    authenticate(keyToUse).finally(() => setInitializing(false));
-  }, [authenticate]);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
+      if (firebaseUser) {
+        try {
+          const token = await firebaseUser.getIdToken();
+          const res = await fetch('/api/admin/stats', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (res.ok) {
+            setAdminKey(token);
+            setIsAuthenticated(true);
+            const data = await res.json();
+            setSidebarData({
+              inboxUnread: data.kpis?.conversations ?? 0,
+              followupsOverdue: data.followups?.counts?.overdue ?? 0,
+              leadsNew: data.kpis?.leads ?? 0,
+              unreadNotifications: data.kpis?.unreadNotifications ?? 0,
+            });
+          } else {
+            await signOut(auth);
+            setIsAuthenticated(false);
+            setAdminKey('');
+          }
+        } catch (err) {
+          console.error('Firebase session check error:', err);
+          setIsAuthenticated(false);
+          setAdminKey('');
+        }
+      } else {
+        setIsAuthenticated(false);
+        setAdminKey('');
+      }
+      setInitializing(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!passcode.trim()) { setAuthError('Enter your administrator passcode.'); return; }
-    await authenticate(passcode.trim());
+    setAuthError('');
+
+    if (!username.trim() || !password.trim()) {
+      setAuthError('Please enter both username and password.');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const cleanUser = username.trim();
+      const defaultAdminEmail = (process.env.NEXT_PUBLIC_ADMIN_AUTH_EMAIL || 'ahmedkhananas57@gmail.com').trim();
+      const emailToUse = cleanUser.includes('@') ? cleanUser : defaultAdminEmail;
+
+      // 1. Authenticate with Firebase Auth
+      const userCredential = await signInWithEmailAndPassword(auth, emailToUse, password.trim());
+      const token = await userCredential.user.getIdToken();
+
+      // 2. Verify COMMAND admin authorization server-side
+      const verifyRes = await fetch('/api/admin/stats', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (verifyRes.status === 403) {
+        await signOut(auth);
+        setAuthError('This Firebase account is not authorized for COMMAND access.');
+        setIsAuthenticated(false);
+        return;
+      }
+
+      if (!verifyRes.ok) {
+        await signOut(auth);
+        setAuthError('Authentication verification failed. Please try again.');
+        setIsAuthenticated(false);
+        return;
+      }
+
+      // 3. Grant access
+      setAdminKey(token);
+      setIsAuthenticated(true);
+      const data = await verifyRes.json();
+      setSidebarData({
+        inboxUnread: data.kpis?.conversations ?? 0,
+        followupsOverdue: data.followups?.counts?.overdue ?? 0,
+        leadsNew: data.kpis?.leads ?? 0,
+        unreadNotifications: data.kpis?.unreadNotifications ?? 0,
+      });
+    } catch (err: any) {
+      const errorCode = err?.code || '';
+      if (
+        errorCode === 'auth/wrong-password' ||
+        errorCode === 'auth/invalid-credential' ||
+        errorCode === 'auth/user-not-found' ||
+        errorCode === 'auth/invalid-email'
+      ) {
+        setAuthError('Invalid username or password. Access denied.');
+      } else if (errorCode === 'auth/user-disabled') {
+        setAuthError('This administrator account has been disabled.');
+      } else if (errorCode === 'auth/too-many-requests') {
+        setAuthError('Too many failed attempts. Please try again later.');
+      } else if (errorCode === 'auth/network-request-failed') {
+        setAuthError('Network error. Check your connection.');
+      } else {
+        setAuthError('Invalid username or password. Access denied.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleLogout = () => {
-    clearAdminSession();
+  const handleLogout = async () => {
+    await logoutAdmin();
     setIsAuthenticated(false);
     setAdminKey('');
-    setPasscode('');
+    setUsername('');
+    setPassword('');
+    setAuthError('');
   };
 
   // ── Initializing ─────────────────────────────────────────────────────────────
@@ -110,7 +162,7 @@ export default function CommandShell({ children }: CommandShellProps) {
     );
   }
 
-  // ── Login Screen ──────────────────────────────────────────────────────────────
+  // ── Username + Password Login Screen ──────────────────────────────────────────
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#F5F1E8] flex items-center justify-center p-4">
@@ -131,36 +183,62 @@ export default function CommandShell({ children }: CommandShellProps) {
               </div>
             </div>
 
-            <p className="text-[13px] text-[#475569] leading-relaxed mb-6">
-              Internal operating platform. Enter your administrator passcode to access the command interface.
+            <p className="text-[13px] text-[#475569] leading-relaxed mb-6 text-center">
+              Internal operating platform. Enter your administrator username and password to access the command interface.
             </p>
 
             <form onSubmit={handleLogin} className="space-y-4">
+              {authError && (
+                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 font-medium">
+                  {authError}
+                </div>
+              )}
+
+              {/* USERNAME FIELD */}
               <div>
-                <label className="font-mono text-[9px] uppercase tracking-widest text-[#64748B] font-bold block mb-1.5">
-                  SECURITY PASSCODE
+                <label htmlFor="admin-username" className="font-mono text-[9px] uppercase tracking-widest text-[#64748B] font-bold block mb-1.5">
+                  ADMINISTRATOR USERNAME
+                </label>
+                <div className="relative">
+                  <User className="w-3.5 h-3.5 text-[#94A3B8] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <input
+                    id="admin-username"
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Username (e.g. admin)"
+                    className="w-full bg-[#F7F4EC] border border-[#D8D4C9] rounded-xl pl-9 pr-3 py-3 text-sm text-[#0B132B] placeholder-[#94A3B8] focus:outline-none focus:border-[#1463FF] focus:ring-2 focus:ring-[#1463FF]/10 transition-all font-mono"
+                    autoFocus
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* PASSWORD FIELD */}
+              <div>
+                <label htmlFor="admin-password" className="font-mono text-[9px] uppercase tracking-widest text-[#64748B] font-bold block mb-1.5">
+                  SECURITY PASSWORD
                 </label>
                 <div className="relative">
                   <Lock className="w-3.5 h-3.5 text-[#94A3B8] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <input
+                    id="admin-password"
                     type={showPass ? 'text' : 'password'}
-                    value={passcode}
-                    onChange={(e) => setPasscode(e.target.value)}
-                    placeholder="Enter passcode"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter password"
                     className="w-full bg-[#F7F4EC] border border-[#D8D4C9] rounded-xl pl-9 pr-10 py-3 text-sm text-[#0B132B] placeholder-[#94A3B8] focus:outline-none focus:border-[#1463FF] focus:ring-2 focus:ring-[#1463FF]/10 transition-all font-mono"
-                    autoFocus
+                    required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPass(!showPass)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-[#475569] transition-colors"
+                    aria-label={showPass ? 'Hide password' : 'Show password'}
                   >
                     {showPass ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                   </button>
                 </div>
-                {authError && (
-                  <p className="mt-2 text-xs text-rose-600 font-medium">{authError}</p>
-                )}
               </div>
 
               <button
@@ -176,7 +254,7 @@ export default function CommandShell({ children }: CommandShellProps) {
                 ) : (
                   <>
                     <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>AUTHENTICATE &amp; ENTER</span>
+                    <span>SIGN IN TO COMMAND</span>
                     <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                   </>
                 )}
@@ -185,14 +263,8 @@ export default function CommandShell({ children }: CommandShellProps) {
 
             <div className="mt-6 pt-4 border-t border-[#E8E4DC] flex items-center justify-between">
               <div className="flex items-center gap-1.5">
-                <span className="font-mono text-[9px] text-[#64748B]">PASSCODE:</span>
-                <button
-                  type="button"
-                  onClick={() => setPasscode('arklintech2026')}
-                  className="font-mono text-[9px] font-bold text-[#1463FF] bg-[#EDF4FF] hover:bg-[#1463FF] hover:text-white px-2 py-0.5 rounded transition-all"
-                >
-                  arklintech2026
-                </button>
+                <ShieldCheck className="w-3 h-3 text-[#1463FF]" />
+                <span className="font-mono text-[9px] font-bold text-[#64748B]">FIREBASE AUTHENTICATED SESSION</span>
               </div>
               <span className="font-mono text-[9px] text-[#94A3B8]">v1.0</span>
             </div>

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Building2, Plus, Search, Globe, Users, Calendar } from 'lucide-react';
-import { getStoredAdminKey } from '@/lib/admin-auth';
+import { fetchAdmin } from '@/lib/admin-client';
 import type { CompanyRecord } from '@/lib/admin-db';
 
 export default function CompaniesPage() {
@@ -11,8 +11,7 @@ export default function CompaniesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const key = getStoredAdminKey();
-    fetch(`/api/admin/companies?key=${encodeURIComponent(key)}`)
+    fetchAdmin('/api/admin/companies')
       .then(r => r.json())
       .then(d => { setCompanies(Array.isArray(d?.data) ? d.data : []); setLoading(false); })
       .catch(() => setLoading(false));

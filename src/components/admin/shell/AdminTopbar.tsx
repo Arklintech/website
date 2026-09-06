@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Search, Bell, HelpCircle, ChevronDown, LogOut, ExternalLink, Menu } from 'lucide-react';
-import { clearAdminSession } from '@/lib/admin-auth';
+import { logoutAdmin } from '@/lib/admin-client';
 import NotificationPanel from './NotificationPanel';
 
 interface AdminTopbarProps {
@@ -16,8 +16,8 @@ export default function AdminTopbar({ unreadNotifications = 0, adminKey, onLogou
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
-  const handleLogout = () => {
-    clearAdminSession();
+  const handleLogout = async () => {
+    await logoutAdmin();
     onLogout();
   };
 

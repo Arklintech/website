@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { adminDb } from '@/lib/admin-db';
 import { sheetsDb } from '@/lib/sheets-db';
 import { validateInquiryPayload, checkRateLimit } from '@/lib/validation';
+import { verifyAdminRequest } from '@/lib/admin-auth';
 
 export async function POST(req: NextRequest) {
   try {
@@ -166,17 +167,15 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const key = req.headers.get('x-admin-key') || searchParams.get('key');
-    const adminPasscode = process.env.ADMIN_PASSCODE || 'arklintech2026';
-
-    // Simple Admin Auth Verification
-    if (key !== adminPasscode) {
+    const auth = await verifyAdminRequest(req);
+    if (!auth.valid) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized access. Valid admin key required.' },
-        { status: 401 }
+        { success: false, error: auth.status === 403 ? 'Forbidden: Access denied.' : 'Unauthorized access. Valid Firebase ID token required.' },
+        { status: auth.status || 401 }
       );
     }
+
+    const { searchParams } = new URL(req.url);
 
     const status = searchParams.get('status') || 'ALL';
     const limit = parseInt(searchParams.get('limit') || '50', 10);

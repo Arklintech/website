@@ -1,17 +1,9 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { Radio, Eye, MapPin } from 'lucide-react';
-import { IntentDot } from '@/components/admin/shared/StatusBadge';
-import { getStoredAdminKey } from '@/lib/admin-auth';
 
-const DEMO_VISITORS = [
-  { id: 'v1', location: 'Mumbai, India', country: '🇮🇳', currentPage: '/work', source: 'Organic', durationSeconds: 285, pagesVisited: ['/', '/work', '/work/daarayn'], intent: 'HIGH', device: 'Desktop' },
-  { id: 'v2', location: 'San Francisco, USA', country: '🇺🇸', currentPage: '/start-a-system', source: 'Direct', durationSeconds: 72, pagesVisited: ['/', '/start-a-system'], intent: 'HIGH', device: 'Mobile' },
-  { id: 'v3', location: 'London, UK', country: '🇬🇧', currentPage: '/what-we-do/ai-intelligence', source: 'Referral', durationSeconds: 142, pagesVisited: ['/', '/what-we-do', '/what-we-do/ai-intelligence'], intent: 'MEDIUM', device: 'Desktop' },
-  { id: 'v4', location: 'Dubai, UAE', country: '🇦🇪', currentPage: '/work/daarayn', source: 'Organic', durationSeconds: 398, pagesVisited: ['/', '/work', '/work/daarayn', '/work/neominds'], intent: 'HIGH', device: 'Desktop' },
-  { id: 'v5', location: 'Singapore', country: '🇸🇬', currentPage: '/', source: 'Social', durationSeconds: 28, pagesVisited: ['/'], intent: 'LOW', device: 'Mobile' },
-  { id: 'v6', location: 'Toronto, Canada', country: '🇨🇦', currentPage: '/contact', source: 'Direct', durationSeconds: 55, pagesVisited: ['/', '/contact'], intent: 'MEDIUM', device: 'Tablet' },
-];
+import React, { useState, useEffect } from 'react';
+import { Radio, Eye, MapPin, RefreshCw } from 'lucide-react';
+import { IntentDot } from '@/components/admin/shared/StatusBadge';
+import { fetchAdmin } from '@/lib/admin-client';
 
 function formatDuration(s: number) { return `${Math.floor(s / 60)}m ${s % 60}s`; }
 
@@ -19,20 +11,24 @@ export default function LiveVisitorsPage() {
   const [visitors, setVisitors] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const key = getStoredAdminKey();
-    fetch(`/api/admin/visitors?active=true&key=${encodeURIComponent(key)}`)
+  const loadVisitors = () => {
+    fetchAdmin('/api/admin/visitors?active=true')
       .then(r => r.json())
-      .then(d => { setVisitors(Array.isArray(d?.data) && d.data.length ? d.data : DEMO_VISITORS); setLoading(false); })
-      .catch(() => { setVisitors(DEMO_VISITORS); setLoading(false); });
-    const t = setInterval(async () => {
-      const currentKey = getStoredAdminKey();
-      const r = await fetch(`/api/admin/visitors?active=true&key=${encodeURIComponent(currentKey)}`).catch(() => null);
-      if (r?.ok) { const d = await r.json(); if (Array.isArray(d?.data) && d.data.length) setVisitors(d.data); }
-    }, 30000);
+      .then(d => {
+        setVisitors(Array.isArray(d?.data) ? d.data : []);
+        setLoading(false);
+      })
+      .catch(() => {
+        setVisitors([]);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    loadVisitors();
+    const t = setInterval(loadVisitors, 30000);
     return () => clearInterval(t);
   }, []);
-
 
   return (
     <div className="p-6 max-w-[1400px] mx-auto">
@@ -52,7 +48,7 @@ export default function LiveVisitorsPage() {
         {[
           { label: 'Active Now', value: visitors.length, icon: <Radio className="w-4 h-4 text-emerald-500" /> },
           { label: 'High Intent', value: visitors.filter(v => v.intent === 'HIGH').length, icon: <Eye className="w-4 h-4 text-[#1463FF]" /> },
-          { label: 'Countries', value: Array.from(new Set(visitors.map(v => v.country))).length, icon: <MapPin className="w-4 h-4 text-amber-500" /> },
+          { label: 'Locations', value: Array.from(new Set(visitors.map(v => v.location || v.country))).filter(Boolean).length, icon: <MapPin className="w-4 h-4 text-amber-500" /> },
         ].map(c => (
           <div key={c.label} className="bg-white rounded-xl border border-[#E8E4DC] p-4 flex items-center gap-3">
             {c.icon}
@@ -68,33 +64,46 @@ export default function LiveVisitorsPage() {
         <div className="px-5 py-4 border-b border-[#E8E4DC]">
           <span className="font-bold text-sm text-[#0B132B]">Active Sessions</span>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-[#F1EDE4] bg-[#FDFBF7]">
-                {['#', 'Location', 'Current Page', 'Pages', 'Duration', 'Source', 'Device', 'Intent'].map(h => (
-                  <th key={h} className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#F8F5F0]">
-              {visitors.map((v, i) => (
-                <tr key={v.id || i} className="hover:bg-[#FDFBF7] transition-colors">
-                  <td className="px-4 py-3.5 font-mono text-[11px] font-bold text-[#94A3B8]">{String(i + 1).padStart(2, '0')}</td>
-                  <td className="px-4 py-3.5">
-                    <span className="flex items-center gap-1.5 text-[12px] text-[#475569]">{v.country} {v.location}</span>
-                  </td>
-                  <td className="px-4 py-3.5 font-mono text-[10px] text-[#1463FF] max-w-[180px] truncate">{v.currentPage || '/'}</td>
-                  <td className="px-4 py-3.5 font-mono text-[11px] font-bold text-[#0B132B]">{(v.pagesVisited || []).length}</td>
-                  <td className="px-4 py-3.5 font-mono text-[11px] text-[#475569]">{formatDuration(v.durationSeconds || 0)}</td>
-                  <td className="px-4 py-3.5 text-[11px] text-[#475569]">{v.source || 'Direct'}</td>
-                  <td className="px-4 py-3.5 text-[11px] text-[#475569]">{v.device || 'Desktop'}</td>
-                  <td className="px-4 py-3.5"><IntentDot intent={v.intent || 'LOW'} /></td>
+        {loading ? (
+          <div className="p-12 text-center">
+            <div className="w-6 h-6 border-2 border-[#1463FF] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+            <span className="font-mono text-xs text-[#94A3B8]">Loading active visitors...</span>
+          </div>
+        ) : visitors.length === 0 ? (
+          <div className="p-12 text-center">
+            <Radio className="w-8 h-8 text-[#D8D4C9] mx-auto mb-2" />
+            <p className="font-bold text-sm text-[#0B132B]">No active visitors right now</p>
+            <p className="text-xs text-[#94A3B8] mt-1">Live sessions will automatically appear when visitors browse the public site.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-[#F1EDE4] bg-[#FDFBF7]">
+                  {['#', 'Location', 'Current Page', 'Pages', 'Duration', 'Source', 'Device', 'Intent'].map(h => (
+                    <th key={h} className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">{h}</th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-[#F8F5F0]">
+                {visitors.map((v, i) => (
+                  <tr key={v.id || i} className="hover:bg-[#FDFBF7] transition-colors">
+                    <td className="px-4 py-3.5 font-mono text-[11px] font-bold text-[#94A3B8]">{String(i + 1).padStart(2, '0')}</td>
+                    <td className="px-4 py-3.5">
+                      <span className="flex items-center gap-1.5 text-[12px] text-[#475569]">{v.country} {v.location || 'Unknown'}</span>
+                    </td>
+                    <td className="px-4 py-3.5 font-mono text-[10px] text-[#1463FF] max-w-[180px] truncate">{v.currentPage || '/'}</td>
+                    <td className="px-4 py-3.5 font-mono text-[11px] font-bold text-[#0B132B]">{(v.pagesVisited || []).length}</td>
+                    <td className="px-4 py-3.5 font-mono text-[11px] text-[#475569]">{formatDuration(v.durationSeconds || 0)}</td>
+                    <td className="px-4 py-3.5 text-[11px] text-[#475569]">{v.source || 'Direct'}</td>
+                    <td className="px-4 py-3.5 text-[11px] text-[#475569]">{v.device || 'Desktop'}</td>
+                    <td className="px-4 py-3.5"><IntentDot intent={v.intent || 'LOW'} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

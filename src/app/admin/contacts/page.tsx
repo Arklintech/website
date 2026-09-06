@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { BookUser, Plus, Search, Mail, Phone, Building2 } from 'lucide-react';
 
-import { getStoredAdminKey } from '@/lib/admin-auth';
+import { fetchAdmin } from '@/lib/admin-client';
 
 export default function ContactsPage() {
   const [contacts, setContacts] = useState<any[]>([]);
@@ -13,8 +13,7 @@ export default function ContactsPage() {
   const fetchContacts = () => {
     setLoading(true);
     setErrorMsg(null);
-    const key = getStoredAdminKey();
-    fetch(`/api/admin/contacts?key=${encodeURIComponent(key)}`)
+    fetchAdmin('/api/admin/contacts')
       .then(r => r.json())
       .then(d => {
         if (d && !d.error) {

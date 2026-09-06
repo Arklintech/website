@@ -3,8 +3,8 @@ import { verifyAdminRequest } from '@/lib/admin-auth';
 import { uploadFileToDrive, SUBFOLDER_MAP } from '@/lib/google-drive';
 
 export async function POST(req: NextRequest) {
-  const auth = verifyAdminRequest(req);
-  if (!auth.valid) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const auth = await verifyAdminRequest(req);
+  if (!auth.valid) return NextResponse.json({ error: auth.status === 403 ? 'Forbidden: Access denied' : 'Unauthorized' }, { status: auth.status || 401 });
 
   try {
     const formData = await req.formData();
