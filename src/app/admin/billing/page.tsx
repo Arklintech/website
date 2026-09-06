@@ -4,9 +4,9 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Receipt, Plus, Search, Download, ExternalLink, Filter,
-  FileText, CheckCircle2, Clock, AlertCircle, DollarSign
+  FileText, CheckCircle2, Clock, AlertCircle, DollarSign, FileEdit
 } from 'lucide-react';
-import { fetchAdmin } from '@/lib/admin-client';
+import { fetchAdmin, fetchAdminJSON } from '@/lib/admin-client';
 import type { InvoiceRecord } from '@/lib/admin-db';
 
 export default function BillingDirectoryPage() {
@@ -17,13 +17,22 @@ export default function BillingDirectoryPage() {
 
   const loadInvoices = async () => {
     try {
-      setLoading(true);
-      const res = await fetchAdmin('/api/admin/invoices');
-      const data = await res.json();
-      setInvoices(data.data || []);
+      const { data, fromCache } = await fetchAdminJSON<{ data: InvoiceRecord[] }>(
+        '/api/admin/invoices',
+        (fresh) => {
+          if (fresh?.data) setInvoices(fresh.data);
+        }
+      );
+      if (data?.data) {
+        setInvoices(data.data);
+      }
+      if (!fromCache) {
+        setLoading(false);
+      } else {
+        setLoading(false);
+      }
     } catch (err) {
       console.error('Failed to load invoices:', err);
-    } finally {
       setLoading(false);
     }
   };
@@ -38,8 +47,8 @@ export default function BillingDirectoryPage() {
 
   const filtered = invoices.filter((inv) => {
     const matchSearch =
-      inv.invoiceNumber.toLowerCase().includes(search.toLowerCase()) ||
-      inv.clientName.toLowerCase().includes(search.toLowerCase());
+      (inv.invoiceNumber || '').toLowerCase().includes(search.toLowerCase()) ||
+      (inv.clientName || '').toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === 'ALL' || inv.status === statusFilter;
     return matchSearch && matchStatus;
   });
@@ -131,7 +140,7 @@ export default function BillingDirectoryPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-[#F8F5F0]">
-            {loading ? (
+            {loading && invoices.length === 0 ? (
               <tr>
                 <td colSpan={7} className="p-8 text-center text-[#94A3B8]">
                   Loading invoices...
@@ -153,7 +162,16 @@ export default function BillingDirectoryPage() {
             ) : (
               filtered.map((inv) => (
                 <tr key={inv.id} className="hover:bg-[#FDFBF7] transition-colors">
-                  <td className="px-4 py-3.5 font-mono font-bold text-[#1463FF]">{inv.invoiceNumber}</td>
+                  <td className="px-4 py-3.5">
+                    <Link
+                      href={`/admin/billing/create?edit=${inv.id}`}
+                      className="inline-flex items-center gap-1.5 font-mono font-bold text-[#1463FF] hover:text-[#004AD6] hover:underline group"
+                      title="Click to open editable invoice"
+                    >
+                      <span>{inv.invoiceNumber}</span>
+                      <FileEdit className="w-3 h-3 text-[#1463FF] opacity-70 group-hover:opacity-100" />
+                    </Link>
+                  </td>
                   <td className="px-4 py-3.5 font-bold text-[#0B132B]">{inv.clientName}</td>
                   <td className="px-4 py-3.5 font-mono text-[#64748B]">{inv.invoiceDate}</td>
                   <td className="px-4 py-3.5 font-mono text-[#64748B]">{inv.dueDate}</td>
@@ -169,14 +187,21 @@ export default function BillingDirectoryPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3.5 font-mono font-bold text-[#0B132B]">₹{inv.total.toLocaleString('en-IN')}</td>
-                  <td className="px-4 py-3.5 text-right space-x-3">
+                  <td className="px-4 py-3.5 text-right space-x-2">
+                    <Link
+                      href={`/admin/billing/create?edit=${inv.id}`}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-[#D8D4C9] bg-white hover:bg-[#FDFBF7] text-[#0B132B] font-mono font-bold text-[11px] transition-all"
+                      title="Edit this invoice"
+                    >
+                      <FileEdit className="w-3 h-3 text-[#1463FF]" /> Edit
+                    </Link>
                     <a
                       href={`/api/admin/invoices/${inv.id}/pdf`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 font-mono font-bold text-xs text-[#1463FF] hover:underline"
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-transparent font-mono font-bold text-[11px] text-[#1463FF] hover:bg-[#EDF4FF]"
                     >
-                      <Download className="w-3.5 h-3.5" /> PDF
+                      <Download className="w-3 h-3" /> PDF
                     </a>
                     {inv.pdfDriveUrl && (
                       <a

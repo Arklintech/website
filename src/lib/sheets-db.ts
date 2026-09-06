@@ -201,6 +201,27 @@ export const sheetsDb = {
     }, { tabName });
   },
 
+  // Overwrite entire tab with given row objects (preserves headers)
+  overwriteTab: async (tabName: string, records: Record<string, any>[]): Promise<void> => {
+    return executeWithRetry(async () => {
+      await sheetsDb.ensureTab(tabName);
+      const sheets = await getSheetsClient();
+      const headers = REQUIRED_TABS[tabName] || [];
+      const values = [headers, ...records.map(r => objectToRow(tabName, r))];
+
+      await sheets.spreadsheets.values.clear({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `'${tabName}'!A:Z`,
+      });
+      await sheets.spreadsheets.values.update({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `'${tabName}'!A1:Z${Math.max(values.length, 1)}`,
+        valueInputOption: 'USER_ENTERED',
+        requestBody: { values },
+      });
+    }, { tabName });
+  },
+
   // Update a row by ID column
   updateRowById: async (tabName: string, idColumn: string, idValue: string, updates: Record<string, any>): Promise<boolean> => {
     return executeWithRetry(async () => {

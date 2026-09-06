@@ -387,10 +387,11 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
 
   // Totals Box
   const totX = 330;
+  const totBoxWidth = width - 36 - totX;
   page.drawRectangle({
     x: totX,
     y: bottomY - 96,
-    width: width - 36 - totX,
+    width: totBoxWidth,
     height: 96,
     color: colorWhite,
     borderColor: colorLightBorder,
@@ -398,31 +399,38 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   });
 
   let totLineY = bottomY - 16;
+  const subtotalStr = formatCurrency(invoice.subtotal);
   page.drawText('Subtotal', { x: totX + 14, y: totLineY, size: 8, font: fontRegular, color: colorNavy });
-  page.drawText(formatCurrency(invoice.subtotal), { x: width - 90, y: totLineY, size: 8, font: fontBold, color: colorNavy });
+  page.drawText(subtotalStr, { x: totX + totBoxWidth - fontBold.widthOfTextAtSize(subtotalStr, 8) - 14, y: totLineY, size: 8, font: fontBold, color: colorNavy });
 
   totLineY -= 14;
+  const discountStr = formatCurrency(invoice.discount);
   page.drawText('Discount', { x: totX + 14, y: totLineY, size: 8, font: fontRegular, color: colorNavy });
-  page.drawText(formatCurrency(invoice.discount), { x: width - 90, y: totLineY, size: 8, font: fontRegular, color: colorNavy });
+  page.drawText(discountStr, { x: totX + totBoxWidth - fontRegular.widthOfTextAtSize(discountStr, 8) - 14, y: totLineY, size: 8, font: fontRegular, color: colorNavy });
 
   totLineY -= 14;
+  const taxStr = formatCurrency(invoice.taxAmount || 0);
   page.drawText(`Tax (${invoice.taxPct || 0}%)`, { x: totX + 14, y: totLineY, size: 8, font: fontRegular, color: colorNavy });
-  page.drawText(formatCurrency(invoice.taxAmount || 0), { x: width - 90, y: totLineY, size: 8, font: fontRegular, color: colorNavy });
+  page.drawText(taxStr, { x: totX + totBoxWidth - fontRegular.widthOfTextAtSize(taxStr, 8) - 14, y: totLineY, size: 8, font: fontRegular, color: colorNavy });
 
   totLineY -= 20;
   // Total Highlight Box (#EDF4FF with border)
+  const totalBoxX = totX + 8;
+  const totalBoxW = totBoxWidth - 16;
   page.drawRectangle({
-    x: totX + 10,
+    x: totalBoxX,
     y: totLineY - 6,
-    width: width - 46 - totX,
-    height: 22,
+    width: totalBoxW,
+    height: 24,
     color: colorAccentLight,
     borderColor: colorBlue,
     borderWidth: 0.75,
   });
 
-  page.drawText('TOTAL', { x: totX + 18, y: totLineY + 2, size: 10, font: fontBold, color: colorBlue });
-  page.drawText(formatCurrency(invoice.total), { x: width - 98, y: totLineY + 1, size: 11, font: fontBold, color: colorNavy });
+  const totalStr = formatCurrency(invoice.total);
+  const totalTextWidth = fontBold.widthOfTextAtSize(totalStr, 11);
+  page.drawText('TOTAL', { x: totalBoxX + 10, y: totLineY + 2, size: 9.5, font: fontBold, color: colorBlue });
+  page.drawText(totalStr, { x: totalBoxX + totalBoxW - totalTextWidth - 10, y: totLineY + 1, size: 11, font: fontBold, color: colorNavy });
 
   totLineY -= 18;
   page.drawText(`Amount in Words:`, { x: totX + 12, y: totLineY + 2, size: 6.5, font: fontBold, color: colorGrayText });

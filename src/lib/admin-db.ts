@@ -1570,23 +1570,63 @@ export const adminDb = {
       return record;
     },
 
-    update: async (id: string, data: Partial<InvoiceRecord>): Promise<InvoiceRecord | null> => {
+    update: async (id: string, data: Partial<InvoiceRecord> & { items?: Array<Partial<InvoiceItemRecord> & { serviceName: string; amount: number }> }): Promise<InvoiceRecord | null> => {
       const records = readJSON<InvoiceRecord>(FILES.invoices, []);
       const idx = records.findIndex(inv => inv.id === id || inv.invoiceNumber === id);
       if (idx === -1) return null;
       const now = new Date().toISOString();
-      records[idx] = { ...records[idx], ...data, updatedAt: now };
+      const existing = records[idx];
+
+      let items = existing.items || [];
+      if (data.items && Array.isArray(data.items)) {
+        items = await adminDb.invoiceItems.replaceForInvoice(existing.id, data.items);
+      }
+
+      const total = data.total !== undefined ? data.total : existing.total;
+      const amountInWords = data.amountInWords || (data.total !== undefined ? amountToWordsIndian(total) : existing.amountInWords);
+
+      const updatedRecord: InvoiceRecord = {
+        ...existing,
+        ...data,
+        id: existing.id, // Preserve ID
+        invoiceNumber: existing.invoiceNumber, // Preserve Invoice Number strictly
+        createdAt: existing.createdAt, // Preserve created timestamp strictly
+        updatedAt: now,
+        items,
+        total,
+        amountInWords,
+      };
+
+      records[idx] = updatedRecord;
       writeJSON(FILES.invoices, records);
 
       try {
         const sheetUpdates: Record<string, any> = { updated_at: now };
-        if (data.status) sheetUpdates.status = data.status;
-        if (data.pdfDriveUrl) sheetUpdates.pdf_drive_url = data.pdfDriveUrl;
-        await sheetsDb.updateRowById('Invoices', 'invoice_id', records[idx].id, sheetUpdates);
+        if (data.projectId !== undefined) sheetUpdates.project_id = data.projectId || '';
+        if (data.companyId !== undefined) sheetUpdates.company_id = data.companyId || '';
+        if (data.clientName !== undefined) sheetUpdates.client_name = data.clientName;
+        if (data.clientAddress !== undefined) sheetUpdates.client_address = data.clientAddress || '';
+        if (data.clientEmail !== undefined) sheetUpdates.client_email = data.clientEmail || '';
+        if (data.clientPhone !== undefined) sheetUpdates.client_phone = data.clientPhone || '';
+        if (data.invoiceDate !== undefined) sheetUpdates.invoice_date = data.invoiceDate;
+        if (data.dueDate !== undefined) sheetUpdates.due_date = data.dueDate;
+        if (data.paymentTerms !== undefined) sheetUpdates.payment_terms = data.paymentTerms || '';
+        if (data.currency !== undefined) sheetUpdates.currency = data.currency || '';
+        if (data.subtotal !== undefined) sheetUpdates.subtotal = data.subtotal.toString();
+        if (data.discount !== undefined) sheetUpdates.discount = data.discount.toString();
+        if (data.taxPct !== undefined) sheetUpdates.tax_pct = data.taxPct.toString();
+        if (data.taxAmount !== undefined) sheetUpdates.tax_amount = data.taxAmount.toString();
+        if (data.total !== undefined) sheetUpdates.total = data.total.toString();
+        if (amountInWords) sheetUpdates.amount_in_words = amountInWords;
+        if (data.status !== undefined) sheetUpdates.status = data.status;
+        if (data.notes !== undefined) sheetUpdates.notes = data.notes || '';
+        if (data.pdfDriveUrl !== undefined) sheetUpdates.pdf_drive_url = data.pdfDriveUrl || '';
+
+        await sheetsDb.updateRowById('Invoices', 'invoice_id', existing.id, sheetUpdates);
       } catch (err) {
         console.error('Error updating invoice in Sheets:', err);
       }
-      return records[idx];
+      return updatedRecord;
     },
   },
 
@@ -1635,6 +1675,43 @@ export const adminDb = {
           });
         } catch {}
       }
+    },
+
+    replaceForInvoice: async (invoiceId: string, items: Array<Partial<InvoiceItemRecord> & { serviceName: string; amount: number }>): Promise<InvoiceItemRecord[]> => {
+      let localItems = readJSON<InvoiceItemRecord>(FILES.invoiceItems, []);
+      localItems = localItems.filter(i => i.invoiceId !== invoiceId);
+
+      const newItems: InvoiceItemRecord[] = items.map(item => ({
+        id: item.id && !item.id.startsWith('custom_') ? item.id : uid('item'),
+        invoiceId,
+        serviceName: item.serviceName,
+        description: item.description || '',
+        qty: item.qty || 1,
+        rate: item.rate !== undefined ? item.rate : item.amount,
+        amount: item.amount || 0,
+      }));
+
+      localItems.push(...newItems);
+      writeJSON(FILES.invoiceItems, localItems);
+
+      try {
+        const existingRows = await sheetsDb.readTab('InvoiceItems');
+        const remainingRows = existingRows.filter(r => r.invoice_id !== invoiceId);
+        const newRows = newItems.map(i => ({
+          item_id: i.id,
+          invoice_id: i.invoiceId,
+          service_name: i.serviceName,
+          description: i.description,
+          qty: i.qty.toString(),
+          rate: i.rate.toString(),
+          amount: i.amount.toString(),
+        }));
+        await sheetsDb.overwriteTab('InvoiceItems', [...remainingRows, ...newRows]);
+      } catch (err) {
+        console.error('Error replacing invoice items in Sheets:', err);
+      }
+
+      return newItems;
     },
   },
 

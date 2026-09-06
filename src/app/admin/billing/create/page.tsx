@@ -6,20 +6,31 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import {
   Receipt, Plus, Search, Eye, Download, Save, RefreshCw,
   CheckCircle2, Building2, Calendar, FileText, Sparkles,
-  ChevronDown, Bell, ArrowLeft, Layers, Shield, Briefcase
+  ChevronDown, Bell, ArrowLeft, Layers, Shield, Briefcase,
+  Trash2, Edit3, ExternalLink
 } from 'lucide-react';
-import { fetchAdmin } from '@/lib/admin-client';
-import type { ServiceRecord, ProjectRecord } from '@/lib/admin-db';
+import { fetchAdmin, fetchAdminJSON, invalidateAdminCache } from '@/lib/admin-client';
+import type { ServiceRecord, ProjectRecord, InvoiceRecord, InvoiceItemRecord } from '@/lib/admin-db';
 import { amountToWordsIndian } from '@/lib/currency-words';
 
-export default function CreateInvoicePage() {
+export default function CreateOrEditInvoicePage() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const editParam = searchParams.get('edit') || searchParams.get('id');
   const preselectedProjectId = searchParams.get('projectId');
+
+  const isEditMode = Boolean(editParam);
 
   const [projects, setProjects] = useState<ProjectRecord[]>([]);
   const [services, setServices] = useState<ServiceRecord[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Edit Mode Specific State
+  const [existingInvoiceId, setExistingInvoiceId] = useState<string>('');
+  const [existingInvoiceNumber, setExistingInvoiceNumber] = useState<string>('INV-2026-001');
+  const [existingInvoiceStatus, setExistingInvoiceStatus] = useState<string>('DRAFT');
+  const [existingPdfDriveUrl, setExistingPdfDriveUrl] = useState<string>('');
+  const [existingCreatedAt, setExistingCreatedAt] = useState<string>('');
 
   // Form Fields
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
@@ -32,6 +43,9 @@ export default function CreateInvoicePage() {
   const [dueDate, setDueDate] = useState<string>('2026-10-14');
   const [paymentTerms, setPaymentTerms] = useState<string>('14 Days');
   const [currency, setCurrency] = useState<string>('INR (₹)');
+  const [notes, setNotes] = useState<string>(
+    'This invoice covers the development and deployment of the agreed project scope as per our discussion.\nAdditional features outside the agreed scope will be billed separately upon approval.\nPlease make the payment within the due date to ensure continued support and development.\nFor any queries, feel free to contact us.'
+  );
   const [serviceSearch, setServiceSearch] = useState<string>('');
 
   // Selected Services & Manual Amounts
@@ -47,12 +61,13 @@ export default function CreateInvoicePage() {
 
   // Action states
   const [generating, setGenerating] = useState(false);
+  const [savingChanges, setSavingChanges] = useState(false);
   const [savingDraft, setSavingDraft] = useState(false);
-  const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [actionMessage, setActionMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
   const previewRef = useRef<HTMLDivElement>(null);
 
-  // Load projects and services library
+  // Load projects, services library, and existing invoice (if in edit mode)
   useEffect(() => {
     async function loadData() {
       try {
@@ -65,59 +80,126 @@ export default function CreateInvoicePage() {
         const projData = await projRes.json();
         const srvData = await srvRes.json();
 
-        const loadedProjects = projData.data || [];
-        const loadedServices = srvData.data || [];
+        const loadedProjects: ProjectRecord[] = projData.data || [];
+        const loadedServices: ServiceRecord[] = srvData.data || [];
 
         setProjects(loadedProjects);
         setServices(loadedServices);
 
-        // Check if preselected project is present
-        if (preselectedProjectId) {
-          const match = loadedProjects.find((p: any) => p.id === preselectedProjectId || p.projectRef === preselectedProjectId);
-          if (match) {
-            setSelectedProjectId(match.id);
-            setProjectName(`${match.name} (${match.projectRef || 'PRJ'})`);
-            setClientName(match.clientName);
+        if (editParam) {
+          // EDIT MODE: Load existing invoice
+          const invRes = await fetchAdmin(`/api/admin/invoices/${encodeURIComponent(editParam)}`);
+          if (invRes.ok) {
+            const invJson = await invRes.json();
+            const inv: InvoiceRecord = invJson.data;
+
+            if (inv) {
+              setExistingInvoiceId(inv.id);
+              setExistingInvoiceNumber(inv.invoiceNumber || 'INV-2026-001');
+              setExistingInvoiceStatus(inv.status || 'SENT');
+              setExistingPdfDriveUrl(inv.pdfDriveUrl || '');
+              setExistingCreatedAt(inv.createdAt || '');
+
+              setClientName(inv.clientName || '');
+              setClientAddress(inv.clientAddress || '');
+              setClientEmail(inv.clientEmail || '');
+              setClientPhone(inv.clientPhone || '');
+              setInvoiceDate(inv.invoiceDate || new Date().toISOString().split('T')[0]);
+              setDueDate(inv.dueDate || '');
+              setPaymentTerms(inv.paymentTerms || '14 Days');
+              setCurrency(inv.currency || 'INR (₹)');
+              if (inv.notes) setNotes(inv.notes);
+
+              // Set commercials from saved record strictly (do not auto-apply defaults)
+              setDiscount(inv.discount || 0);
+              setTaxPct(inv.taxPct || 0);
+
+              // Match project
+              if (inv.projectId) {
+                setSelectedProjectId(inv.projectId);
+                const matchedProj = loadedProjects.find(p => p.id === inv.projectId);
+                if (matchedProj) {
+                  setProjectName(`${matchedProj.name} (${matchedProj.projectRef || 'PRJ'})`);
+                }
+              }
+
+              // Load saved items
+              const selIds: string[] = [];
+              const selAmounts: Record<string, number> = {};
+              const loadedCustoms: Array<{ id: string; name: string; description: string; amount: number }> = [];
+
+              if (inv.items && inv.items.length > 0) {
+                inv.items.forEach((it: any) => {
+                  const matchedLibraryService = loadedServices.find(
+                    s => s.name.toLowerCase().trim() === it.serviceName.toLowerCase().trim()
+                  );
+                  if (matchedLibraryService) {
+                    selIds.push(matchedLibraryService.id);
+                    selAmounts[matchedLibraryService.id] = it.amount || it.rate || 0;
+                  } else {
+                    const cId = it.id || `custom_${Math.random().toString(36).substring(2, 8)}`;
+                    loadedCustoms.push({
+                      id: cId,
+                      name: it.serviceName,
+                      description: it.description || '',
+                      amount: it.amount || it.rate || 0,
+                    });
+                    selIds.push(cId);
+                    selAmounts[cId] = it.amount || it.rate || 0;
+                  }
+                });
+              }
+
+              setSelectedServiceIds(selIds);
+              setServiceAmounts(selAmounts);
+              setCustomServices(loadedCustoms);
+            }
           }
-        } else if (loadedProjects.length > 0) {
-          // Default selection
-          const p = loadedProjects[0];
-          setSelectedProjectId(p.id);
-          setProjectName(`${p.name} (${p.projectRef || 'PRJ'})`);
-          setClientName(p.clientName);
+        } else {
+          // CREATE MODE: Initialize default selections
+          if (preselectedProjectId) {
+            const match = loadedProjects.find((p: any) => p.id === preselectedProjectId || p.projectRef === preselectedProjectId);
+            if (match) {
+              setSelectedProjectId(match.id);
+              setProjectName(`${match.name} (${match.projectRef || 'PRJ'})`);
+              setClientName(match.clientName);
+            }
+          } else if (loadedProjects.length > 0) {
+            const p = loadedProjects[0];
+            setSelectedProjectId(p.id);
+            setProjectName(`${p.name} (${p.projectRef || 'PRJ'})`);
+            setClientName(p.clientName);
+          }
+
+          const initialIds: string[] = [];
+          const initialAmounts: Record<string, number> = {};
+          const defaultSelections: Record<string, number> = {
+            'Website Design & Development': 35000,
+            'Admin / Reception Panel': 45000,
+            'Backend Development': 25000,
+            'Authentication System': 10000,
+            'Deployment & Configuration': 15000,
+          };
+
+          loadedServices.forEach((srv: ServiceRecord) => {
+            if (defaultSelections[srv.name]) {
+              initialIds.push(srv.id);
+              initialAmounts[srv.id] = defaultSelections[srv.name];
+            }
+          });
+
+          setSelectedServiceIds(initialIds);
+          setServiceAmounts(initialAmounts);
         }
-
-        // Initialize default selected services as in Reference 2:
-        // Website Design (35k), Admin Panel (45k), Backend & Database (25k), Authentication (10k), Deployment (15k)
-        const initialIds: string[] = [];
-        const initialAmounts: Record<string, number> = {};
-
-        const defaultSelections: Record<string, number> = {
-          'Website Design & Development': 35000,
-          'Admin / Reception Panel': 45000,
-          'Backend Development': 25000,
-          'Authentication System': 10000,
-          'Deployment & Configuration': 15000,
-        };
-
-        loadedServices.forEach((srv: ServiceRecord) => {
-          if (defaultSelections[srv.name]) {
-            initialIds.push(srv.id);
-            initialAmounts[srv.id] = defaultSelections[srv.name];
-          }
-        });
-
-        setSelectedServiceIds(initialIds);
-        setServiceAmounts(initialAmounts);
       } catch (err) {
-        console.error('Error loading initial billing data:', err);
+        console.error('Error loading billing workspace data:', err);
       } finally {
         setLoading(false);
       }
     }
 
     loadData();
-  }, [preselectedProjectId]);
+  }, [editParam, preselectedProjectId]);
 
   const handleProjectSelect = (projId: string) => {
     setSelectedProjectId(projId);
@@ -139,6 +221,14 @@ export default function CreateInvoicePage() {
     }
   };
 
+  const removeServiceItem = (idToRemove: string) => {
+    setSelectedServiceIds(selectedServiceIds.filter((id) => id !== idToRemove));
+    setCustomServices(customServices.filter((cs) => cs.id !== idToRemove));
+    const nextAmounts = { ...serviceAmounts };
+    delete nextAmounts[idToRemove];
+    setServiceAmounts(nextAmounts);
+  };
+
   const handleAmountChange = (srvId: string, amt: number) => {
     setServiceAmounts({
       ...serviceAmounts,
@@ -148,7 +238,7 @@ export default function CreateInvoicePage() {
 
   const handleAddCustom = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newCustom.name) return;
+    if (!newCustom.name.trim()) return;
     const customId = `custom_${Date.now()}`;
     setCustomServices([...customServices, { id: customId, ...newCustom }]);
     setSelectedServiceIds([...selectedServiceIds, customId]);
@@ -217,7 +307,56 @@ export default function CreateInvoicePage() {
     s.description.toLowerCase().includes(serviceSearch.toLowerCase())
   );
 
-  // Actions
+  // Action: SAVE CHANGES (Edit Mode)
+  const handleSaveChanges = async () => {
+    if (!existingInvoiceId) return;
+    try {
+      setSavingChanges(true);
+      const payload = {
+        projectId: selectedProjectId || null,
+        clientName,
+        clientAddress,
+        clientEmail,
+        clientPhone,
+        invoiceDate,
+        dueDate,
+        paymentTerms,
+        currency,
+        subtotal,
+        discount,
+        taxPct,
+        taxAmount,
+        total,
+        amountInWords: words,
+        notes,
+        status: existingInvoiceStatus,
+        items: activeLineItems,
+      };
+
+      const res = await fetchAdmin(`/api/admin/invoices/${encodeURIComponent(existingInvoiceId)}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error('Failed to update invoice');
+      invalidateAdminCache('/api/admin/invoices');
+
+      setActionMessage({
+        text: `Invoice ${existingInvoiceNumber} changes saved successfully to Google Sheets!`,
+        type: 'success',
+      });
+      setTimeout(() => setActionMessage(null), 5000);
+    } catch (err: any) {
+      console.error('Error saving invoice changes:', err);
+      setActionMessage({ text: 'Failed to save invoice changes. Please try again.', type: 'error' });
+      setTimeout(() => setActionMessage(null), 5000);
+    } finally {
+      setSavingChanges(false);
+    }
+  };
+
+  // Action: SAVE DRAFT (Create Mode)
   const handleSaveDraft = async () => {
     try {
       setSavingDraft(true);
@@ -237,6 +376,7 @@ export default function CreateInvoicePage() {
         taxAmount,
         total,
         amountInWords: words,
+        notes,
         status: 'DRAFT',
         items: activeLineItems,
       };
@@ -247,69 +387,130 @@ export default function CreateInvoicePage() {
         body: JSON.stringify(payload),
       });
 
-      if (res.ok) {
-        setActionMessage('Draft invoice saved successfully.');
-        setTimeout(() => setActionMessage(null), 3000);
+      if (!res.ok) throw new Error('Failed to save draft invoice');
+      const data = await res.json();
+      invalidateAdminCache('/api/admin/invoices');
+
+      setActionMessage({
+        text: `Draft invoice ${data.data?.invoiceNumber || ''} created successfully.`,
+        type: 'success',
+      });
+      setTimeout(() => setActionMessage(null), 4000);
+
+      if (data.data?.id) {
+        router.push(`/admin/billing/create?edit=${data.data.id}`);
       }
     } catch (err) {
       console.error('Failed to save draft:', err);
+      setActionMessage({ text: 'Failed to save draft invoice.', type: 'error' });
+      setTimeout(() => setActionMessage(null), 4000);
     } finally {
       setSavingDraft(false);
     }
   };
 
+  // Action: GENERATE / UPDATE & DOWNLOAD PDF
   const handleGenerateAndDownload = async () => {
     try {
       setGenerating(true);
-      const payload = {
-        projectId: selectedProjectId || null,
-        clientName,
-        clientAddress,
-        clientEmail,
-        clientPhone,
-        invoiceDate,
-        dueDate,
-        paymentTerms,
-        currency,
-        subtotal,
-        discount,
-        taxPct,
-        taxAmount,
-        total,
-        amountInWords: words,
-        status: 'SENT',
-        items: activeLineItems,
-      };
 
-      // 1. Create invoice in DB and Google Sheets (which also triggers Drive upload!)
-      const res = await fetchAdmin('/api/admin/invoices', {
+      let targetId = existingInvoiceId;
+      let targetNumber = existingInvoiceNumber;
+
+      if (isEditMode && existingInvoiceId) {
+        // 1. Save changes first to ensure PDF has the latest data
+        const payload = {
+          projectId: selectedProjectId || null,
+          clientName,
+          clientAddress,
+          clientEmail,
+          clientPhone,
+          invoiceDate,
+          dueDate,
+          paymentTerms,
+          currency,
+          subtotal,
+          discount,
+          taxPct,
+          taxAmount,
+          total,
+          amountInWords: words,
+          notes,
+          status: existingInvoiceStatus,
+          items: activeLineItems,
+        };
+
+        const updateRes = await fetchAdmin(`/api/admin/invoices/${encodeURIComponent(existingInvoiceId)}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!updateRes.ok) throw new Error('Failed to save latest invoice changes before PDF generation');
+      } else {
+        // Create mode: Create invoice record
+        const payload = {
+          projectId: selectedProjectId || null,
+          clientName,
+          clientAddress,
+          clientEmail,
+          clientPhone,
+          invoiceDate,
+          dueDate,
+          paymentTerms,
+          currency,
+          subtotal,
+          discount,
+          taxPct,
+          taxAmount,
+          total,
+          amountInWords: words,
+          notes,
+          status: 'SENT',
+          items: activeLineItems,
+        };
+
+        const createRes = await fetchAdmin('/api/admin/invoices', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!createRes.ok) throw new Error('Failed to create invoice record');
+        const data = await createRes.json();
+        targetId = data.data.id;
+        targetNumber = data.data.invoiceNumber || 'INV-2026-001';
+        setExistingInvoiceId(targetId);
+        setExistingInvoiceNumber(targetNumber);
+      }
+
+      // 2. Trigger PDF Generation & Drive Upload
+      const pdfPostRes = await fetchAdmin(`/api/admin/invoices/${encodeURIComponent(targetId)}/pdf`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error('Failed to create invoice record');
-      const data = await res.json();
-      const invoiceId = data.data.id;
+      if (!pdfPostRes.ok) throw new Error('Failed to generate PDF buffer');
 
-      // 2. Trigger PDF download
-      const pdfRes = await fetchAdmin(`/api/admin/invoices/${invoiceId}/pdf`);
-      if (!pdfRes.ok) throw new Error('Failed to download PDF buffer');
-
-      const blob = await pdfRes.blob();
+      const blob = await pdfPostRes.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${data.data.invoiceNumber || 'INV-2026-001'}.pdf`;
+      a.download = `${targetNumber}.pdf`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
 
-      setActionMessage('Invoice generated, uploaded to Google Drive & downloaded successfully!');
-      setTimeout(() => setActionMessage(null), 4000);
-    } catch (err) {
+      invalidateAdminCache('/api/admin/invoices');
+
+      setActionMessage({
+        text: `Invoice ${targetNumber} PDF generated, updated to Google Drive & downloaded successfully!`,
+        type: 'success',
+      });
+      setTimeout(() => setActionMessage(null), 5000);
+    } catch (err: any) {
       console.error('Error generating and downloading invoice:', err);
+      setActionMessage({ text: 'Error generating PDF. Check console for details.', type: 'error' });
+      setTimeout(() => setActionMessage(null), 5000);
     } finally {
       setGenerating(false);
     }
@@ -317,46 +518,70 @@ export default function CreateInvoicePage() {
 
   return (
     <div className="p-6 max-w-[1440px] mx-auto space-y-6">
-      {/* Top Breadcrumbs & Search */}
+      {/* Top Breadcrumbs & Nav Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-2 text-xs font-medium text-[#64748B]">
           <Link href="/admin/billing" className="hover:text-[#1463FF]">Billing</Link>
           <span>/</span>
-          <span className="font-bold text-[#0B132B]">Create Invoice</span>
+          <span className="font-bold text-[#0B132B]">
+            {isEditMode ? `Edit Invoice (${existingInvoiceNumber})` : 'Create Invoice'}
+          </span>
         </div>
 
         <div className="flex items-center gap-3 self-end sm:self-auto">
-          <div className="relative">
-            <Search className="w-3.5 h-3.5 text-[#94A3B8] absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Search projects, clients..."
-              className="bg-white border border-[#E8E4DC] rounded-xl pl-8 pr-3 py-1.5 text-xs text-[#0B132B] w-56 focus:outline-none focus:border-[#1463FF]"
-            />
-          </div>
-          <button className="p-2 rounded-xl bg-white border border-[#E8E4DC] text-[#64748B]">
-            <Bell className="w-4 h-4" />
-          </button>
-          <div className="w-8 h-8 rounded-full bg-[#0B132B] text-white flex items-center justify-center font-bold text-xs">
-            AA
-          </div>
+          <Link
+            href="/admin/billing"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E8E4DC] bg-white text-xs font-mono font-bold text-[#64748B] hover:text-[#0B132B] hover:bg-[#FDFBF7]"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" /> Back to Billing
+          </Link>
         </div>
       </div>
 
       {actionMessage && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-xs font-mono font-bold text-emerald-800 flex items-center gap-2 animate-fadeIn">
+        <div className={`p-4 rounded-xl text-xs font-mono font-bold flex items-center gap-2 animate-fadeIn ${
+          actionMessage.type === 'success'
+            ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
+            : 'bg-red-50 border border-red-200 text-red-800'
+        }`}>
           <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-          <span>{actionMessage}</span>
+          <span>{actionMessage.text}</span>
         </div>
       )}
 
       {/* Main 2-column Workspace */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Column: Controls (5.5 cols / 12) */}
+        {/* Left Column: Controls (6 cols / 12) */}
         <div className="lg:col-span-6 bg-white rounded-2xl border border-[#E8E4DC] p-6 space-y-6 shadow-sm">
-          <div>
-            <h1 className="font-bold text-xl text-[#0B132B]">Create Invoice</h1>
-            <p className="text-xs text-[#64748B] mt-0.5">Select project, choose services, set amounts and generate your invoice.</p>
+          <div className="flex items-start justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="font-bold text-xl text-[#0B132B]">
+                  {isEditMode ? `Edit Invoice: ${existingInvoiceNumber}` : 'Create Invoice'}
+                </h1>
+                {isEditMode && (
+                  <span className="px-2 py-0.5 rounded-full font-mono text-[10px] font-bold bg-[#EDF4FF] text-[#1463FF] border border-[#1463FF]/30">
+                    EDIT MODE
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-[#64748B] mt-0.5">
+                {isEditMode
+                  ? 'Update services, pricing, client details, notes, and synchronize changes with Google Sheets.'
+                  : 'Select project, choose services, set amounts and generate your invoice.'}
+              </p>
+            </div>
+
+            {isEditMode && existingPdfDriveUrl && (
+              <a
+                href={existingPdfDriveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 font-mono text-xs text-[#1463FF] hover:underline"
+              >
+                Drive PDF <ExternalLink className="w-3 h-3" />
+              </a>
+            )}
           </div>
 
           {/* Section 1: Project & Client Details */}
@@ -370,20 +595,18 @@ export default function CreateInvoicePage() {
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="text-[#64748B] font-medium block mb-1">Project Name *</label>
+                <label className="text-[#64748B] font-medium block mb-1">Associated Project</label>
                 <select
                   value={selectedProjectId}
                   onChange={(e) => handleProjectSelect(e.target.value)}
                   className="w-full bg-[#FDFBF7] border border-[#D8D4C9] rounded-xl px-3 py-2 text-xs text-[#0B132B] font-semibold focus:outline-none focus:border-[#1463FF]"
                 >
+                  <option value="">-- Standalone Billing / Custom Project --</option>
                   {projects.map((p) => (
                     <option key={p.id} value={p.id}>
                       {p.name} ({p.projectRef || 'PRJ'})
                     </option>
                   ))}
-                  {projects.length === 0 && (
-                    <option value="">Healthcare Technology System (HE-2026-01)</option>
-                  )}
                 </select>
               </div>
 
@@ -405,6 +628,27 @@ export default function CreateInvoicePage() {
                   onChange={(e) => setClientAddress(e.target.value)}
                   className="w-full bg-[#FDFBF7] border border-[#D8D4C9] rounded-xl p-3 text-xs text-[#0B132B] focus:outline-none focus:border-[#1463FF]"
                 />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[#64748B] font-medium block mb-1">Client Email</label>
+                  <input
+                    type="email"
+                    value={clientEmail}
+                    onChange={(e) => setClientEmail(e.target.value)}
+                    className="w-full bg-[#FDFBF7] border border-[#D8D4C9] rounded-xl px-3 py-2 text-xs text-[#0B132B] focus:outline-none focus:border-[#1463FF]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[#64748B] font-medium block mb-1">Client Phone</label>
+                  <input
+                    type="text"
+                    value={clientPhone}
+                    onChange={(e) => setClientPhone(e.target.value)}
+                    className="w-full bg-[#FDFBF7] border border-[#D8D4C9] rounded-xl px-3 py-2 text-xs text-[#0B132B] focus:outline-none focus:border-[#1463FF]"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -437,6 +681,24 @@ export default function CreateInvoicePage() {
                   className="w-full bg-[#FDFBF7] border border-[#D8D4C9] rounded-xl px-3 py-2 text-xs text-[#0B132B] focus:outline-none focus:border-[#1463FF]"
                 />
               </div>
+              <div>
+                <label className="text-[#64748B] font-medium block mb-1">Payment Terms</label>
+                <input
+                  type="text"
+                  value={paymentTerms}
+                  onChange={(e) => setPaymentTerms(e.target.value)}
+                  className="w-full bg-[#FDFBF7] border border-[#D8D4C9] rounded-xl px-3 py-2 text-xs text-[#0B132B] focus:outline-none focus:border-[#1463FF]"
+                />
+              </div>
+              <div>
+                <label className="text-[#64748B] font-medium block mb-1">Currency</label>
+                <input
+                  type="text"
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value)}
+                  className="w-full bg-[#FDFBF7] border border-[#D8D4C9] rounded-xl px-3 py-2 text-xs text-[#0B132B] focus:outline-none focus:border-[#1463FF]"
+                />
+              </div>
             </div>
           </div>
 
@@ -447,7 +709,7 @@ export default function CreateInvoicePage() {
                 <div className="w-6 h-6 rounded-lg bg-[#EDF4FF] text-[#1463FF] flex items-center justify-center">
                   <FileText className="w-3.5 h-3.5" />
                 </div>
-                <span>3. Select Services</span>
+                <span>3. Add / Select Services</span>
               </div>
               <span className="text-[11px] text-[#64748B]">Choose services for this invoice</span>
             </div>
@@ -463,19 +725,7 @@ export default function CreateInvoicePage() {
               />
             </div>
 
-            {/* Service count badge */}
-            {services.length > 0 && (
-              <div className="flex items-center justify-between text-[10px] font-mono text-[#94A3B8]">
-                <span>{filteredServices.length} of {services.length} services</span>
-                {selectedServiceIds.filter(id => services.some(s => s.id === id)).length > 0 && (
-                  <span className="text-[#1463FF] font-bold">
-                    {selectedServiceIds.filter(id => services.some(s => s.id === id)).length} selected
-                  </span>
-                )}
-              </div>
-            )}
-
-            <div className="space-y-1.5 max-h-80 overflow-y-auto pr-1">
+            <div className="space-y-1.5 max-h-64 overflow-y-auto pr-1">
               {loading ? (
                 <div className="py-6 text-center">
                   <div className="w-5 h-5 border-2 border-[#1463FF] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
@@ -485,7 +735,7 @@ export default function CreateInvoicePage() {
                 <div className="py-6 text-center border border-dashed border-[#E8E4DC] rounded-xl">
                   <Search className="w-5 h-5 text-[#D8D4C9] mx-auto mb-1.5" />
                   <p className="text-xs font-bold text-[#0B132B]">No services match &ldquo;{serviceSearch}&rdquo;</p>
-                  <p className="text-[11px] text-[#64748B] mt-0.5">Try a different keyword or add a custom service below.</p>
+                  <p className="text-[11px] text-[#64748B] mt-0.5">Add a custom service below.</p>
                 </div>
               ) : (
                 filteredServices.map((srv) => {
@@ -506,7 +756,7 @@ export default function CreateInvoicePage() {
                         onChange={() => {}}
                         className="mt-0.5 accent-[#1463FF] rounded shrink-0"
                       />
-                      <div className="space-y-0.5 min-w-0">
+                      <div className="space-y-0.5 min-w-0 flex-1">
                         <span className={`font-bold text-xs block ${checked ? 'text-[#1463FF]' : 'text-[#0B132B]'}`}>{srv.name}</span>
                         <p className="text-[10.5px] text-[#64748B] leading-tight">{srv.description}</p>
                       </div>
@@ -521,50 +771,67 @@ export default function CreateInvoicePage() {
               onClick={() => setShowCustomModal(true)}
               className="w-full py-2 border border-dashed border-[#1463FF] text-[#1463FF] text-xs font-mono font-bold rounded-xl hover:bg-[#EDF4FF]/30 transition-all flex items-center justify-center gap-1.5"
             >
-              <Plus className="w-3.5 h-3.5" /> Add Custom Service
+              <Plus className="w-3.5 h-3.5" /> Add Custom Line Item / Service
             </button>
           </div>
 
-          {/* Section 4: Set Amounts */}
+          {/* Section 4: Set Amounts & Line Items */}
           <div className="space-y-4 pt-2 border-t border-[#F1EDE4]">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#0B132B]">
-              <div className="w-6 h-6 rounded-lg bg-[#EDF4FF] text-[#1463FF] flex items-center justify-center">
-                <Receipt className="w-3.5 h-3.5" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#0B132B]">
+                <div className="w-6 h-6 rounded-lg bg-[#EDF4FF] text-[#1463FF] flex items-center justify-center">
+                  <Receipt className="w-3.5 h-3.5" />
+                </div>
+                <span>4. Line Items & Amounts ({activeLineItems.length})</span>
               </div>
-              <span>4. Set Amounts</span>
+              <span className="text-[11px] text-[#64748B]">Adjust manual amounts and remove unwanted items</span>
             </div>
-            <p className="text-[11px] text-[#64748B]">Enter the manual amount for each selected service.</p>
 
             <div className="space-y-2.5">
-              {activeLineItems.map((item, index) => (
-                <div key={item.id} className="flex items-center gap-3 bg-[#FDFBF7] border border-[#E8E4DC] rounded-xl p-2.5">
-                  <span className="w-6 text-center font-mono font-bold text-xs text-[#64748B]">{index + 1}</span>
-                  <div className="flex-1 min-w-0">
-                    <span className="font-bold text-xs text-[#0B132B] block truncate">{item.serviceName}</span>
-                  </div>
-                  <div className="w-32 flex items-center gap-1">
-                    <span className="font-mono text-xs text-[#64748B]">₹</span>
-                    <input
-                      type="number"
-                      min="0"
-                      step="1000"
-                      value={item.amount}
-                      onChange={(e) => handleAmountChange(item.id, parseFloat(e.target.value) || 0)}
-                      className="w-full bg-white border border-[#D8D4C9] rounded-lg px-2.5 py-1 text-xs font-mono font-bold text-[#0B132B] text-right focus:outline-none focus:border-[#1463FF]"
-                    />
-                  </div>
+              {activeLineItems.length === 0 ? (
+                <div className="p-4 border border-dashed border-[#E8E4DC] rounded-xl text-center text-xs text-[#94A3B8]">
+                  No services selected. Select services from above or add custom line items.
                 </div>
-              ))}
+              ) : (
+                activeLineItems.map((item, index) => (
+                  <div key={item.id} className="flex items-center gap-3 bg-[#FDFBF7] border border-[#E8E4DC] rounded-xl p-2.5">
+                    <span className="w-5 text-center font-mono font-bold text-xs text-[#64748B]">{index + 1}</span>
+                    <div className="flex-1 min-w-0">
+                      <span className="font-bold text-xs text-[#0B132B] block truncate">{item.serviceName}</span>
+                      <p className="text-[10px] text-[#64748B] truncate">{item.description}</p>
+                    </div>
+                    <div className="w-32 flex items-center gap-1">
+                      <span className="font-mono text-xs text-[#64748B]">₹</span>
+                      <input
+                        type="number"
+                        min="0"
+                        step="1000"
+                        value={item.amount}
+                        onChange={(e) => handleAmountChange(item.id, parseFloat(e.target.value) || 0)}
+                        className="w-full bg-white border border-[#D8D4C9] rounded-lg px-2.5 py-1 text-xs font-mono font-bold text-[#0B132B] text-right focus:outline-none focus:border-[#1463FF]"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeServiceItem(item.id)}
+                      className="p-1.5 rounded-lg text-[#94A3B8] hover:text-red-600 hover:bg-red-50 transition-colors"
+                      title="Remove this service item"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
-          {/* Section 5: Discount & Tax */}
+          {/* Section 5: Discount, Tax & Notes */}
           <div className="space-y-4 pt-2 border-t border-[#F1EDE4]">
             <div className="flex items-center gap-2 text-xs font-bold text-[#0B132B]">
               <div className="w-6 h-6 rounded-lg bg-[#EDF4FF] text-[#1463FF] flex items-center justify-center">
                 <Sparkles className="w-3.5 h-3.5" />
               </div>
-              <span>5. Discount & Tax</span>
+              <span>5. Commercials & Notes</span>
             </div>
 
             <div className="grid grid-cols-2 gap-4 text-xs">
@@ -590,6 +857,16 @@ export default function CreateInvoicePage() {
                 />
               </div>
             </div>
+
+            <div>
+              <label className="text-[#64748B] font-medium block mb-1 text-xs">Invoice Notes & Terms</label>
+              <textarea
+                rows={3}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="w-full bg-[#FDFBF7] border border-[#D8D4C9] rounded-xl p-3 text-xs text-[#0B132B] focus:outline-none focus:border-[#1463FF]"
+              />
+            </div>
           </div>
 
           {/* Action Buttons Bar */}
@@ -597,35 +874,61 @@ export default function CreateInvoicePage() {
             <button
               type="button"
               onClick={() => previewRef.current?.scrollIntoView({ behavior: 'smooth' })}
-              className="flex-1 py-2.5 rounded-xl border border-[#E8E4DC] text-[#64748B] hover:text-[#0B132B] hover:border-[#1463FF] text-xs font-mono font-bold transition-all flex items-center justify-center gap-1.5"
+              className="px-4 py-2.5 rounded-xl border border-[#E8E4DC] text-[#64748B] hover:text-[#0B132B] hover:border-[#1463FF] text-xs font-mono font-bold transition-all flex items-center justify-center gap-1.5"
             >
               <Eye className="w-3.5 h-3.5" /> Preview
             </button>
-            <button
-              type="button"
-              disabled={savingDraft}
-              onClick={handleSaveDraft}
-              className="flex-1 py-2.5 rounded-xl border border-[#D8D4C9] bg-[#FDFBF7] text-[#0B132B] hover:bg-white text-xs font-mono font-bold transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
-            >
-              <Save className="w-3.5 h-3.5" /> Save Draft
-            </button>
-            <button
-              type="button"
-              disabled={generating}
-              onClick={handleGenerateAndDownload}
-              className="flex-[1.5] py-2.5 rounded-xl bg-[#1463FF] hover:bg-[#004AD6] text-white text-xs font-mono font-bold transition-all shadow-md shadow-[#1463FF]/20 flex items-center justify-center gap-1.5 disabled:opacity-50"
-            >
-              <Download className="w-3.5 h-3.5" /> {generating ? 'Generating PDF...' : 'Generate & Download PDF'}
-            </button>
+
+            {isEditMode ? (
+              <>
+                <button
+                  type="button"
+                  disabled={savingChanges}
+                  onClick={handleSaveChanges}
+                  className="flex-1 py-2.5 rounded-xl bg-[#1463FF] hover:bg-[#004AD6] text-white text-xs font-mono font-bold transition-all shadow-md shadow-[#1463FF]/20 flex items-center justify-center gap-1.5 disabled:opacity-50"
+                >
+                  <Save className="w-3.5 h-3.5" /> {savingChanges ? 'Saving Changes...' : 'SAVE CHANGES'}
+                </button>
+                <button
+                  type="button"
+                  disabled={generating}
+                  onClick={handleGenerateAndDownload}
+                  className="flex-1 py-2.5 rounded-xl border border-[#D8D4C9] bg-[#FDFBF7] text-[#0B132B] hover:bg-white text-xs font-mono font-bold transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
+                >
+                  <Download className="w-3.5 h-3.5 text-[#1463FF]" /> {generating ? 'Updating PDF...' : 'Update & Download PDF'}
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  disabled={savingDraft}
+                  onClick={handleSaveDraft}
+                  className="flex-1 py-2.5 rounded-xl border border-[#D8D4C9] bg-[#FDFBF7] text-[#0B132B] hover:bg-white text-xs font-mono font-bold transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
+                >
+                  <Save className="w-3.5 h-3.5" /> Save Draft
+                </button>
+                <button
+                  type="button"
+                  disabled={generating}
+                  onClick={handleGenerateAndDownload}
+                  className="flex-[1.5] py-2.5 rounded-xl bg-[#1463FF] hover:bg-[#004AD6] text-white text-xs font-mono font-bold transition-all shadow-md shadow-[#1463FF]/20 flex items-center justify-center gap-1.5 disabled:opacity-50"
+                >
+                  <Download className="w-3.5 h-3.5" /> {generating ? 'Generating PDF...' : 'Generate & Download PDF'}
+                </button>
+              </>
+            )}
           </div>
         </div>
 
-        {/* Right Column: Live Invoice Preview (Matching Reference 2 & 3) */}
+        {/* Right Column: Live Invoice Preview */}
         <div ref={previewRef} className="lg:col-span-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="font-bold text-lg text-[#0B132B]">Invoice Preview</h2>
-              <p className="text-xs text-[#64748B]">This is how your invoice will look. Review and generate the PDF.</p>
+              <h2 className="font-bold text-lg text-[#0B132B]">
+                {isEditMode ? `Invoice Preview (${existingInvoiceNumber})` : 'Invoice Preview'}
+              </h2>
+              <p className="text-xs text-[#64748B]">Real-time preview of the generated document.</p>
             </div>
             <button
               onClick={() => previewRef.current?.classList.add('animate-pulse')}
@@ -635,7 +938,7 @@ export default function CreateInvoicePage() {
             </button>
           </div>
 
-          {/* Rendered Invoice Paper (Matching Reference 3) */}
+          {/* Rendered Invoice Paper */}
           <div className="bg-[#FDFBF7] rounded-2xl border border-[#E8E4DC] p-7 shadow-lg space-y-6 text-[#0B132B]">
             {/* Header: Logo & Slogans */}
             <div className="flex items-start justify-between border-b border-[#E8E4DC] pb-5">
@@ -686,11 +989,19 @@ export default function CreateInvoicePage() {
               {/* INVOICE PANEL */}
               <div className="md:col-span-3 bg-white rounded-xl border border-[#E8E4DC] p-3 space-y-2">
                 <span className="text-[9px] font-mono font-bold text-[#94A3B8] uppercase block">INVOICE</span>
-                <div className="font-black text-sm font-mono text-[#0B132B]">INV-2026-001</div>
+                <div className="font-black text-sm font-mono text-[#0B132B]">
+                  {isEditMode ? existingInvoiceNumber : 'INV-2026-001'}
+                </div>
                 <div>
                   <span className="text-[8px] font-mono font-bold text-[#94A3B8] block mb-0.5">STATUS</span>
-                  <span className="px-2 py-0.5 rounded-full font-mono text-[9px] font-bold bg-[#DBEAFE] text-[#1D4ED8] inline-block">
-                    DRAFT
+                  <span className={`px-2 py-0.5 rounded-full font-mono text-[9px] font-bold inline-block ${
+                    existingInvoiceStatus === 'PAID'
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                      : existingInvoiceStatus === 'SENT'
+                      ? 'bg-[#DBEAFE] text-[#1D4ED8] border border-blue-200'
+                      : 'bg-amber-50 text-amber-700 border border-amber-200'
+                  }`}>
+                    {isEditMode ? existingInvoiceStatus : 'DRAFT'}
                   </span>
                 </div>
                 <div className="text-[10px] text-[#64748B] font-mono pt-1">
@@ -712,18 +1023,26 @@ export default function CreateInvoicePage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#F1EDE4]">
-                  {activeLineItems.map((item, idx) => (
-                    <tr key={item.id} className="hover:bg-[#FDFBF7]">
-                      <td className="px-3.5 py-3 font-mono font-bold text-xs text-[#0B132B]">{idx + 1}</td>
-                      <td className="px-3.5 py-3 space-y-0.5">
-                        <strong className="text-xs font-bold text-[#0B132B] block">{item.serviceName}</strong>
-                        <p className="text-[10.5px] text-[#64748B] leading-tight">{item.description}</p>
+                  {activeLineItems.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-3.5 py-6 text-center text-[#94A3B8] font-mono text-xs">
+                        No service line items
                       </td>
-                      <td className="px-3.5 py-3 text-center font-mono text-xs">{item.qty}</td>
-                      <td className="px-3.5 py-3 text-right font-mono text-xs">₹{item.rate.toLocaleString('en-IN')}</td>
-                      <td className="px-3.5 py-3 text-right font-mono font-bold text-xs">₹{item.amount.toLocaleString('en-IN')}</td>
                     </tr>
-                  ))}
+                  ) : (
+                    activeLineItems.map((item, idx) => (
+                      <tr key={item.id} className="hover:bg-[#FDFBF7]">
+                        <td className="px-3.5 py-3 font-mono font-bold text-xs text-[#0B132B]">{idx + 1}</td>
+                        <td className="px-3.5 py-3 space-y-0.5">
+                          <strong className="text-xs font-bold text-[#0B132B] block">{item.serviceName}</strong>
+                          <p className="text-[10.5px] text-[#64748B] leading-tight">{item.description}</p>
+                        </td>
+                        <td className="px-3.5 py-3 text-center font-mono text-xs">{item.qty}</td>
+                        <td className="px-3.5 py-3 text-right font-mono text-xs">₹{item.rate.toLocaleString('en-IN')}</td>
+                        <td className="px-3.5 py-3 text-right font-mono font-bold text-xs">₹{item.amount.toLocaleString('en-IN')}</td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
@@ -735,12 +1054,9 @@ export default function CreateInvoicePage() {
                   <FileText className="w-3.5 h-3.5 text-[#1463FF]" />
                   <span>Notes</span>
                 </div>
-                <ul className="text-[10.5px] text-[#64748B] space-y-1 list-disc pl-4 leading-tight">
-                  <li>This invoice covers the development and deployment of the agreed project scope as per our discussion.</li>
-                  <li>Additional features outside the agreed scope will be billed separately upon approval.</li>
-                  <li>Please make the payment within the due date to ensure continued support and development.</li>
-                  <li>For any queries, feel free to contact us.</li>
-                </ul>
+                <div className="text-[10.5px] text-[#64748B] whitespace-pre-wrap leading-tight">
+                  {notes}
+                </div>
               </div>
 
               <div className="md:col-span-5 bg-white rounded-xl border border-[#E8E4DC] p-4 space-y-2 font-mono">
@@ -757,9 +1073,12 @@ export default function CreateInvoicePage() {
                   <strong className="text-[#0B132B]">₹{taxAmount.toLocaleString('en-IN')}</strong>
                 </div>
 
-                <div className="bg-[#EDF4FF] border border-[#1463FF]/30 rounded-xl p-3 flex items-center justify-between pt-2">
-                  <span className="font-bold text-sm text-[#1463FF]">TOTAL</span>
-                  <strong className="text-base text-[#0B132B]">₹{total.toLocaleString('en-IN')}</strong>
+                {/* Fixed Total Box Alignment (Image 1 Fix) */}
+                <div className="bg-[#EDF4FF] border border-[#1463FF]/30 rounded-xl px-4 py-3 flex items-center justify-between gap-4">
+                  <span className="font-bold text-sm text-[#1463FF] tracking-wider uppercase">TOTAL</span>
+                  <strong className="text-base text-[#0B132B] font-mono tracking-tight font-black">
+                    ₹{total.toLocaleString('en-IN')}
+                  </strong>
                 </div>
 
                 <div className="pt-1 text-[9.5px]">
@@ -814,10 +1133,10 @@ export default function CreateInvoicePage() {
       {showCustomModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl border border-[#D8D4C9] p-6 w-full max-w-md shadow-2xl space-y-4">
-            <h3 className="font-bold text-base text-[#0B132B]">Add Custom Service</h3>
+            <h3 className="font-bold text-base text-[#0B132B]">Add Custom Line Item</h3>
             <form onSubmit={handleAddCustom} className="space-y-3 text-xs">
               <div>
-                <label className="font-mono text-[9px] font-bold text-[#64748B] uppercase block mb-1">Service Name *</label>
+                <label className="font-mono text-[9px] font-bold text-[#64748B] uppercase block mb-1">Service / Deliverable Name *</label>
                 <input
                   type="text"
                   required
