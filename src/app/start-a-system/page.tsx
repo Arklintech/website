@@ -8,6 +8,7 @@ import { ArrowRight, CheckCircle2, ShieldCheck, Send, Sparkles } from 'lucide-re
 export default function StartASystemPage() {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [formState, setFormState] = useState({
     name: '',
     company: '',
@@ -18,14 +19,31 @@ export default function StartASystemPage() {
     requirement: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSubmitting) return;
     setIsSubmitting(true);
-    setTimeout(() => {
+    setErrorMessage('');
+
+    try {
+      const res = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formState),
+      });
+
+      const json = await res.json();
+      if (res.ok && json.success) {
+        setIsSubmitting(false);
+        setSubmitted(true);
+      } else {
+        setIsSubmitting(false);
+        setErrorMessage(json.errors?.join(' ') || json.error || 'Failed to submit inquiry. Please verify your entries.');
+      }
+    } catch (err) {
       setIsSubmitting(false);
-      setSubmitted(true);
-    }, 450);
+      setErrorMessage('Network connection error. Please try again.');
+    }
   };
 
   return (
@@ -233,6 +251,12 @@ export default function StartASystemPage() {
                         className="w-full px-3 py-2 rounded bg-z-surface-2 border border-z-border text-xs sm:text-sm text-z-white focus:outline-none focus:border-z-cyan-400 font-body resize-none"
                       />
                     </div>
+
+                    {errorMessage && (
+                      <div className="p-3 rounded bg-red-950/50 border border-red-500/50 text-red-200 text-xs font-mono">
+                        {errorMessage}
+                      </div>
+                    )}
 
                     <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="flex items-center gap-1.5 font-mono text-[10px] text-z-dim">
