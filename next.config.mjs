@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: ['jwks-rsa', 'jose'],
   experimental: {
-    serverComponentsExternalPackages: ['firebase-admin', 'jwks-rsa', 'jose'],
+    serverComponentsExternalPackages: ['firebase-admin'],
   },
   reactStrictMode: true,
   images: {
