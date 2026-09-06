@@ -910,7 +910,7 @@ export default function CreateOrEditInvoicePage() {
         </div>
 
         {/* Right Column: Live Invoice Preview */}
-        <div ref={previewRef} className="lg:col-span-6 space-y-4">
+        <div ref={previewRef} className="lg:col-span-6 space-y-4 overflow-x-hidden">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="font-bold text-lg text-[#0B132B]">
@@ -927,7 +927,7 @@ export default function CreateOrEditInvoicePage() {
           </div>
 
           {/* Rendered Invoice Paper */}
-          <div className="bg-[#FDFBF7] rounded-2xl border border-[#E8E4DC] p-4 sm:p-7 shadow-lg space-y-5 text-[#0B132B]">
+          <div className="bg-[#FDFBF7] rounded-2xl border border-[#E8E4DC] p-4 sm:p-6 shadow-lg space-y-5 text-[#0B132B] overflow-x-hidden">
             {/* Header: Exact Keystone Logo & Slogans */}
             <div className="flex flex-col sm:flex-row sm:items-start justify-between border-b border-[#E8E4DC] pb-4 gap-3">
               <div className="space-y-1.5">
@@ -998,17 +998,16 @@ export default function CreateOrEditInvoicePage() {
               <table className="w-full text-left text-xs table-fixed">
                 <thead>
                   <tr className="bg-[#0B132B] text-white">
-                    <th className="px-2 py-2.5 font-mono text-[9px] font-bold uppercase w-7">#</th>
+                    <th className="px-2 py-2.5 font-mono text-[9px] font-bold uppercase w-6">#</th>
                     <th className="px-2 py-2.5 font-mono text-[9px] font-bold uppercase">DESCRIPTION</th>
-                    <th className="px-2 py-2.5 font-mono text-[9px] font-bold uppercase text-center w-8">QTY</th>
-                    <th className="px-2 py-2.5 font-mono text-[9px] font-bold uppercase text-right w-20">RATE (INR)</th>
-                    <th className="px-2 py-2.5 font-mono text-[9px] font-bold uppercase text-right w-20">AMT (INR)</th>
+                    <th className="px-2 py-2.5 font-mono text-[9px] font-bold uppercase text-right w-[76px]">RATE (INR)</th>
+                    <th className="px-2 py-2.5 font-mono text-[9px] font-bold uppercase text-right w-[76px]">AMT (INR)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#F1EDE4]">
                   {activeLineItems.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-3.5 py-6 text-center text-[#94A3B8] font-mono text-xs">
+                      <td colSpan={4} className="px-3 py-6 text-center text-[#94A3B8] font-mono text-xs">
                         No service line items
                       </td>
                     </tr>
@@ -1016,11 +1015,10 @@ export default function CreateOrEditInvoicePage() {
                     activeLineItems.map((item, idx) => (
                       <tr key={item.id} className="hover:bg-[#FDFBF7]">
                         <td className="px-2 py-2.5 font-mono font-bold text-xs text-[#0B132B]">{idx + 1}</td>
-                        <td className="px-2 py-2.5 space-y-0.5 min-w-0">
+                        <td className="px-2 py-2.5 min-w-0">
                           <strong className="text-xs font-bold text-[#0B132B] block truncate">{item.serviceName}</strong>
-                          <p className="text-[10px] text-[#64748B] leading-tight line-clamp-2">{item.description}</p>
+                          <p className="text-[10px] text-[#64748B] leading-tight truncate">{item.description}</p>
                         </td>
-                        <td className="px-2 py-2.5 text-center font-mono text-xs">{item.qty}</td>
                         <td className="px-2 py-2.5 text-right font-mono text-xs">₹{item.rate.toLocaleString('en-IN')}</td>
                         <td className="px-2 py-2.5 text-right font-mono font-bold text-xs">₹{item.amount.toLocaleString('en-IN')}</td>
                       </tr>
