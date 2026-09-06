@@ -994,15 +994,15 @@ export default function CreateOrEditInvoicePage() {
             </div>
 
             {/* Service Items Table */}
-            <div className="rounded-xl overflow-x-auto border border-[#E8E4DC] bg-white">
-              <table className="w-full text-left text-xs min-w-[480px]">
+            <div className="rounded-xl border border-[#E8E4DC] bg-white overflow-hidden">
+              <table className="w-full text-left text-xs table-fixed">
                 <thead>
                   <tr className="bg-[#0B132B] text-white">
-                    <th className="px-3.5 py-2.5 font-mono text-[9px] font-bold uppercase w-10">#</th>
-                    <th className="px-3.5 py-2.5 font-mono text-[9px] font-bold uppercase">DESCRIPTION</th>
-                    <th className="px-3.5 py-2.5 font-mono text-[9px] font-bold uppercase text-center w-12">QTY</th>
-                    <th className="px-3.5 py-2.5 font-mono text-[9px] font-bold uppercase text-right w-24">RATE (INR)</th>
-                    <th className="px-3.5 py-2.5 font-mono text-[9px] font-bold uppercase text-right w-24">AMOUNT (INR)</th>
+                    <th className="px-2 py-2.5 font-mono text-[9px] font-bold uppercase w-7">#</th>
+                    <th className="px-2 py-2.5 font-mono text-[9px] font-bold uppercase">DESCRIPTION</th>
+                    <th className="px-2 py-2.5 font-mono text-[9px] font-bold uppercase text-center w-8">QTY</th>
+                    <th className="px-2 py-2.5 font-mono text-[9px] font-bold uppercase text-right w-20">RATE (INR)</th>
+                    <th className="px-2 py-2.5 font-mono text-[9px] font-bold uppercase text-right w-20">AMT (INR)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#F1EDE4]">
@@ -1015,14 +1015,14 @@ export default function CreateOrEditInvoicePage() {
                   ) : (
                     activeLineItems.map((item, idx) => (
                       <tr key={item.id} className="hover:bg-[#FDFBF7]">
-                        <td className="px-3.5 py-3 font-mono font-bold text-xs text-[#0B132B]">{idx + 1}</td>
-                        <td className="px-3.5 py-3 space-y-0.5">
-                          <strong className="text-xs font-bold text-[#0B132B] block">{item.serviceName}</strong>
-                          <p className="text-[10.5px] text-[#64748B] leading-tight">{item.description}</p>
+                        <td className="px-2 py-2.5 font-mono font-bold text-xs text-[#0B132B]">{idx + 1}</td>
+                        <td className="px-2 py-2.5 space-y-0.5 min-w-0">
+                          <strong className="text-xs font-bold text-[#0B132B] block truncate">{item.serviceName}</strong>
+                          <p className="text-[10px] text-[#64748B] leading-tight line-clamp-2">{item.description}</p>
                         </td>
-                        <td className="px-3.5 py-3 text-center font-mono text-xs">{item.qty}</td>
-                        <td className="px-3.5 py-3 text-right font-mono text-xs">₹{item.rate.toLocaleString('en-IN')}</td>
-                        <td className="px-3.5 py-3 text-right font-mono font-bold text-xs">₹{item.amount.toLocaleString('en-IN')}</td>
+                        <td className="px-2 py-2.5 text-center font-mono text-xs">{item.qty}</td>
+                        <td className="px-2 py-2.5 text-right font-mono text-xs">₹{item.rate.toLocaleString('en-IN')}</td>
+                        <td className="px-2 py-2.5 text-right font-mono font-bold text-xs">₹{item.amount.toLocaleString('en-IN')}</td>
                       </tr>
                     ))
                   )}
