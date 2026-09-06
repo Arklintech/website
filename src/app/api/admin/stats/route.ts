@@ -9,32 +9,35 @@ export async function GET(req: NextRequest) {
 
   try {
     const [
-      leadCountByStatus,
-      totalLeads,
-      totalContacts,
-      totalCompanies,
-      unreadConversations,
-      unassignedConversations,
-      followupCounts,
-      activeVisitors,
-      unreadNotifications,
-      recentLeads,
-      recentFollowups,
-      totalInquiries,
+      rawLeadCountByStatus,
+      totalLeads = 0,
+      totalContacts = 0,
+      totalCompanies = 0,
+      unreadConversations = 0,
+      unassignedConversations = 0,
+      rawFollowupCounts,
+      activeVisitors = 0,
+      unreadNotifications = 0,
+      recentLeads = [],
+      recentFollowups = [],
+      totalInquiries = 0,
     ] = await Promise.all([
-      adminDb.leads.countByStatus(),
-      adminDb.leads.count(),
-      adminDb.contacts.count(),
-      adminDb.companies.count(),
-      adminDb.conversations.countUnread(),
-      adminDb.conversations.countUnassigned(),
-      adminDb.followups.countByCategory(),
-      adminDb.visitors.countActive(),
-      adminDb.notifications.countUnread(),
-      adminDb.leads.findMany({ limit: 6 }),
-      adminDb.followups.findMany({ status: 'OPEN', limit: 8 }),
-      db.inquiries.count(),
+      adminDb.leads.countByStatus().catch(() => ({})),
+      adminDb.leads.count().catch(() => 0),
+      adminDb.contacts.count().catch(() => 0),
+      adminDb.companies.count().catch(() => 0),
+      adminDb.conversations.countUnread().catch(() => 0),
+      adminDb.conversations.countUnassigned().catch(() => 0),
+      adminDb.followups.countByCategory().catch(() => ({ overdue: 0, dueToday: 0, dueThisWeek: 0, upcoming: 0 })),
+      adminDb.visitors.countActive().catch(() => 0),
+      adminDb.notifications.countUnread().catch(() => 0),
+      adminDb.leads.findMany({ limit: 6 }).catch(() => []),
+      adminDb.followups.findMany({ status: 'OPEN', limit: 8 }).catch(() => []),
+      db.inquiries.count().catch(() => 0),
     ]);
+
+    const leadCountByStatus: Record<string, number> = rawLeadCountByStatus || {};
+    const followupCounts = rawFollowupCounts || { overdue: 0, dueToday: 0, dueThisWeek: 0, upcoming: 0 };
 
     // Derive pipeline stages with conversion rates
     const PIPELINE_STAGES = ['NEW', 'CONTACTED', 'QUALIFIED', 'DISCOVERY', 'PROPOSAL', 'ACTIVE', 'WON', 'LOST'];
@@ -46,33 +49,34 @@ export async function GET(req: NextRequest) {
     }));
 
     // Top sources from telemetry
-    const telemetry = await db.telemetry.findRecent(500);
+    const telemetry = (await db.telemetry.findRecent(500).catch(() => [])) || [];
     const sourceCounts: Record<string, number> = {};
     for (const t of telemetry) {
-      if (t.eventType === 'PAGE_VIEW') {
+      if (t && t.eventType === 'PAGE_VIEW') {
         const source = 'Direct';
         sourceCounts[source] = (sourceCounts[source] || 0) + 1;
       }
     }
 
     // Visitor journeys — from recent visitors
-    const recentVisitors = await adminDb.visitors.findRecent(20);
+    const recentVisitors = (await adminDb.visitors.findRecent(20).catch(() => [])) || [];
     const journeys = recentVisitors
-      .filter(v => v.pagesVisited.length > 1)
+      .filter(v => v && Array.isArray(v.pagesVisited) && v.pagesVisited.length > 1)
       .slice(0, 5)
-      .map(v => ({ pages: v.pagesVisited, duration: v.durationSeconds, source: v.source }));
+      .map(v => ({ pages: v.pagesVisited || [], duration: v.durationSeconds || 0, source: v.source || 'Direct' }));
 
     // Needs attention items
     const needsAttention = [];
-    if (followupCounts.overdue > 0) needsAttention.push({ type: 'OVERDUE_FOLLOWUP', count: followupCounts.overdue, label: 'Overdue Follow-ups', url: '/admin/follow-ups' });
+    if ((followupCounts.overdue || 0) > 0) needsAttention.push({ type: 'OVERDUE_FOLLOWUP', count: followupCounts.overdue, label: 'Overdue Follow-ups', url: '/admin/follow-ups' });
     if (unassignedConversations > 0) needsAttention.push({ type: 'UNASSIGNED_CONV', count: unassignedConversations, label: 'Unassigned Conversations', url: '/admin/inbox' });
-    const highIntentVisitors = recentVisitors.filter(v => v.intent === 'HIGH' && v.isActive).length;
+    const highIntentVisitors = recentVisitors.filter(v => v && v.intent === 'HIGH' && v.isActive).length;
     if (highIntentVisitors > 0) needsAttention.push({ type: 'HIGH_INTENT', count: highIntentVisitors, label: 'High-Intent Visitors Active', url: '/admin/live-visitors' });
-    if (leadCountByStatus['NEW'] > 0) needsAttention.push({ type: 'LEADS_WAITING', count: leadCountByStatus['NEW'], label: 'New Leads Awaiting Response', url: '/admin/leads' });
+    if ((leadCountByStatus['NEW'] || 0) > 0) needsAttention.push({ type: 'LEADS_WAITING', count: leadCountByStatus['NEW'], label: 'New Leads Awaiting Response', url: '/admin/leads' });
 
     return NextResponse.json({
       kpis: {
         visitorsToday: telemetry.filter(t => {
+          if (!t || !t.timestamp) return false;
           const d = new Date(t.timestamp);
           const today = new Date();
           return d.toDateString() === today.toDateString();
@@ -87,7 +91,7 @@ export async function GET(req: NextRequest) {
         unreadNotifications,
       },
       pipeline,
-      recentLeads,
+      recentLeads: Array.isArray(recentLeads) ? recentLeads : [],
       topSources: Object.entries(sourceCounts).map(([source, visits]) => ({
         source,
         visits,
@@ -95,10 +99,10 @@ export async function GET(req: NextRequest) {
       })),
       followups: {
         counts: followupCounts,
-        total: followupCounts.overdue + followupCounts.dueToday + followupCounts.dueThisWeek + followupCounts.upcoming,
-        items: recentFollowups,
+        total: (followupCounts.overdue || 0) + (followupCounts.dueToday || 0) + (followupCounts.dueThisWeek || 0) + (followupCounts.upcoming || 0),
+        items: Array.isArray(recentFollowups) ? recentFollowups : [],
       },
-      liveVisitors: recentVisitors.filter(v => v.isActive).slice(0, 5),
+      liveVisitors: recentVisitors.filter(v => v && v.isActive).slice(0, 5),
       journeys,
       needsAttention,
     });
