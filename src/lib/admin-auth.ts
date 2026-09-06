@@ -123,18 +123,23 @@ export async function verifyAdminToken(
 export async function verifyAdminRequest(
   req: Request
 ): Promise<{ valid: boolean; status: number; payload?: AdminTokenPayload }> {
-  const authHeader = req.headers.get('authorization') || '';
+  try {
+    const authHeader = req.headers.get('authorization') || '';
 
-  if (!authHeader.toLowerCase().startsWith('bearer ')) {
+    if (!authHeader.toLowerCase().startsWith('bearer ')) {
+      return { valid: false, status: 401 };
+    }
+
+    const token = authHeader.substring(7).trim();
+    if (!token) {
+      return { valid: false, status: 401 };
+    }
+
+    return await verifyAdminToken(token);
+  } catch (err) {
+    console.error('Error verifying admin request auth header:', err);
     return { valid: false, status: 401 };
   }
-
-  const token = authHeader.substring(7).trim();
-  if (!token) {
-    return { valid: false, status: 401 };
-  }
-
-  return verifyAdminToken(token);
 }
 
 // ── Deprecated stubs — kept to satisfy any remaining import references ────────

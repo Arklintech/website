@@ -4,10 +4,10 @@ import { db } from '@/lib/db';
 import { verifyAdminRequest } from '@/lib/admin-auth';
 
 export async function GET(req: NextRequest) {
-  const auth = await verifyAdminRequest(req);
-  if (!auth.valid) return NextResponse.json({ error: auth.status === 403 ? 'Forbidden: Access denied' : 'Unauthorized' }, { status: auth.status || 401 });
-
   try {
+    const auth = await verifyAdminRequest(req);
+    if (!auth.valid) return NextResponse.json({ error: auth.status === 403 ? 'Forbidden: Access denied' : 'Unauthorized' }, { status: auth.status || 401 });
+
     const [
       rawLeadCountByStatus,
       totalLeads = 0,
@@ -51,16 +51,19 @@ export async function GET(req: NextRequest) {
     // Top sources from telemetry
     const telemetry = (await db.telemetry.findRecent(500).catch(() => [])) || [];
     const sourceCounts: Record<string, number> = {};
-    for (const t of telemetry) {
-      if (t && t.eventType === 'PAGE_VIEW') {
-        const source = 'Direct';
-        sourceCounts[source] = (sourceCounts[source] || 0) + 1;
+    if (Array.isArray(telemetry)) {
+      for (const t of telemetry) {
+        if (t && t.eventType === 'PAGE_VIEW') {
+          const source = 'Direct';
+          sourceCounts[source] = (sourceCounts[source] || 0) + 1;
+        }
       }
     }
 
     // Visitor journeys — from recent visitors
     const recentVisitors = (await adminDb.visitors.findRecent(20).catch(() => [])) || [];
-    const journeys = recentVisitors
+    const safeVisitors = Array.isArray(recentVisitors) ? recentVisitors : [];
+    const journeys = safeVisitors
       .filter(v => v && Array.isArray(v.pagesVisited) && v.pagesVisited.length > 1)
       .slice(0, 5)
       .map(v => ({ pages: v.pagesVisited || [], duration: v.durationSeconds || 0, source: v.source || 'Direct' }));
@@ -69,15 +72,18 @@ export async function GET(req: NextRequest) {
     const needsAttention = [];
     if ((followupCounts.overdue || 0) > 0) needsAttention.push({ type: 'OVERDUE_FOLLOWUP', count: followupCounts.overdue, label: 'Overdue Follow-ups', url: '/admin/follow-ups' });
     if (unassignedConversations > 0) needsAttention.push({ type: 'UNASSIGNED_CONV', count: unassignedConversations, label: 'Unassigned Conversations', url: '/admin/inbox' });
-    const highIntentVisitors = recentVisitors.filter(v => v && v.intent === 'HIGH' && v.isActive).length;
+    const highIntentVisitors = safeVisitors.filter(v => v && v.intent === 'HIGH' && v.isActive).length;
     if (highIntentVisitors > 0) needsAttention.push({ type: 'HIGH_INTENT', count: highIntentVisitors, label: 'High-Intent Visitors Active', url: '/admin/live-visitors' });
     if ((leadCountByStatus['NEW'] || 0) > 0) needsAttention.push({ type: 'LEADS_WAITING', count: leadCountByStatus['NEW'], label: 'New Leads Awaiting Response', url: '/admin/leads' });
 
+    const safeTelemetry = Array.isArray(telemetry) ? telemetry : [];
+
     return NextResponse.json({
       kpis: {
-        visitorsToday: telemetry.filter(t => {
+        visitorsToday: safeTelemetry.filter(t => {
           if (!t || !t.timestamp) return false;
           const d = new Date(t.timestamp);
+          if (isNaN(d.getTime())) return false;
           const today = new Date();
           return d.toDateString() === today.toDateString();
         }).length,
@@ -95,14 +101,14 @@ export async function GET(req: NextRequest) {
       topSources: Object.entries(sourceCounts).map(([source, visits]) => ({
         source,
         visits,
-        pct: telemetry.length > 0 ? Math.round((visits / telemetry.length) * 100) : 0,
+        pct: safeTelemetry.length > 0 ? Math.round((visits / safeTelemetry.length) * 100) : 0,
       })),
       followups: {
         counts: followupCounts,
         total: (followupCounts.overdue || 0) + (followupCounts.dueToday || 0) + (followupCounts.dueThisWeek || 0) + (followupCounts.upcoming || 0),
         items: Array.isArray(recentFollowups) ? recentFollowups : [],
       },
-      liveVisitors: recentVisitors.filter(v => v && v.isActive).slice(0, 5),
+      liveVisitors: safeVisitors.filter(v => v && v.isActive).slice(0, 5),
       journeys,
       needsAttention,
     });
