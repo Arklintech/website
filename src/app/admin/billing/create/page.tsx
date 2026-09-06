@@ -12,6 +12,7 @@ import {
 import { fetchAdmin, fetchAdminJSON, invalidateAdminCache } from '@/lib/admin-client';
 import type { ServiceRecord, ProjectRecord, InvoiceRecord, InvoiceItemRecord } from '@/lib/admin-db';
 import { amountToWordsIndian } from '@/lib/currency-words';
+import KeystoneLogo from '@/components/brand/KeystoneLogo';
 
 export default function CreateOrEditInvoicePage() {
   const searchParams = useSearchParams();
@@ -164,11 +165,13 @@ export default function CreateOrEditInvoicePage() {
               setProjectName(`${match.name} (${match.projectRef || 'PRJ'})`);
               setClientName(match.clientName);
             }
-          } else if (loadedProjects.length > 0) {
-            const p = loadedProjects[0];
-            setSelectedProjectId(p.id);
-            setProjectName(`${p.name} (${p.projectRef || 'PRJ'})`);
-            setClientName(p.clientName);
+          } else {
+            setSelectedProjectId('');
+            setProjectName('Technology System');
+            setClientName('');
+            setClientAddress('');
+            setClientEmail('');
+            setClientPhone('');
           }
 
           const initialIds: string[] = [];
@@ -584,38 +587,23 @@ export default function CreateOrEditInvoicePage() {
             )}
           </div>
 
-          {/* Section 1: Project & Client Details */}
+          {/* Section 1: Client / Company Details */}
           <div className="space-y-4 pt-2 border-t border-[#F1EDE4]">
             <div className="flex items-center gap-2 text-xs font-bold text-[#0B132B]">
               <div className="w-6 h-6 rounded-lg bg-[#EDF4FF] text-[#1463FF] flex items-center justify-center">
-                <Briefcase className="w-3.5 h-3.5" />
+                <Building2 className="w-3.5 h-3.5" />
               </div>
-              <span>1. Project & Client Details</span>
+              <span>1. Client / Company Details</span>
             </div>
 
             <div className="space-y-3 text-xs">
-              <div>
-                <label className="text-[#64748B] font-medium block mb-1">Associated Project</label>
-                <select
-                  value={selectedProjectId}
-                  onChange={(e) => handleProjectSelect(e.target.value)}
-                  className="w-full bg-[#FDFBF7] border border-[#D8D4C9] rounded-xl px-3 py-2 text-xs text-[#0B132B] font-semibold focus:outline-none focus:border-[#1463FF]"
-                >
-                  <option value="">-- Standalone Billing / Custom Project --</option>
-                  {projects.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name} ({p.projectRef || 'PRJ'})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
               <div>
                 <label className="text-[#64748B] font-medium block mb-1">Client / Company Name *</label>
                 <input
                   type="text"
                   value={clientName}
                   onChange={(e) => setClientName(e.target.value)}
+                  placeholder="e.g. Acme Corporation"
                   className="w-full bg-[#FDFBF7] border border-[#D8D4C9] rounded-xl px-3 py-2 text-xs text-[#0B132B] font-semibold focus:outline-none focus:border-[#1463FF]"
                 />
               </div>
@@ -939,23 +927,18 @@ export default function CreateOrEditInvoicePage() {
           </div>
 
           {/* Rendered Invoice Paper */}
-          <div className="bg-[#FDFBF7] rounded-2xl border border-[#E8E4DC] p-7 shadow-lg space-y-6 text-[#0B132B]">
-            {/* Header: Logo & Slogans */}
-            <div className="flex items-start justify-between border-b border-[#E8E4DC] pb-5">
-              <div>
-                <img
-                  src="/brand/arklintech-invoice-header.png"
-                  alt="ARKLINTECH"
-                  className="h-10 w-auto object-contain"
-                  onError={(e) => { (e.target as HTMLImageElement).src = '/brand/Arklintech_Keystone_logo.svg'; }}
-                />
-                <div className="text-[9px] font-bold font-mono tracking-[0.16em] text-[#0B132B] mt-2">
+          <div className="bg-[#FDFBF7] rounded-2xl border border-[#E8E4DC] p-4 sm:p-7 shadow-lg space-y-5 text-[#0B132B]">
+            {/* Header: Exact Keystone Logo & Slogans */}
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between border-b border-[#E8E4DC] pb-4 gap-3">
+              <div className="space-y-1.5">
+                <KeystoneLogo size="md" />
+                <div className="text-[8.5px] sm:text-[9px] font-bold font-mono tracking-[0.16em] text-[#0B132B] pt-1">
                   IDEAS &nbsp;→&nbsp; SYSTEMS &nbsp;→&nbsp; REAL &nbsp;IMPACT
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 text-right">
-                <div className="w-[1.5px] h-10 bg-[#1463FF]" />
+              <div className="flex items-center gap-3 text-left sm:text-right self-start sm:self-auto">
+                <div className="w-[1.5px] h-9 bg-[#1463FF]" />
                 <div className="text-[7.5px] font-bold text-[#0B132B] font-mono leading-tight uppercase tracking-wider">
                   INTELLIGENT<br />SYSTEMS<br />FOR A<br />BRIGHTER<br />TOMORROW
                 </div>
@@ -978,7 +961,7 @@ export default function CreateOrEditInvoicePage() {
                 <span className="font-mono text-[9px] font-bold text-[#1463FF] uppercase tracking-wider block">PROJECT</span>
                 <strong className="text-xs font-bold text-[#0B132B] block leading-snug">{projectName}</strong>
                 <div className="text-[10.5px] text-[#64748B] space-y-0.5 pt-1 font-mono">
-                  <div>Project Ref.: <strong className="text-[#0B132B]">{selectedProjectId ? selectedProjectId.slice(0, 10).toUpperCase() : 'HE-2026-01'}</strong></div>
+                  <div>Project Ref.: <strong className="text-[#0B132B]">{selectedProjectId ? selectedProjectId.slice(0, 10).toUpperCase() : 'PRJ-2026-01'}</strong></div>
                   <div>Invoice Date: <strong className="text-[#0B132B]">{invoiceDate}</strong></div>
                   <div>Due Date: <strong className="text-[#0B132B]">{dueDate}</strong></div>
                   <div>Payment Terms: <strong className="text-[#0B132B]">{paymentTerms}</strong></div>
@@ -1011,8 +994,8 @@ export default function CreateOrEditInvoicePage() {
             </div>
 
             {/* Service Items Table */}
-            <div className="rounded-xl overflow-hidden border border-[#E8E4DC] bg-white">
-              <table className="w-full text-left text-xs">
+            <div className="rounded-xl overflow-x-auto border border-[#E8E4DC] bg-white">
+              <table className="w-full text-left text-xs min-w-[480px]">
                 <thead>
                   <tr className="bg-[#0B132B] text-white">
                     <th className="px-3.5 py-2.5 font-mono text-[9px] font-bold uppercase w-10">#</th>
@@ -1047,52 +1030,51 @@ export default function CreateOrEditInvoicePage() {
               </table>
             </div>
 
-            {/* Notes & Totals */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start text-xs">
-              <div className="md:col-span-7 bg-white rounded-xl border border-[#E8E4DC] p-4 space-y-2">
-                <div className="flex items-center gap-1.5 font-bold text-[#0B132B]">
-                  <FileText className="w-3.5 h-3.5 text-[#1463FF]" />
-                  <span>Notes</span>
-                </div>
-                <div className="text-[10.5px] text-[#64748B] whitespace-pre-wrap leading-tight">
-                  {notes}
-                </div>
+            {/* 1. TOTALS CONTAINER (Stacked vertically above Notes) */}
+            <div className="bg-white rounded-xl border border-[#E8E4DC] p-4 sm:p-5 space-y-2.5 font-mono text-xs shadow-sm">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-[#64748B]">Subtotal</span>
+                <strong className="text-[#0B132B] font-bold">₹{subtotal.toLocaleString('en-IN')}</strong>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-[#64748B]">Discount</span>
+                <strong className="text-[#0B132B]">₹{discount.toLocaleString('en-IN')}</strong>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-[#64748B]">Tax ({taxPct}%)</span>
+                <strong className="text-[#0B132B]">₹{taxAmount.toLocaleString('en-IN')}</strong>
               </div>
 
-              <div className="md:col-span-5 bg-white rounded-xl border border-[#E8E4DC] p-4 space-y-2 font-mono">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-[#64748B]">Subtotal</span>
-                  <strong className="text-[#0B132B]">₹{subtotal.toLocaleString('en-IN')}</strong>
-                </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-[#64748B]">Discount</span>
-                  <strong className="text-[#0B132B]">₹{discount.toLocaleString('en-IN')}</strong>
-                </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-[#64748B]">Tax ({taxPct}%)</span>
-                  <strong className="text-[#0B132B]">₹{taxAmount.toLocaleString('en-IN')}</strong>
-                </div>
+              {/* Highlighted TOTAL box */}
+              <div className="bg-[#EDF4FF] border border-[#1463FF]/30 rounded-xl px-4 py-3 flex items-center justify-between gap-4">
+                <span className="font-bold text-sm text-[#1463FF] tracking-wider uppercase">TOTAL</span>
+                <strong className="text-base sm:text-lg text-[#0B132B] font-mono tracking-tight font-black">
+                  ₹{total.toLocaleString('en-IN')}
+                </strong>
+              </div>
 
-                {/* Fixed Total Box Alignment (Image 1 Fix) */}
-                <div className="bg-[#EDF4FF] border border-[#1463FF]/30 rounded-xl px-4 py-3 flex items-center justify-between gap-4">
-                  <span className="font-bold text-sm text-[#1463FF] tracking-wider uppercase">TOTAL</span>
-                  <strong className="text-base text-[#0B132B] font-mono tracking-tight font-black">
-                    ₹{total.toLocaleString('en-IN')}
-                  </strong>
-                </div>
-
-                <div className="pt-1 text-[9.5px]">
-                  <span className="text-[#94A3B8] block">Amount in Words:</span>
-                  <span className="font-bold text-[#0B132B]">{words}</span>
-                </div>
+              <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[10px] border-t border-[#F1EDE4]">
+                <span className="text-[#94A3B8] uppercase font-bold text-[9px] tracking-wider">Amount in Words:</span>
+                <span className="font-bold text-[#0B132B] text-left sm:text-right">{words}</span>
               </div>
             </div>
 
-            {/* Signature Section */}
-            <div className="flex items-end justify-between pt-4 border-t border-[#E8E4DC]">
+            {/* 2. NOTES CONTAINER (Stacked vertically below Totals) */}
+            <div className="bg-white rounded-xl border border-[#E8E4DC] p-4 sm:p-5 space-y-2 shadow-sm">
+              <div className="flex items-center gap-1.5 font-bold text-xs text-[#0B132B]">
+                <FileText className="w-3.5 h-3.5 text-[#1463FF]" />
+                <span>Notes</span>
+              </div>
+              <div className="text-[11px] sm:text-xs text-[#64748B] whitespace-pre-wrap leading-relaxed">
+                {notes}
+              </div>
+            </div>
+
+            {/* 3. SIGNATURE / CLOSING (Stacked vertically below Notes) */}
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between pt-4 border-t border-[#E8E4DC] gap-4">
               <div className="space-y-1">
-                <p className="text-[11px] font-bold text-[#0B132B]">Thank you for your business.</p>
-                <div className="h-12 flex items-center">
+                <p className="text-xs font-bold text-[#0B132B]">Thank you for your business.</p>
+                <div className="h-12 flex items-center py-1">
                   <img
                     src="/brand/anas-signature.png"
                     alt="Signature"
@@ -1104,7 +1086,7 @@ export default function CreateOrEditInvoicePage() {
                 <p className="text-[10px] font-bold text-[#0B132B]">ARKLINTECH TECHNOLOGY SYSTEMS</p>
               </div>
 
-              <div className="flex items-center gap-3 text-right">
+              <div className="flex items-center gap-3 text-left sm:text-right self-start sm:self-auto">
                 <div className="w-[1.5px] h-12 bg-[#1463FF]" />
                 <div className="text-[8px] font-bold font-mono text-[#0B132B] uppercase leading-tight tracking-wider">
                   BUILD<br />AUTOMATE<br />INTEGRATE<br />SCALE
@@ -1113,14 +1095,14 @@ export default function CreateOrEditInvoicePage() {
             </div>
 
             {/* Bottom Footer Navy Bar */}
-            <div className="bg-[#0B132B] text-white -mx-7 -mb-7 p-4 rounded-b-2xl flex items-center justify-between text-[10px] font-mono">
+            <div className="bg-[#0B132B] text-white -mx-4 sm:-mx-7 -mb-4 sm:-mb-7 p-4 rounded-b-2xl flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] font-mono text-center sm:text-left">
               <div>
                 <span>www.arklintech.com</span> &nbsp;•&nbsp; <span>work@arklintech.com</span>
               </div>
               <div className="font-bold tracking-wider">
                 BUILT FOR WHAT&apos;S NEXT.
               </div>
-              <div className="text-right text-[8.5px] text-[#94A3B8] leading-tight">
+              <div className="text-center sm:text-right text-[8.5px] text-[#94A3B8] leading-tight">
                 AI | SOFTWARE | AUTOMATION<br />
                 BUSINESS SYSTEMS | DIGITAL INFRASTRUCTURE
               </div>

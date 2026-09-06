@@ -56,6 +56,10 @@ function cleanWinAnsi(str: string): string {
   return str
     .replace(/\u20B9/g, 'INR ')
     .replace(/₹/g, 'INR ')
+    .replace(/[–—]/g, '-')
+    .replace(/[‘’]/g, "'")
+    .replace(/[“”]/g, '"')
+    .replace(/[•·]/g, '-')
     .replace(/[^\x00-\x7F]/g, '');
 }
 
@@ -356,72 +360,64 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
     tableY -= rowHeight;
   });
 
-  // 5. Notes on Left & Totals on Right
-  const bottomY = tableY - 16;
+  // 5. Vertical Stacked Section: 1. TOTALS -> 2. NOTES -> 3. SIGNATURE
+  const contentWidth = width - 72;
 
-  // Notes Box
+  // ── 1. TOTALS CONTAINER (Full Width Stacked Card) ──
+  const totalsTopY = tableY - 12;
+  const totalsBoxHeight = 84;
   page.drawRectangle({
     x: 36,
-    y: bottomY - 96,
-    width: 280,
-    height: 96,
+    y: totalsTopY - totalsBoxHeight,
+    width: contentWidth,
+    height: totalsBoxHeight,
     color: colorWhite,
     borderColor: colorLightBorder,
     borderWidth: 0.75,
   });
 
-  page.drawText('Notes', { x: 50, y: bottomY - 16, size: 8.5, font: fontBold, color: colorNavy });
-  const notesBullets = [
-    'This invoice covers the development and deployment of the agreed project scope.',
-    'Additional features outside agreed scope will be billed separately upon approval.',
-    'Please make payment within the due date to ensure continuous support.',
-    'For any queries, feel free to contact us at work@arklintech.com.',
-  ];
-
-  let noteBulletY = bottomY - 30;
-  notesBullets.forEach((bullet) => {
-    page.drawCircle({ x: 52, y: noteBulletY + 2.5, size: 1.5, color: colorBlue });
-    page.drawText(cleanWinAnsi(bullet), { x: 60, y: noteBulletY, size: 7, font: fontRegular, color: colorNavy });
-    noteBulletY -= 14;
-  });
-
-  // Totals Box
-  const totX = 330;
-  const totBoxWidth = width - 36 - totX;
-  page.drawRectangle({
-    x: totX,
-    y: bottomY - 96,
-    width: totBoxWidth,
-    height: 96,
-    color: colorWhite,
-    borderColor: colorLightBorder,
-    borderWidth: 0.75,
-  });
-
-  let totLineY = bottomY - 16;
+  let totLineY = totalsTopY - 15;
   const subtotalStr = formatCurrency(invoice.subtotal);
-  page.drawText('Subtotal', { x: totX + 14, y: totLineY, size: 8, font: fontRegular, color: colorNavy });
-  page.drawText(subtotalStr, { x: totX + totBoxWidth - fontBold.widthOfTextAtSize(subtotalStr, 8) - 14, y: totLineY, size: 8, font: fontBold, color: colorNavy });
+  page.drawText('Subtotal', { x: 50, y: totLineY, size: 8, font: fontRegular, color: colorNavy });
+  page.drawText(subtotalStr, {
+    x: width - 50 - fontBold.widthOfTextAtSize(subtotalStr, 8),
+    y: totLineY,
+    size: 8,
+    font: fontBold,
+    color: colorNavy,
+  });
 
-  totLineY -= 14;
+  totLineY -= 13;
   const discountStr = formatCurrency(invoice.discount);
-  page.drawText('Discount', { x: totX + 14, y: totLineY, size: 8, font: fontRegular, color: colorNavy });
-  page.drawText(discountStr, { x: totX + totBoxWidth - fontRegular.widthOfTextAtSize(discountStr, 8) - 14, y: totLineY, size: 8, font: fontRegular, color: colorNavy });
+  page.drawText('Discount', { x: 50, y: totLineY, size: 8, font: fontRegular, color: colorNavy });
+  page.drawText(discountStr, {
+    x: width - 50 - fontRegular.widthOfTextAtSize(discountStr, 8),
+    y: totLineY,
+    size: 8,
+    font: fontRegular,
+    color: colorNavy,
+  });
 
-  totLineY -= 14;
+  totLineY -= 13;
   const taxStr = formatCurrency(invoice.taxAmount || 0);
-  page.drawText(`Tax (${invoice.taxPct || 0}%)`, { x: totX + 14, y: totLineY, size: 8, font: fontRegular, color: colorNavy });
-  page.drawText(taxStr, { x: totX + totBoxWidth - fontRegular.widthOfTextAtSize(taxStr, 8) - 14, y: totLineY, size: 8, font: fontRegular, color: colorNavy });
+  page.drawText(`Tax (${invoice.taxPct || 0}%)`, { x: 50, y: totLineY, size: 8, font: fontRegular, color: colorNavy });
+  page.drawText(taxStr, {
+    x: width - 50 - fontRegular.widthOfTextAtSize(taxStr, 8),
+    y: totLineY,
+    size: 8,
+    font: fontRegular,
+    color: colorNavy,
+  });
 
-  totLineY -= 20;
-  // Total Highlight Box (#EDF4FF with border)
-  const totalBoxX = totX + 8;
-  const totalBoxW = totBoxWidth - 16;
+  totLineY -= 19;
+  // Total Highlight Box (#EDF4FF with blue border)
+  const totalBoxX = 44;
+  const totalBoxW = contentWidth - 16;
   page.drawRectangle({
     x: totalBoxX,
-    y: totLineY - 6,
+    y: totLineY - 5,
     width: totalBoxW,
-    height: 24,
+    height: 22,
     color: colorAccentLight,
     borderColor: colorBlue,
     borderWidth: 0.75,
@@ -429,54 +425,96 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
 
   const totalStr = formatCurrency(invoice.total);
   const totalTextWidth = fontBold.widthOfTextAtSize(totalStr, 11);
-  page.drawText('TOTAL', { x: totalBoxX + 10, y: totLineY + 2, size: 9.5, font: fontBold, color: colorBlue });
-  page.drawText(totalStr, { x: totalBoxX + totalBoxW - totalTextWidth - 10, y: totLineY + 1, size: 11, font: fontBold, color: colorNavy });
+  page.drawText('TOTAL', { x: totalBoxX + 12, y: totLineY + 2, size: 9.5, font: fontBold, color: colorBlue });
+  page.drawText(totalStr, {
+    x: totalBoxX + totalBoxW - totalTextWidth - 12,
+    y: totLineY + 1,
+    size: 11,
+    font: fontBold,
+    color: colorNavy,
+  });
 
-  totLineY -= 18;
-  page.drawText(`Amount in Words:`, { x: totX + 12, y: totLineY + 2, size: 6.5, font: fontBold, color: colorGrayText });
+  totLineY -= 14;
+  page.drawText(`Amount in Words:`, { x: 50, y: totLineY, size: 6.5, font: fontBold, color: colorGrayText });
   page.drawText(cleanWinAnsi(invoice.amountInWords || 'Indian Rupees Only'), {
-    x: totX + 12,
-    y: totLineY - 6,
+    x: 125,
+    y: totLineY,
     size: 7,
     font: fontBold,
     color: colorNavy,
   });
 
-  // 6. Sign-off & Signature Section
-  const signY = bottomY - 110;
+  // ── 2. NOTES CONTAINER (Full Width Stacked Card directly below Totals) ──
+  const notesTopY = totalsTopY - totalsBoxHeight - 8;
+  const customNotes = (invoice.notes || '')
+    .split('\n')
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  const notesBullets =
+    customNotes.length > 0
+      ? customNotes.slice(0, 3)
+      : [
+          'This invoice covers the development and deployment of the agreed project scope.',
+          'Additional features outside agreed scope will be billed separately upon approval.',
+          'Please make payment within the due date to ensure continuous support.',
+        ];
+
+  const notesBoxHeight = 22 + notesBullets.length * 11.5;
+  page.drawRectangle({
+    x: 36,
+    y: notesTopY - notesBoxHeight,
+    width: contentWidth,
+    height: notesBoxHeight,
+    color: colorWhite,
+    borderColor: colorLightBorder,
+    borderWidth: 0.75,
+  });
+
+  page.drawText('Notes', { x: 50, y: notesTopY - 13, size: 8.5, font: fontBold, color: colorNavy });
+
+  let noteBulletY = notesTopY - 24;
+  notesBullets.forEach((bullet) => {
+    page.drawCircle({ x: 52, y: noteBulletY + 2.5, size: 1.5, color: colorBlue });
+    page.drawText(cleanWinAnsi(bullet), { x: 60, y: noteBulletY, size: 7, font: fontRegular, color: colorNavy });
+    noteBulletY -= 11.5;
+  });
+
+  // ── 3. SIGNATURE / CLOSING SECTION (Stacked directly below Notes) ──
+  const signY = notesTopY - notesBoxHeight - 12;
   page.drawText('Thank you for your business.', { x: 36, y: signY, size: 8.5, font: fontBold, color: colorNavy });
 
   if (fs.existsSync(signaturePath)) {
     const sigBytes = fs.readFileSync(signaturePath);
     const sigImg = await doc.embedPng(sigBytes);
-    const sigW = 140;
+    const sigW = 120;
     const sigH = (sigW / sigImg.width) * sigImg.height;
     page.drawImage(sigImg, {
       x: 36,
-      y: signY - sigH - 4,
+      y: signY - sigH - 2,
       width: sigW,
       height: sigH,
     });
   }
 
-  const nameY = signY - 52;
-  page.drawText('Anas Ahmed Khan', { x: 36, y: nameY, size: 9, font: fontBold, color: colorNavy });
-  page.drawText('Founder', { x: 36, y: nameY - 10, size: 7.5, font: fontRegular, color: colorGrayText });
-  page.drawText('ARKLINTECH TECHNOLOGY SYSTEMS', { x: 36, y: nameY - 20, size: 7.5, font: fontBold, color: colorNavy });
+  const nameY = signY - 44;
+  page.drawText('Anas Ahmed Khan', { x: 36, y: nameY, size: 8.5, font: fontBold, color: colorNavy });
+  page.drawText('Founder', { x: 36, y: nameY - 9, size: 7, font: fontRegular, color: colorGrayText });
+  page.drawText('ARKLINTECH TECHNOLOGY SYSTEMS', { x: 36, y: nameY - 18, size: 7.5, font: fontBold, color: colorNavy });
 
   // Right Side: BUILD / AUTOMATE / INTEGRATE / SCALE
   const pillarX = width - 110;
   page.drawLine({
     start: { x: pillarX - 10, y: signY + 2 },
-    end: { x: pillarX - 10, y: nameY - 22 },
+    end: { x: pillarX - 10, y: nameY - 20 },
     thickness: 1.5,
     color: colorBlue,
   });
 
-  page.drawText('BUILD', { x: pillarX, y: signY - 8, size: 7.5, font: fontBold, color: colorNavy });
-  page.drawText('AUTOMATE', { x: pillarX, y: signY - 20, size: 7.5, font: fontBold, color: colorNavy });
-  page.drawText('INTEGRATE', { x: pillarX, y: signY - 32, size: 7.5, font: fontBold, color: colorNavy });
-  page.drawText('SCALE', { x: pillarX, y: signY - 44, size: 7.5, font: fontBold, color: colorNavy });
+  page.drawText('BUILD', { x: pillarX, y: signY - 6, size: 7.5, font: fontBold, color: colorNavy });
+  page.drawText('AUTOMATE', { x: pillarX, y: signY - 16, size: 7.5, font: fontBold, color: colorNavy });
+  page.drawText('INTEGRATE', { x: pillarX, y: signY - 26, size: 7.5, font: fontBold, color: colorNavy });
+  page.drawText('SCALE', { x: pillarX, y: signY - 36, size: 7.5, font: fontBold, color: colorNavy });
 
   // 7. Footer (Deep Navy Full Width Bar)
   page.drawRectangle({
