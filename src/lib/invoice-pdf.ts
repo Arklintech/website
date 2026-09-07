@@ -1,17 +1,17 @@
 import { PDFDocument, rgb, StandardFonts, PDFName, PDFString, PDFArray, PDFDict } from 'pdf-lib';
+import fontkit from '@pdf-lib/fontkit';
 import fs from 'fs';
 import path from 'path';
 import { InvoiceRecord } from './admin-db';
+import {
+  INVOICE_BRAND,
+  INVOICE_COLORS,
+  calculateInvoiceTotals,
+  formatInvoiceCurrency,
+} from './invoice-spec';
 
 /**
  * Creates a clickable hyperlink annotation (URI or mailto) on a PDF page.
- * @param doc   - The PDFDocument context
- * @param page  - The page to annotate
- * @param x     - Left edge of the clickable rectangle (points)
- * @param y     - Bottom edge of the clickable rectangle (points)
- * @param w     - Width of the clickable rectangle
- * @param h     - Height of the clickable rectangle
- * @param uri   - The URI string (https://... or mailto:...)
  */
 function addLinkAnnotation(
   doc: PDFDocument,
@@ -22,7 +22,6 @@ function addLinkAnnotation(
   h: number,
   uri: string
 ): void {
-  // Build the /Action dictionary with /S /URI
   const actionDict = doc.context.obj({
     Type: 'Action',
     S: 'URI',
@@ -30,19 +29,17 @@ function addLinkAnnotation(
   }) as PDFDict;
   const actionRef = doc.context.register(actionDict);
 
-  // Build the /Annot /Link dictionary with /Rect and /A (action)
   const annotDict = doc.context.obj({
     Type: 'Annot',
     Subtype: 'Link',
     Rect: [x, y, x + w, y + h],
-    Border: [0, 0, 0],        // Invisible border
-    C: [],                     // No color overlay
+    Border: [0, 0, 0],
+    C: [],
     A: actionRef,
-    F: 4,                      // Print flag
+    F: 4,
   }) as PDFDict;
   const annotRef = doc.context.register(annotDict);
 
-  // Add to page's /Annots array
   const existingAnnots = page.node.get(PDFName.of('Annots'));
   if (existingAnnots instanceof PDFArray) {
     existingAnnots.push(annotRef);
@@ -54,42 +51,53 @@ function addLinkAnnotation(
 function cleanWinAnsi(str: string): string {
   if (!str) return '';
   return str
-    .replace(/\u20B9/g, 'INR ')
-    .replace(/₹/g, 'INR ')
     .replace(/[–—]/g, '-')
     .replace(/[‘’]/g, "'")
     .replace(/[“”]/g, '"')
-    .replace(/[•·]/g, '-')
-    .replace(/[^\x00-\x7F]/g, '');
-}
-
-function formatCurrency(val: number): string {
-  const formatted = Math.round(val).toLocaleString('en-IN');
-  return `INR ${formatted}`;
+    .replace(/[•·]/g, '-');
 }
 
 export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<Buffer> {
   const doc = await PDFDocument.create();
+  doc.registerFontkit(fontkit);
+
   // Standard A4: 595.28 x 841.89 points
   const page = doc.addPage([595.28, 841.89]);
   const { width, height } = page.getSize();
 
-  const fontRegular = await doc.embedFont(StandardFonts.Helvetica);
-  const fontBold = await doc.embedFont(StandardFonts.HelveticaBold);
-  const fontMono = await doc.embedFont(StandardFonts.Courier);
+  // Load Custom TTF Fonts (Segoe UI for native ₹ symbol support & clean typography)
+  let fontRegular: any;
+  let fontBold: any;
 
-  // Colors matching ARKLINTECH design system
+  const fontRegPath = path.join(process.cwd(), 'public', 'fonts', 'segoeui.ttf');
+  const fontBoldPath = path.join(process.cwd(), 'public', 'fonts', 'segoeuib.ttf');
+
+  if (fs.existsSync(fontRegPath) && fs.existsSync(fontBoldPath)) {
+    try {
+      fontRegular = await doc.embedFont(fs.readFileSync(fontRegPath));
+      fontBold = await doc.embedFont(fs.readFileSync(fontBoldPath));
+    } catch (e) {
+      console.warn('Failed to load custom TTF fonts, falling back to Helvetica:', e);
+      fontRegular = await doc.embedFont(StandardFonts.Helvetica);
+      fontBold = await doc.embedFont(StandardFonts.HelveticaBold);
+    }
+  } else {
+    fontRegular = await doc.embedFont(StandardFonts.Helvetica);
+    fontBold = await doc.embedFont(StandardFonts.HelveticaBold);
+  }
+
+  // Exact RGB Colors matching live preview
   const colorBg = rgb(0.992, 0.984, 0.969); // #FDFBF7 cream
   const colorNavy = rgb(0.043, 0.075, 0.169); // #0B132B deep navy
   const colorBlue = rgb(0.078, 0.388, 1.0); // #1463FF electric blue
-  const colorGrayText = rgb(0.392, 0.455, 0.545); // #64748B slate
-  const colorLightBorder = rgb(0.91, 0.894, 0.863); // #E8E4DC
+  const colorSlate = rgb(0.392, 0.455, 0.545); // #64748B slate
+  const colorMuted = rgb(0.58, 0.639, 0.722); // #94A3B8 muted
+  const colorBorder = rgb(0.91, 0.894, 0.863); // #E8E4DC border
+  const colorSubtle = rgb(0.945, 0.929, 0.894); // #F1EDE4 divider
   const colorWhite = rgb(1, 1, 1);
-  const colorAccentLight = rgb(0.929, 0.957, 1.0); // #EDF4FF
-  const colorPillBg = rgb(0.859, 0.918, 0.996); // #DBEAFE
-  const colorPillText = rgb(0.114, 0.306, 0.847); // #1D4ED8
+  const colorHighlightBg = rgb(0.929, 0.957, 1.0); // #EDF4FF total box
 
-  // 1. Draw Cream Background
+  // 1. Cream Background
   page.drawRectangle({
     x: 0,
     y: 0,
@@ -103,76 +111,78 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   const headerLogoPath = path.join(brandDir, 'arklintech-invoice-header.png');
   const signaturePath = path.join(brandDir, 'anas-signature.png');
 
-  let headerY = height - 55;
+  const marginX = 32;
+  const contentWidth = width - marginX * 2; // 531.28 pt
+  const headerY = height - 48;
 
   if (fs.existsSync(headerLogoPath)) {
     const headerBytes = fs.readFileSync(headerLogoPath);
     const headerImg = await doc.embedPng(headerBytes);
-    const imgWidth = 180;
+    const imgWidth = 175;
     const imgHeight = (imgWidth / headerImg.width) * headerImg.height;
     page.drawImage(headerImg, {
-      x: 36,
-      y: headerY - imgHeight + 10,
+      x: marginX,
+      y: headerY - imgHeight + 4,
       width: imgWidth,
       height: imgHeight,
     });
   } else {
-    page.drawText('ARKLINTECH', {
-      x: 36,
+    page.drawText(INVOICE_BRAND.name, {
+      x: marginX,
       y: headerY - 10,
       size: 18,
       font: fontBold,
       color: colorNavy,
     });
-    page.drawText('TECHNOLOGY SYSTEMS', {
-      x: 36,
+    page.drawText(INVOICE_BRAND.subName, {
+      x: marginX,
       y: headerY - 24,
-      size: 9,
-      font: fontRegular,
+      size: 8.5,
+      font: fontBold,
       color: colorBlue,
     });
   }
 
-  // Right Header Tagline & Accent lines
-  page.drawLine({
-    start: { x: width - 180, y: headerY + 12 },
-    end: { x: width - 180, y: headerY - 32 },
-    thickness: 1.5,
-    color: colorBlue,
-  });
-
-  page.drawText('INTELLIGENT', { x: width - 170, y: headerY + 6, size: 7.5, font: fontBold, color: colorNavy });
-  page.drawText('SYSTEMS', { x: width - 170, y: headerY - 4, size: 7.5, font: fontBold, color: colorNavy });
-  page.drawText('FOR A', { x: width - 170, y: headerY - 14, size: 7.5, font: fontBold, color: colorNavy });
-  page.drawText('BRIGHTER', { x: width - 170, y: headerY - 24, size: 7.5, font: fontBold, color: colorNavy });
-  page.drawText('TOMORROW', { x: width - 170, y: headerY - 34, size: 7.5, font: fontBold, color: colorNavy });
-
   // Sub-header Slogan: "IDEAS  →  SYSTEMS  →  REAL  IMPACT"
-  page.drawText('IDEAS    ->    SYSTEMS    ->    REAL    IMPACT', {
-    x: 36,
-    y: headerY - 44,
+  page.drawText('IDEAS   ->   SYSTEMS   ->   REAL   IMPACT', {
+    x: marginX,
+    y: headerY - 42,
     size: 7.5,
     font: fontBold,
     color: colorNavy,
   });
 
-  // Divider Line below header
+  // Right Header Tagline & Accent lines
   page.drawLine({
-    start: { x: 36, y: headerY - 54 },
-    end: { x: width - 36, y: headerY - 54 },
-    thickness: 0.75,
-    color: colorLightBorder,
+    start: { x: width - 150, y: headerY + 8 },
+    end: { x: width - 150, y: headerY - 42 },
+    thickness: 1.5,
+    color: colorBlue,
   });
 
-  // 3. Information Columns (BILL TO, PROJECT, INVOICE)
-  const infoY = headerY - 70;
+  let tagY = headerY + 2;
+  INVOICE_BRAND.tagline.forEach((line) => {
+    page.drawText(line, { x: width - 140, y: tagY, size: 7.5, font: fontBold, color: colorNavy });
+    tagY -= 10;
+  });
+
+  // Divider Line below header
+  page.drawLine({
+    start: { x: marginX, y: headerY - 50 },
+    end: { x: width - marginX, y: headerY - 50 },
+    thickness: 0.75,
+    color: colorBorder,
+  });
+
+  // 3. Information Grid (BILL TO, PROJECT, INVOICE)
+  const infoY = headerY - 65;
 
   // ── Column 1: BILL TO ──
-  page.drawText('BILL TO', { x: 36, y: infoY, size: 7.5, font: fontBold, color: colorBlue });
-  page.drawText(invoice.clientName || 'Client Name', {
-    x: 36,
+  page.drawText('BILL TO', { x: marginX, y: infoY, size: 8, font: fontBold, color: colorBlue });
+  page.drawText(cleanWinAnsi(invoice.clientName || 'Client Name'), {
+    x: marginX,
     y: infoY - 14,
-    size: 10,
+    size: 11,
     font: fontBold,
     color: colorNavy,
   });
@@ -180,23 +190,29 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   const addressLines = (invoice.clientAddress || '').split('\n').filter(Boolean);
   let addrY = infoY - 26;
   addressLines.slice(0, 3).forEach((line) => {
-    page.drawText(line.trim(), { x: 36, y: addrY, size: 8, font: fontRegular, color: colorNavy });
+    page.drawText(cleanWinAnsi(line.trim()), { x: marginX, y: addrY, size: 8.5, font: fontRegular, color: colorNavy });
     addrY -= 11;
   });
 
   if (invoice.clientEmail) {
-    page.drawText(`Email: ${invoice.clientEmail}`, { x: 36, y: addrY, size: 7.5, font: fontRegular, color: colorGrayText });
+    page.drawText(`Email: ${cleanWinAnsi(invoice.clientEmail)}`, { x: marginX, y: addrY, size: 8, font: fontRegular, color: colorSlate });
     addrY -= 10;
   }
-  if (invoice.clientPhone) {
-    page.drawText(`Phone: ${invoice.clientPhone}`, { x: 36, y: addrY, size: 7.5, font: fontRegular, color: colorGrayText });
+  if (invoice.clientPhone && invoice.clientPhone !== '#ERROR!') {
+    page.drawText(`Phone: ${cleanWinAnsi(invoice.clientPhone)}`, { x: marginX, y: addrY, size: 8, font: fontRegular, color: colorSlate });
     addrY -= 10;
   }
 
   // ── Column 2: PROJECT ──
-  const projX = 220;
-  page.drawText('PROJECT', { x: projX, y: infoY, size: 7.5, font: fontBold, color: colorBlue });
-  page.drawText(invoice.clientName ? `${invoice.clientName} System` : 'Technology System', {
+  const projX = 245;
+  const projectTitle = invoice.projectName
+    ? invoice.projectName
+    : invoice.clientName
+    ? `${invoice.clientName} System`
+    : 'Technology System';
+
+  page.drawText('PROJECT', { x: projX, y: infoY, size: 8, font: fontBold, color: colorBlue });
+  page.drawText(cleanWinAnsi(projectTitle), {
     x: projX,
     y: infoY - 14,
     size: 9.5,
@@ -207,84 +223,101 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   let projDetailsY = infoY - 26;
   const projectRows = [
     { label: 'Project Ref.', val: invoice.projectId ? invoice.projectId.toUpperCase() : 'PRJ-2026-01' },
-    { label: 'Invoice Date', val: cleanWinAnsi(invoice.invoiceDate || new Date().toISOString().split('T')[0]) },
-    { label: 'Due Date', val: cleanWinAnsi(invoice.dueDate || '') },
-    { label: 'Payment Terms', val: cleanWinAnsi(invoice.paymentTerms || '14 Days') },
-    { label: 'Currency', val: cleanWinAnsi(invoice.currency) || 'INR' },
+    { label: 'Invoice Date', val: invoice.invoiceDate || new Date().toISOString().split('T')[0] },
+    { label: 'Due Date', val: invoice.dueDate || '' },
+    { label: 'Payment Terms', val: invoice.paymentTerms || '14 Days' },
+    { label: 'Currency', val: invoice.currency || 'INR (₹)' },
   ];
 
   projectRows.forEach((r) => {
-    page.drawText(r.label, { x: projX, y: projDetailsY, size: 7.5, font: fontRegular, color: colorGrayText });
-    page.drawText(`:  ${cleanWinAnsi(r.val)}`, { x: projX + 68, y: projDetailsY, size: 7.5, font: fontRegular, color: colorNavy });
+    page.drawText(r.label, { x: projX, y: projDetailsY, size: 8, font: fontRegular, color: colorSlate });
+    page.drawText(`:  ${cleanWinAnsi(r.val)}`, { x: projX + 70, y: projDetailsY, size: 8, font: fontRegular, color: colorNavy });
     projDetailsY -= 11;
   });
 
-  // ── Column 3: INVOICE ──
+  // ── Column 3: INVOICE BOX ──
   const invX = 425;
+  const invBoxW = 138;
+  const invBoxH = 86;
   page.drawRectangle({
-    x: invX - 10,
-    y: infoY - 72,
-    width: 144,
-    height: 82,
+    x: invX,
+    y: infoY - invBoxH + 12,
+    width: invBoxW,
+    height: invBoxH,
     color: colorWhite,
-    borderColor: colorLightBorder,
+    borderColor: colorBorder,
     borderWidth: 0.75,
   });
 
-  page.drawText('INVOICE', { x: invX, y: infoY - 8, size: 8, font: fontBold, color: colorGrayText });
+  page.drawText('INVOICE', { x: invX + 12, y: infoY, size: 7.5, font: fontBold, color: colorMuted });
   page.drawText(invoice.invoiceNumber || 'INV-2026-001', {
-    x: invX,
-    y: infoY - 24,
+    x: invX + 12,
+    y: infoY - 16,
     size: 13,
     font: fontBold,
     color: colorNavy,
   });
 
-  page.drawText('STATUS', { x: invX, y: infoY - 38, size: 7, font: fontBold, color: colorGrayText });
+  page.drawText('STATUS', { x: invX + 12, y: infoY - 30, size: 7, font: fontBold, color: colorMuted });
+
   const statusBadgeText = (invoice.status || 'DRAFT').toUpperCase();
+  let pillBg = rgb(0.996, 0.953, 0.78); // amber-50
+  let pillText = rgb(0.706, 0.325, 0.035); // amber-700
+  if (statusBadgeText === 'PAID') {
+    pillBg = rgb(0.82, 0.98, 0.9);
+    pillText = rgb(0.01, 0.47, 0.34);
+  } else if (statusBadgeText === 'SENT') {
+    pillBg = rgb(0.859, 0.918, 0.996);
+    pillText = rgb(0.114, 0.306, 0.847);
+  }
+
   page.drawRectangle({
-    x: invX,
-    y: infoY - 54,
+    x: invX + 12,
+    y: infoY - 47,
     width: 52,
     height: 14,
-    color: colorPillBg,
+    color: pillBg,
   });
   page.drawText(statusBadgeText, {
-    x: invX + 8,
-    y: infoY - 50,
+    x: invX + 20,
+    y: infoY - 43,
     size: 7.5,
     font: fontBold,
-    color: colorPillText,
+    color: pillText,
   });
 
-  page.drawText(invoice.invoiceDate || '30 Sep 2026', { x: invX, y: infoY - 65, size: 7, font: fontRegular, color: colorGrayText });
+  page.drawText(invoice.invoiceDate || '2026-09-30', {
+    x: invX + 12,
+    y: infoY - 60,
+    size: 7.5,
+    font: fontRegular,
+    color: colorSlate,
+  });
 
-  // 4. Service Items Table
-  let tableY = headerY - 170;
+  // 4. Service Items Table (4 Columns ONLY - matching live preview)
+  let tableY = headerY - 165;
   const colX = {
-    num: 36,
-    desc: 66,
-    qty: 340,
-    rate: 410,
-    amount: 490,
+    num: marginX,
+    desc: marginX + 30,
+    rate: marginX + 380,
+    amount: marginX + 460,
   };
 
   // Table Header Bar (Deep Navy)
   page.drawRectangle({
-    x: 36,
-    y: tableY - 16,
-    width: width - 72,
+    x: marginX,
+    y: tableY - 18,
+    width: contentWidth,
     height: 20,
     color: colorNavy,
   });
 
-  page.drawText('#', { x: colX.num + 6, y: tableY - 11, size: 7.5, font: fontBold, color: colorWhite });
-  page.drawText('DESCRIPTION', { x: colX.desc, y: tableY - 11, size: 7.5, font: fontBold, color: colorWhite });
-  page.drawText('QTY', { x: colX.qty + 4, y: tableY - 11, size: 7.5, font: fontBold, color: colorWhite });
-  page.drawText('RATE (INR)', { x: colX.rate + 4, y: tableY - 11, size: 7.5, font: fontBold, color: colorWhite });
-  page.drawText('AMOUNT (INR)', { x: colX.amount, y: tableY - 11, size: 7.5, font: fontBold, color: colorWhite });
+  page.drawText('#', { x: colX.num + 6, y: tableY - 13, size: 7.5, font: fontBold, color: colorWhite });
+  page.drawText('DESCRIPTION', { x: colX.desc, y: tableY - 13, size: 7.5, font: fontBold, color: colorWhite });
+  page.drawText('RATE (INR)', { x: colX.rate + 12, y: tableY - 13, size: 7.5, font: fontBold, color: colorWhite });
+  page.drawText('AMT (INR)', { x: colX.amount + 18, y: tableY - 13, size: 7.5, font: fontBold, color: colorWhite });
 
-  tableY -= 20;
+  tableY -= 18;
 
   const items = invoice.items && invoice.items.length ? invoice.items : [
     { serviceName: 'Website Design & Development', description: 'Complete responsive website with modern UI/UX, core pages and CMS integration.', qty: 1, rate: 35000, amount: 35000 },
@@ -295,17 +328,18 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   ];
 
   items.forEach((item, index) => {
-    const rowHeight = 34;
+    const rowHeight = 32;
     page.drawRectangle({
-      x: 36,
+      x: marginX,
       y: tableY - rowHeight,
-      width: width - 72,
+      width: contentWidth,
       height: rowHeight,
       color: colorWhite,
-      borderColor: colorLightBorder,
+      borderColor: colorSubtle,
       borderWidth: 0.5,
     });
 
+    // Number
     page.drawText((index + 1).toString(), {
       x: colX.num + 8,
       y: tableY - 16,
@@ -314,44 +348,42 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
       color: colorNavy,
     });
 
+    // Service Name
     page.drawText(cleanWinAnsi(item.serviceName), {
       x: colX.desc,
-      y: tableY - 14,
+      y: tableY - 13,
       size: 8.5,
       font: fontBold,
       color: colorNavy,
     });
 
+    // Service Description
     if (item.description) {
-      const trimmedDesc = item.description.length > 70 ? `${item.description.slice(0, 68)}...` : item.description;
+      const trimmedDesc = item.description.length > 78 ? `${item.description.slice(0, 75)}...` : item.description;
       page.drawText(cleanWinAnsi(trimmedDesc), {
         x: colX.desc,
-        y: tableY - 25,
+        y: tableY - 24,
         size: 7,
         font: fontRegular,
-        color: colorGrayText,
+        color: colorSlate,
       });
     }
 
-    page.drawText(item.qty.toString(), {
-      x: colX.qty + 10,
-      y: tableY - 18,
+    // Rate
+    const rateStr = formatInvoiceCurrency(item.rate, '₹');
+    page.drawText(cleanWinAnsi(rateStr), {
+      x: colX.rate + 55 - fontRegular.widthOfTextAtSize(rateStr, 8),
+      y: tableY - 17,
       size: 8,
       font: fontRegular,
       color: colorNavy,
     });
 
-    page.drawText(formatCurrency(item.rate), {
-      x: colX.rate + 4,
-      y: tableY - 18,
-      size: 8,
-      font: fontRegular,
-      color: colorNavy,
-    });
-
-    page.drawText(formatCurrency(item.amount), {
-      x: colX.amount + 4,
-      y: tableY - 18,
+    // Amount
+    const amountStr = formatInvoiceCurrency(item.amount, '₹');
+    page.drawText(cleanWinAnsi(amountStr), {
+      x: colX.amount + 62 - fontBold.widthOfTextAtSize(amountStr, 8.5),
+      y: tableY - 17,
       size: 8.5,
       font: fontBold,
       color: colorNavy,
@@ -360,27 +392,30 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
     tableY -= rowHeight;
   });
 
-  // 5. Vertical Stacked Section: 1. TOTALS -> 2. NOTES -> 3. SIGNATURE
-  const contentWidth = width - 72;
+  // Calculate invoice totals strictly using shared helper
+  const calc = calculateInvoiceTotals(items, invoice.discount || 0, invoice.taxPct || 0);
+
+  // 5. Vertical Stacked Section (REQUIRED ORDER: 1. TOTALS -> 2. NOTES -> 3. SIGNATURE)
 
   // ── 1. TOTALS CONTAINER (Full Width Stacked Card) ──
-  const totalsTopY = tableY - 12;
-  const totalsBoxHeight = 84;
+  const totalsTopY = tableY - 10;
+  const totalsBoxHeight = 92;
+
   page.drawRectangle({
-    x: 36,
+    x: marginX,
     y: totalsTopY - totalsBoxHeight,
     width: contentWidth,
     height: totalsBoxHeight,
     color: colorWhite,
-    borderColor: colorLightBorder,
+    borderColor: colorBorder,
     borderWidth: 0.75,
   });
 
   let totLineY = totalsTopY - 15;
-  const subtotalStr = formatCurrency(invoice.subtotal);
-  page.drawText('Subtotal', { x: 50, y: totLineY, size: 8, font: fontRegular, color: colorNavy });
-  page.drawText(subtotalStr, {
-    x: width - 50 - fontBold.widthOfTextAtSize(subtotalStr, 8),
+  const subtotalStr = formatInvoiceCurrency(calc.subtotal, '₹');
+  page.drawText('Subtotal', { x: marginX + 14, y: totLineY, size: 8, font: fontRegular, color: colorSlate });
+  page.drawText(cleanWinAnsi(subtotalStr), {
+    x: marginX + contentWidth - 14 - fontBold.widthOfTextAtSize(subtotalStr, 8),
     y: totLineY,
     size: 8,
     font: fontBold,
@@ -388,10 +423,10 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   });
 
   totLineY -= 13;
-  const discountStr = formatCurrency(invoice.discount);
-  page.drawText('Discount', { x: 50, y: totLineY, size: 8, font: fontRegular, color: colorNavy });
-  page.drawText(discountStr, {
-    x: width - 50 - fontRegular.widthOfTextAtSize(discountStr, 8),
+  const discountStr = formatInvoiceCurrency(calc.discount, '₹');
+  page.drawText('Discount', { x: marginX + 14, y: totLineY, size: 8, font: fontRegular, color: colorSlate });
+  page.drawText(cleanWinAnsi(discountStr), {
+    x: marginX + contentWidth - 14 - fontRegular.widthOfTextAtSize(discountStr, 8),
     y: totLineY,
     size: 8,
     font: fontRegular,
@@ -399,34 +434,34 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   });
 
   totLineY -= 13;
-  const taxStr = formatCurrency(invoice.taxAmount || 0);
-  page.drawText(`Tax (${invoice.taxPct || 0}%)`, { x: 50, y: totLineY, size: 8, font: fontRegular, color: colorNavy });
-  page.drawText(taxStr, {
-    x: width - 50 - fontRegular.widthOfTextAtSize(taxStr, 8),
+  const taxStr = formatInvoiceCurrency(calc.taxAmount, '₹');
+  page.drawText(`Tax (${calc.taxPct}%)`, { x: marginX + 14, y: totLineY, size: 8, font: fontRegular, color: colorSlate });
+  page.drawText(cleanWinAnsi(taxStr), {
+    x: marginX + contentWidth - 14 - fontRegular.widthOfTextAtSize(taxStr, 8),
     y: totLineY,
     size: 8,
     font: fontRegular,
     color: colorNavy,
   });
 
-  totLineY -= 19;
-  // Total Highlight Box (#EDF4FF with blue border)
-  const totalBoxX = 44;
-  const totalBoxW = contentWidth - 16;
+  totLineY -= 20;
+  // Highlighted TOTAL Box (#EDF4FF with blue border)
+  const totalBoxX = marginX + 10;
+  const totalBoxW = contentWidth - 20;
   page.drawRectangle({
     x: totalBoxX,
     y: totLineY - 5,
     width: totalBoxW,
     height: 22,
-    color: colorAccentLight,
+    color: colorHighlightBg,
     borderColor: colorBlue,
     borderWidth: 0.75,
   });
 
-  const totalStr = formatCurrency(invoice.total);
+  const totalStr = formatInvoiceCurrency(calc.total, '₹');
   const totalTextWidth = fontBold.widthOfTextAtSize(totalStr, 11);
   page.drawText('TOTAL', { x: totalBoxX + 12, y: totLineY + 2, size: 9.5, font: fontBold, color: colorBlue });
-  page.drawText(totalStr, {
+  page.drawText(cleanWinAnsi(totalStr), {
     x: totalBoxX + totalBoxW - totalTextWidth - 12,
     y: totLineY + 1,
     size: 11,
@@ -435,62 +470,52 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   });
 
   totLineY -= 14;
-  page.drawText(`Amount in Words:`, { x: 50, y: totLineY, size: 6.5, font: fontBold, color: colorGrayText });
-  page.drawText(cleanWinAnsi(invoice.amountInWords || 'Indian Rupees Only'), {
-    x: 125,
+  page.drawText('AMOUNT IN WORDS:', { x: marginX + 14, y: totLineY, size: 7, font: fontBold, color: colorMuted });
+  page.drawText(cleanWinAnsi(calc.amountInWords || 'Indian Rupees Only'), {
+    x: marginX + 125,
     y: totLineY,
-    size: 7,
+    size: 7.5,
     font: fontBold,
     color: colorNavy,
   });
 
   // ── 2. NOTES CONTAINER (Full Width Stacked Card directly below Totals) ──
   const notesTopY = totalsTopY - totalsBoxHeight - 8;
-  const customNotes = (invoice.notes || '')
-    .split('\n')
-    .map((s) => s.trim())
-    .filter(Boolean);
+  const notesText = invoice.notes ||
+    'This invoice covers the development and deployment of the agreed project scope as per our discussion.\nAdditional features outside the agreed scope will be billed separately upon approval.\nPlease make the payment within the due date to ensure continued support and development.\nFor any queries, feel free to contact us.';
 
-  const notesBullets =
-    customNotes.length > 0
-      ? customNotes.slice(0, 3)
-      : [
-          'This invoice covers the development and deployment of the agreed project scope.',
-          'Additional features outside agreed scope will be billed separately upon approval.',
-          'Please make payment within the due date to ensure continuous support.',
-        ];
+  const noteLines = notesText.split('\n').map((l) => l.trim()).filter(Boolean);
+  const notesBoxHeight = 22 + noteLines.length * 11.5;
 
-  const notesBoxHeight = 22 + notesBullets.length * 11.5;
   page.drawRectangle({
-    x: 36,
+    x: marginX,
     y: notesTopY - notesBoxHeight,
     width: contentWidth,
     height: notesBoxHeight,
     color: colorWhite,
-    borderColor: colorLightBorder,
+    borderColor: colorBorder,
     borderWidth: 0.75,
   });
 
-  page.drawText('Notes', { x: 50, y: notesTopY - 13, size: 8.5, font: fontBold, color: colorNavy });
+  page.drawText('Notes', { x: marginX + 14, y: notesTopY - 14, size: 8.5, font: fontBold, color: colorNavy });
 
-  let noteBulletY = notesTopY - 24;
-  notesBullets.forEach((bullet) => {
-    page.drawCircle({ x: 52, y: noteBulletY + 2.5, size: 1.5, color: colorBlue });
-    page.drawText(cleanWinAnsi(bullet), { x: 60, y: noteBulletY, size: 7, font: fontRegular, color: colorNavy });
-    noteBulletY -= 11.5;
+  let nLineY = notesTopY - 26;
+  noteLines.forEach((line) => {
+    page.drawText(cleanWinAnsi(line), { x: marginX + 14, y: nLineY, size: 7.5, font: fontRegular, color: colorSlate });
+    nLineY -= 11.5;
   });
 
-  // ── 3. SIGNATURE / CLOSING SECTION (Stacked directly below Notes) ──
+  // ── 3. SIGNATURE & CLOSING SECTION (Stacked directly below Notes) ──
   const signY = notesTopY - notesBoxHeight - 12;
-  page.drawText('Thank you for your business.', { x: 36, y: signY, size: 8.5, font: fontBold, color: colorNavy });
+  page.drawText(INVOICE_BRAND.closingMessage, { x: marginX, y: signY, size: 8.5, font: fontBold, color: colorNavy });
 
   if (fs.existsSync(signaturePath)) {
     const sigBytes = fs.readFileSync(signaturePath);
     const sigImg = await doc.embedPng(sigBytes);
-    const sigW = 120;
+    const sigW = 115;
     const sigH = (sigW / sigImg.width) * sigImg.height;
     page.drawImage(sigImg, {
-      x: 36,
+      x: marginX,
       y: signY - sigH - 2,
       width: sigW,
       height: sigH,
@@ -498,9 +523,9 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   }
 
   const nameY = signY - 44;
-  page.drawText('Anas Ahmed Khan', { x: 36, y: nameY, size: 8.5, font: fontBold, color: colorNavy });
-  page.drawText('Founder', { x: 36, y: nameY - 9, size: 7, font: fontRegular, color: colorGrayText });
-  page.drawText('ARKLINTECH TECHNOLOGY SYSTEMS', { x: 36, y: nameY - 18, size: 7.5, font: fontBold, color: colorNavy });
+  page.drawText(INVOICE_BRAND.signatureName, { x: marginX, y: nameY, size: 8.5, font: fontBold, color: colorNavy });
+  page.drawText(INVOICE_BRAND.signatureTitle, { x: marginX, y: nameY - 9, size: 7, font: fontRegular, color: colorSlate });
+  page.drawText(INVOICE_BRAND.signatureCompany, { x: marginX, y: nameY - 18, size: 7.5, font: fontBold, color: colorNavy });
 
   // Right Side: BUILD / AUTOMATE / INTEGRATE / SCALE
   const pillarX = width - 110;
@@ -511,65 +536,58 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
     color: colorBlue,
   });
 
-  page.drawText('BUILD', { x: pillarX, y: signY - 6, size: 7.5, font: fontBold, color: colorNavy });
-  page.drawText('AUTOMATE', { x: pillarX, y: signY - 16, size: 7.5, font: fontBold, color: colorNavy });
-  page.drawText('INTEGRATE', { x: pillarX, y: signY - 26, size: 7.5, font: fontBold, color: colorNavy });
-  page.drawText('SCALE', { x: pillarX, y: signY - 36, size: 7.5, font: fontBold, color: colorNavy });
+  let pY = signY - 6;
+  INVOICE_BRAND.pillars.forEach((p) => {
+    page.drawText(p, { x: pillarX, y: pY, size: 7.5, font: fontBold, color: colorNavy });
+    pY -= 10;
+  });
 
-  // 7. Footer (Deep Navy Full Width Bar)
+  // 6. Footer (Deep Navy Full Width Bar)
   page.drawRectangle({
     x: 0,
     y: 0,
     width,
-    height: 40,
+    height: 36,
     color: colorNavy,
   });
 
-  // Footer text: website + email (visible text)
-  page.drawText('www.arklintech.com  •  work@arklintech.com', {
-    x: 36,
-    y: 16,
+  // Footer text: website + email
+  const footerText = `${INVOICE_BRAND.website}   •   ${INVOICE_BRAND.email}`;
+  page.drawText(footerText, {
+    x: marginX,
+    y: 14,
     size: 7.5,
     font: fontRegular,
-    color: rgb(0.85, 0.9, 1),
+    color: rgb(0.82, 0.88, 1),
   });
 
-  // ─── Clickable hyperlink annotations ───────────────────────────────────────
-  // Website: www.arklintech.com  → https://arklintech.com
-  // Approximate text width for "www.arklintech.com" at 7.5pt ≈ 100pt
-  addLinkAnnotation(doc, page, 36, 10, 100, 12, 'https://arklintech.com');
+  // Clickable hyperlink annotations for website and email
+  addLinkAnnotation(doc, page, marginX, 8, 95, 14, INVOICE_BRAND.websiteUrl);
+  addLinkAnnotation(doc, page, marginX + 110, 8, 105, 14, INVOICE_BRAND.emailMailto);
 
-  // Email: work@arklintech.com  → mailto:work@arklintech.com
-  // "  •  " separator ≈ 16pt wide. Email text ≈ 98pt
-  addLinkAnnotation(doc, page, 152, 10, 98, 12, 'mailto:work@arklintech.com');
-
-  page.drawText("BUILT FOR WHAT'S NEXT.", {
-    x: 230,
-    y: 16,
+  // Center Slogan
+  page.drawText(INVOICE_BRAND.footerCenter, {
+    x: 232,
+    y: 14,
     size: 7.5,
     font: fontBold,
     color: colorWhite,
   });
-  page.drawLine({
-    start: { x: 230, y: 12 },
-    end: { x: 335, y: 12 },
-    thickness: 1.5,
-    color: colorBlue,
-  });
 
-  page.drawText('AI  |  SOFTWARE  |  AUTOMATION', {
-    x: width - 180,
-    y: 20,
+  // Right Capabilities
+  page.drawText(INVOICE_BRAND.footerRight[0], {
+    x: width - 170,
+    y: 18,
     size: 6.5,
     font: fontRegular,
-    color: rgb(0.85, 0.9, 1),
+    color: rgb(0.82, 0.88, 1),
   });
-  page.drawText('BUSINESS SYSTEMS  |  DIGITAL INFRASTRUCTURE', {
-    x: width - 180,
-    y: 11,
+  page.drawText(INVOICE_BRAND.footerRight[1], {
+    x: width - 170,
+    y: 9,
     size: 6.5,
     font: fontRegular,
-    color: rgb(0.85, 0.9, 1),
+    color: rgb(0.82, 0.88, 1),
   });
 
   const pdfBytes = await doc.save();

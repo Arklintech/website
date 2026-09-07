@@ -317,6 +317,7 @@ export default function CreateOrEditInvoicePage() {
       setSavingChanges(true);
       const payload = {
         projectId: selectedProjectId || null,
+        projectName: projectName || null,
         clientName,
         clientAddress,
         clientEmail,
@@ -365,6 +366,7 @@ export default function CreateOrEditInvoicePage() {
       setSavingDraft(true);
       const payload = {
         projectId: selectedProjectId || null,
+        projectName: projectName || null,
         clientName,
         clientAddress,
         clientEmail,
@@ -424,6 +426,7 @@ export default function CreateOrEditInvoicePage() {
         // 1. Save changes first to ensure PDF has the latest data
         const payload = {
           projectId: selectedProjectId || null,
+          projectName: projectName || null,
           clientName,
           clientAddress,
           clientEmail,
@@ -453,6 +456,7 @@ export default function CreateOrEditInvoicePage() {
         // Create mode: Create invoice record
         const payload = {
           projectId: selectedProjectId || null,
+          projectName: projectName || null,
           clientName,
           clientAddress,
           clientEmail,

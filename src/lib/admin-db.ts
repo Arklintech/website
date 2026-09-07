@@ -262,6 +262,7 @@ export interface InvoiceRecord {
   id: string;
   invoiceNumber: string;
   projectId?: string | null;
+  projectName?: string | null;
   companyId?: string | null;
   clientName: string;
   clientAddress: string;
