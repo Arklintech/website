@@ -5,7 +5,6 @@ import path from 'path';
 import { InvoiceRecord } from './admin-db';
 import {
   INVOICE_BRAND,
-  INVOICE_COLORS,
   calculateInvoiceTotals,
   formatInvoiceCurrency,
 } from './invoice-spec';
@@ -55,6 +54,37 @@ function cleanWinAnsi(str: string): string {
     .replace(/[‘’]/g, "'")
     .replace(/[“”]/g, '"')
     .replace(/[•·]/g, '-');
+}
+
+/**
+ * Wraps text into lines so it strictly fits within maxWidth without overlapping adjacent columns.
+ */
+function wrapText(text: string, maxWidth: number, font: any, fontSize: number): string[] {
+  if (!text) return [];
+  const paragraphs = text.split('\n');
+  const resultLines: string[] = [];
+
+  for (const para of paragraphs) {
+    const words = para.trim().split(/\s+/).filter(Boolean);
+    if (words.length === 0) continue;
+
+    let currentLine = words[0];
+    for (let i = 1; i < words.length; i++) {
+      const word = words[i];
+      const testLine = `${currentLine} ${word}`;
+      if (font.widthOfTextAtSize(cleanWinAnsi(testLine), fontSize) <= maxWidth) {
+        currentLine = testLine;
+      } else {
+        resultLines.push(currentLine);
+        currentLine = word;
+      }
+    }
+    if (currentLine) {
+      resultLines.push(currentLine);
+    }
+  }
+
+  return resultLines;
 }
 
 export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<Buffer> {
@@ -122,7 +152,7 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
     const imgHeight = (imgWidth / headerImg.width) * headerImg.height;
     page.drawImage(headerImg, {
       x: marginX,
-      y: headerY - imgHeight + 4,
+      y: headerY - imgHeight + 2,
       width: imgWidth,
       height: imgHeight,
     });
@@ -174,53 +204,69 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
     color: colorBorder,
   });
 
-  // 3. Information Grid (BILL TO, PROJECT, INVOICE)
+  // 3. Information Grid (BILL TO, PROJECT, INVOICE) with strict non-overlapping column bounds
   const infoY = headerY - 65;
 
+  // Column boundaries:
+  // Col 1 (BILL TO): x = 32, maxW = 190
+  // Col 2 (PROJECT): x = 237, maxW = 165
+  // Col 3 (INVOICE): x = 412, maxW = 151
+  const col1X = marginX;
+  const col1MaxW = 190;
+
+  const col2X = 237;
+  const col2MaxW = 165;
+
+  const col3X = 412;
+  const col3W = 151;
+
   // ── Column 1: BILL TO ──
-  page.drawText('BILL TO', { x: marginX, y: infoY, size: 8, font: fontBold, color: colorBlue });
-  page.drawText(cleanWinAnsi(invoice.clientName || 'Client Name'), {
-    x: marginX,
-    y: infoY - 14,
-    size: 11,
-    font: fontBold,
-    color: colorNavy,
+  page.drawText('BILL TO', { x: col1X, y: infoY, size: 8, font: fontBold, color: colorBlue });
+  
+  const clientNameLines = wrapText(invoice.clientName || 'Client Name', col1MaxW, fontBold, 10.5);
+  let billY = infoY - 14;
+  clientNameLines.forEach((line) => {
+    page.drawText(cleanWinAnsi(line), { x: col1X, y: billY, size: 10.5, font: fontBold, color: colorNavy });
+    billY -= 12;
   });
 
-  const addressLines = (invoice.clientAddress || '').split('\n').filter(Boolean);
-  let addrY = infoY - 26;
-  addressLines.slice(0, 3).forEach((line) => {
-    page.drawText(cleanWinAnsi(line.trim()), { x: marginX, y: addrY, size: 8.5, font: fontRegular, color: colorNavy });
-    addrY -= 11;
+  const addressLines = wrapText(invoice.clientAddress || '', col1MaxW, fontRegular, 8.5);
+  addressLines.slice(0, 4).forEach((line) => {
+    page.drawText(cleanWinAnsi(line), { x: col1X, y: billY, size: 8.5, font: fontRegular, color: colorNavy });
+    billY -= 11;
   });
 
   if (invoice.clientEmail) {
-    page.drawText(`Email: ${cleanWinAnsi(invoice.clientEmail)}`, { x: marginX, y: addrY, size: 8, font: fontRegular, color: colorSlate });
-    addrY -= 10;
+    const emailLines = wrapText(`Email: ${invoice.clientEmail}`, col1MaxW, fontRegular, 8);
+    emailLines.forEach((line) => {
+      page.drawText(cleanWinAnsi(line), { x: col1X, y: billY, size: 8, font: fontRegular, color: colorSlate });
+      billY -= 10;
+    });
   }
   if (invoice.clientPhone && invoice.clientPhone !== '#ERROR!') {
-    page.drawText(`Phone: ${cleanWinAnsi(invoice.clientPhone)}`, { x: marginX, y: addrY, size: 8, font: fontRegular, color: colorSlate });
-    addrY -= 10;
+    const phoneLines = wrapText(`Phone: ${invoice.clientPhone}`, col1MaxW, fontRegular, 8);
+    phoneLines.forEach((line) => {
+      page.drawText(cleanWinAnsi(line), { x: col1X, y: billY, size: 8, font: fontRegular, color: colorSlate });
+      billY -= 10;
+    });
   }
 
   // ── Column 2: PROJECT ──
-  const projX = 245;
   const projectTitle = invoice.projectName
     ? invoice.projectName
     : invoice.clientName
     ? `${invoice.clientName} System`
     : 'Technology System';
 
-  page.drawText('PROJECT', { x: projX, y: infoY, size: 8, font: fontBold, color: colorBlue });
-  page.drawText(cleanWinAnsi(projectTitle), {
-    x: projX,
-    y: infoY - 14,
-    size: 9.5,
-    font: fontBold,
-    color: colorNavy,
+  page.drawText('PROJECT', { x: col2X, y: infoY, size: 8, font: fontBold, color: colorBlue });
+  
+  const projTitleLines = wrapText(projectTitle, col2MaxW, fontBold, 9.5);
+  let projY = infoY - 14;
+  projTitleLines.forEach((line) => {
+    page.drawText(cleanWinAnsi(line), { x: col2X, y: projY, size: 9.5, font: fontBold, color: colorNavy });
+    projY -= 11;
   });
 
-  let projDetailsY = infoY - 26;
   const projectRows = [
     { label: 'Project Ref.', val: invoice.projectId ? invoice.projectId.toUpperCase() : 'PRJ-2026-01' },
     { label: 'Invoice Date', val: invoice.invoiceDate || new Date().toISOString().split('T')[0] },
@@ -230,35 +276,33 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   ];
 
   projectRows.forEach((r) => {
-    page.drawText(r.label, { x: projX, y: projDetailsY, size: 8, font: fontRegular, color: colorSlate });
-    page.drawText(`:  ${cleanWinAnsi(r.val)}`, { x: projX + 70, y: projDetailsY, size: 8, font: fontRegular, color: colorNavy });
-    projDetailsY -= 11;
+    page.drawText(r.label, { x: col2X, y: projY, size: 7.5, font: fontRegular, color: colorSlate });
+    page.drawText(`: ${cleanWinAnsi(r.val)}`, { x: col2X + 66, y: projY, size: 7.5, font: fontRegular, color: colorNavy });
+    projY -= 10.5;
   });
 
   // ── Column 3: INVOICE BOX ──
-  const invX = 425;
-  const invBoxW = 138;
   const invBoxH = 86;
   page.drawRectangle({
-    x: invX,
+    x: col3X,
     y: infoY - invBoxH + 12,
-    width: invBoxW,
+    width: col3W,
     height: invBoxH,
     color: colorWhite,
     borderColor: colorBorder,
     borderWidth: 0.75,
   });
 
-  page.drawText('INVOICE', { x: invX + 12, y: infoY, size: 7.5, font: fontBold, color: colorMuted });
+  page.drawText('INVOICE', { x: col3X + 12, y: infoY, size: 7.5, font: fontBold, color: colorMuted });
   page.drawText(invoice.invoiceNumber || 'INV-2026-001', {
-    x: invX + 12,
+    x: col3X + 12,
     y: infoY - 16,
     size: 13,
     font: fontBold,
     color: colorNavy,
   });
 
-  page.drawText('STATUS', { x: invX + 12, y: infoY - 30, size: 7, font: fontBold, color: colorMuted });
+  page.drawText('STATUS', { x: col3X + 12, y: infoY - 30, size: 7, font: fontBold, color: colorMuted });
 
   const statusBadgeText = (invoice.status || 'DRAFT').toUpperCase();
   let pillBg = rgb(0.996, 0.953, 0.78); // amber-50
@@ -271,15 +315,18 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
     pillText = rgb(0.114, 0.306, 0.847);
   }
 
+  const pillWidth = 56;
   page.drawRectangle({
-    x: invX + 12,
+    x: col3X + 12,
     y: infoY - 47,
-    width: 52,
+    width: pillWidth,
     height: 14,
     color: pillBg,
   });
+  
+  const statusTextW = fontBold.widthOfTextAtSize(statusBadgeText, 7.5);
   page.drawText(statusBadgeText, {
-    x: invX + 20,
+    x: col3X + 12 + (pillWidth - statusTextW) / 2,
     y: infoY - 43,
     size: 7.5,
     font: fontBold,
@@ -287,15 +334,18 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   });
 
   page.drawText(invoice.invoiceDate || '2026-09-30', {
-    x: invX + 12,
+    x: col3X + 12,
     y: infoY - 60,
     size: 7.5,
     font: fontRegular,
     color: colorSlate,
   });
 
+  // Calculate lowest point of Info Grid to position table dynamically
+  const infoBottomY = Math.min(billY, projY, infoY - invBoxH + 12);
+
   // 4. Service Items Table (4 Columns ONLY - matching live preview)
-  let tableY = headerY - 165;
+  let tableY = infoBottomY - 18;
   const colX = {
     num: marginX,
     desc: marginX + 30,
@@ -328,7 +378,9 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   ];
 
   items.forEach((item, index) => {
-    const rowHeight = 32;
+    const descLines = wrapText(item.description || '', 340, fontRegular, 7);
+    const rowHeight = Math.max(32, 18 + descLines.length * 10);
+
     page.drawRectangle({
       x: marginX,
       y: tableY - rowHeight,
@@ -342,7 +394,7 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
     // Number
     page.drawText((index + 1).toString(), {
       x: colX.num + 8,
-      y: tableY - 16,
+      y: tableY - 15,
       size: 8,
       font: fontBold,
       color: colorNavy,
@@ -351,28 +403,29 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
     // Service Name
     page.drawText(cleanWinAnsi(item.serviceName), {
       x: colX.desc,
-      y: tableY - 13,
+      y: tableY - 14,
       size: 8.5,
       font: fontBold,
       color: colorNavy,
     });
 
-    // Service Description
-    if (item.description) {
-      const trimmedDesc = item.description.length > 78 ? `${item.description.slice(0, 75)}...` : item.description;
-      page.drawText(cleanWinAnsi(trimmedDesc), {
+    // Service Description Lines
+    let dY = tableY - 24;
+    descLines.forEach((dLine) => {
+      page.drawText(cleanWinAnsi(dLine), {
         x: colX.desc,
-        y: tableY - 24,
+        y: dY,
         size: 7,
         font: fontRegular,
         color: colorSlate,
       });
-    }
+      dY -= 9.5;
+    });
 
     // Rate
     const rateStr = formatInvoiceCurrency(item.rate, '₹');
     page.drawText(cleanWinAnsi(rateStr), {
-      x: colX.rate + 55 - fontRegular.widthOfTextAtSize(rateStr, 8),
+      x: colX.rate + 55 - fontRegular.widthOfTextAtSize(cleanWinAnsi(rateStr), 8),
       y: tableY - 17,
       size: 8,
       font: fontRegular,
@@ -382,7 +435,7 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
     // Amount
     const amountStr = formatInvoiceCurrency(item.amount, '₹');
     page.drawText(cleanWinAnsi(amountStr), {
-      x: colX.amount + 62 - fontBold.widthOfTextAtSize(amountStr, 8.5),
+      x: colX.amount + 62 - fontBold.widthOfTextAtSize(cleanWinAnsi(amountStr), 8.5),
       y: tableY - 17,
       size: 8.5,
       font: fontBold,
@@ -399,7 +452,8 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
 
   // ── 1. TOTALS CONTAINER (Full Width Stacked Card) ──
   const totalsTopY = tableY - 10;
-  const totalsBoxHeight = 92;
+  const wordLines = wrapText(calc.amountInWords || 'Indian Rupees Only', contentWidth - 140, fontBold, 7.5);
+  const totalsBoxHeight = 84 + wordLines.length * 10;
 
   page.drawRectangle({
     x: marginX,
@@ -415,7 +469,7 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   const subtotalStr = formatInvoiceCurrency(calc.subtotal, '₹');
   page.drawText('Subtotal', { x: marginX + 14, y: totLineY, size: 8, font: fontRegular, color: colorSlate });
   page.drawText(cleanWinAnsi(subtotalStr), {
-    x: marginX + contentWidth - 14 - fontBold.widthOfTextAtSize(subtotalStr, 8),
+    x: marginX + contentWidth - 14 - fontBold.widthOfTextAtSize(cleanWinAnsi(subtotalStr), 8),
     y: totLineY,
     size: 8,
     font: fontBold,
@@ -426,7 +480,7 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   const discountStr = formatInvoiceCurrency(calc.discount, '₹');
   page.drawText('Discount', { x: marginX + 14, y: totLineY, size: 8, font: fontRegular, color: colorSlate });
   page.drawText(cleanWinAnsi(discountStr), {
-    x: marginX + contentWidth - 14 - fontRegular.widthOfTextAtSize(discountStr, 8),
+    x: marginX + contentWidth - 14 - fontRegular.widthOfTextAtSize(cleanWinAnsi(discountStr), 8),
     y: totLineY,
     size: 8,
     font: fontRegular,
@@ -437,7 +491,7 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   const taxStr = formatInvoiceCurrency(calc.taxAmount, '₹');
   page.drawText(`Tax (${calc.taxPct}%)`, { x: marginX + 14, y: totLineY, size: 8, font: fontRegular, color: colorSlate });
   page.drawText(cleanWinAnsi(taxStr), {
-    x: marginX + contentWidth - 14 - fontRegular.widthOfTextAtSize(taxStr, 8),
+    x: marginX + contentWidth - 14 - fontRegular.widthOfTextAtSize(cleanWinAnsi(taxStr), 8),
     y: totLineY,
     size: 8,
     font: fontRegular,
@@ -459,7 +513,7 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   });
 
   const totalStr = formatInvoiceCurrency(calc.total, '₹');
-  const totalTextWidth = fontBold.widthOfTextAtSize(totalStr, 11);
+  const totalTextWidth = fontBold.widthOfTextAtSize(cleanWinAnsi(totalStr), 11);
   page.drawText('TOTAL', { x: totalBoxX + 12, y: totLineY + 2, size: 9.5, font: fontBold, color: colorBlue });
   page.drawText(cleanWinAnsi(totalStr), {
     x: totalBoxX + totalBoxW - totalTextWidth - 12,
@@ -469,14 +523,19 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
     color: colorNavy,
   });
 
-  totLineY -= 14;
+  totLineY -= 15;
   page.drawText('AMOUNT IN WORDS:', { x: marginX + 14, y: totLineY, size: 7, font: fontBold, color: colorMuted });
-  page.drawText(cleanWinAnsi(calc.amountInWords || 'Indian Rupees Only'), {
-    x: marginX + 125,
-    y: totLineY,
-    size: 7.5,
-    font: fontBold,
-    color: colorNavy,
+  
+  let wY = totLineY;
+  wordLines.forEach((wLine) => {
+    page.drawText(cleanWinAnsi(wLine), {
+      x: marginX + 125,
+      y: wY,
+      size: 7.5,
+      font: fontBold,
+      color: colorNavy,
+    });
+    wY -= 10;
   });
 
   // ── 2. NOTES CONTAINER (Full Width Stacked Card directly below Totals) ──
@@ -484,8 +543,8 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   const notesText = invoice.notes ||
     'This invoice covers the development and deployment of the agreed project scope as per our discussion.\nAdditional features outside the agreed scope will be billed separately upon approval.\nPlease make the payment within the due date to ensure continued support and development.\nFor any queries, feel free to contact us.';
 
-  const noteLines = notesText.split('\n').map((l) => l.trim()).filter(Boolean);
-  const notesBoxHeight = 22 + noteLines.length * 11.5;
+  const noteLines = wrapText(notesText, contentWidth - 28, fontRegular, 7.5);
+  const notesBoxHeight = 22 + noteLines.length * 11;
 
   page.drawRectangle({
     x: marginX,
@@ -502,7 +561,7 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   let nLineY = notesTopY - 26;
   noteLines.forEach((line) => {
     page.drawText(cleanWinAnsi(line), { x: marginX + 14, y: nLineY, size: 7.5, font: fontRegular, color: colorSlate });
-    nLineY -= 11.5;
+    nLineY -= 11;
   });
 
   // ── 3. SIGNATURE & CLOSING SECTION (Stacked directly below Notes) ──
