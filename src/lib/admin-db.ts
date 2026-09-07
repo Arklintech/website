@@ -1572,8 +1572,14 @@ export const adminDb = {
     },
 
     update: async (id: string, data: Partial<InvoiceRecord> & { items?: Array<Partial<InvoiceItemRecord> & { serviceName: string; amount: number }> }): Promise<InvoiceRecord | null> => {
-      const records = readJSON<InvoiceRecord>(FILES.invoices, []);
-      const idx = records.findIndex(inv => inv.id === id || inv.invoiceNumber === id);
+      let records = readJSON<InvoiceRecord>(FILES.invoices, []);
+      let idx = records.findIndex(inv => inv.id === id || inv.invoiceNumber === id);
+      if (idx === -1) {
+        // If invoice is missing from local JSON (e.g. multi-lambda Vercel deployment), sync from Google Sheets
+        await adminDb.invoices.findRecent(200);
+        records = readJSON<InvoiceRecord>(FILES.invoices, []);
+        idx = records.findIndex(inv => inv.id === id || inv.invoiceNumber === id);
+      }
       if (idx === -1) return null;
       const now = new Date().toISOString();
       const existing = records[idx];
