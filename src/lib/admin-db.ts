@@ -1477,17 +1477,22 @@ export const adminDb = {
             }
           });
           local = Array.from(map.values());
+          writeJSON(FILES.invoices, local);
         }
       } catch {}
       return local.slice(0, limit);
     },
 
     findById: async (id: string): Promise<InvoiceRecord | null> => {
-      const invoices = await adminDb.invoices.findRecent(200);
-      const invoice = invoices.find(inv => inv.id === id || inv.invoiceNumber === id);
-      if (!invoice) return null;
-      invoice.items = await adminDb.invoiceItems.findByInvoice(invoice.id);
-      return invoice;
+      let invoices = await adminDb.invoices.findRecent(200);
+      let match = invoices.find(inv => inv.id === id || inv.invoiceNumber === id);
+      if (!match) {
+        const local = readJSON<InvoiceRecord>(FILES.invoices, []);
+        match = local.find(inv => inv.id === id || inv.invoiceNumber === id);
+      }
+      if (!match) return null;
+      match.items = await adminDb.invoiceItems.findByInvoice(match.id);
+      return match;
     },
 
     findByProject: async (projectId: string): Promise<InvoiceRecord[]> => {
@@ -1510,10 +1515,10 @@ export const adminDb = {
       return `INV-${year}-${next}`;
     },
 
-    create: async (data: Omit<InvoiceRecord, 'id' | 'createdAt' | 'updatedAt'> & { items?: Omit<InvoiceItemRecord, 'id' | 'invoiceId'>[] }): Promise<InvoiceRecord> => {
+    create: async (data: Omit<InvoiceRecord, 'id' | 'createdAt' | 'updatedAt'> & { id?: string; items?: Omit<InvoiceItemRecord, 'id' | 'invoiceId'>[] }): Promise<InvoiceRecord> => {
       const records = readJSON<InvoiceRecord>(FILES.invoices, []);
       const now = new Date().toISOString();
-      const invoiceId = uid('inv');
+      const invoiceId = data.id || uid('inv');
       const invoiceNumber = data.invoiceNumber || await adminDb.invoices.getNextInvoiceNumber();
 
       const items: InvoiceItemRecord[] = (data.items || []).map(item => ({
@@ -1580,8 +1585,96 @@ export const adminDb = {
         records = readJSON<InvoiceRecord>(FILES.invoices, []);
         idx = records.findIndex(inv => inv.id === id || inv.invoiceNumber === id);
       }
-      if (idx === -1) return null;
+
       const now = new Date().toISOString();
+
+      // RESILIENT UPSERT: If record still not found, create it with the requested ID
+      // This prevents any 404 when saving changes before PDF generation
+      if (idx === -1) {
+        const fallbackInvoiceNumber = data.invoiceNumber || (id.startsWith('INV-') ? id : await adminDb.invoices.getNextInvoiceNumber());
+        let items: InvoiceItemRecord[] = [];
+        if (data.items && Array.isArray(data.items)) {
+          items = data.items.map(item => ({
+            id: item.id && !item.id.startsWith('custom_') ? item.id : uid('item'),
+            invoiceId: id,
+            serviceName: item.serviceName,
+            description: item.description || '',
+            qty: item.qty || 1,
+            rate: item.rate !== undefined ? item.rate : item.amount,
+            amount: item.amount || 0,
+          }));
+        }
+
+        const total = data.total !== undefined ? data.total : (data.subtotal || 0);
+        const amountInWords = data.amountInWords || amountToWordsIndian(total);
+
+        const newRecord: InvoiceRecord = {
+          id,
+          invoiceNumber: fallbackInvoiceNumber,
+          projectId: data.projectId || null,
+          companyId: data.companyId || null,
+          clientName: data.clientName || 'Client',
+          clientAddress: data.clientAddress || '',
+          clientEmail: data.clientEmail || '',
+          clientPhone: data.clientPhone || '',
+          invoiceDate: data.invoiceDate || now.split('T')[0],
+          dueDate: data.dueDate || '',
+          paymentTerms: data.paymentTerms || '14 Days',
+          currency: data.currency || 'INR (₹)',
+          subtotal: data.subtotal || total,
+          discount: data.discount || 0,
+          taxPct: data.taxPct || 0,
+          taxAmount: data.taxAmount || 0,
+          total,
+          amountInWords,
+          status: (data.status as any) || 'SENT',
+          notes: data.notes || '',
+          pdfDriveUrl: data.pdfDriveUrl || '',
+          items,
+          createdAt: data.createdAt || now,
+          updatedAt: now,
+        };
+
+        records.unshift(newRecord);
+        writeJSON(FILES.invoices, records);
+
+        if (items.length) {
+          await adminDb.invoiceItems.replaceForInvoice(id, items);
+        }
+
+        try {
+          await sheetsDb.appendRow('Invoices', {
+            invoice_id: newRecord.id,
+            invoice_number: newRecord.invoiceNumber,
+            project_id: newRecord.projectId || '',
+            company_id: newRecord.companyId || '',
+            client_name: newRecord.clientName,
+            client_address: newRecord.clientAddress || '',
+            client_email: newRecord.clientEmail || '',
+            client_phone: newRecord.clientPhone || '',
+            invoice_date: newRecord.invoiceDate,
+            due_date: newRecord.dueDate,
+            payment_terms: newRecord.paymentTerms || '14 Days',
+            currency: newRecord.currency || 'INR (₹)',
+            subtotal: newRecord.subtotal.toString(),
+            discount: newRecord.discount.toString(),
+            tax_pct: newRecord.taxPct.toString(),
+            tax_amount: newRecord.taxAmount.toString(),
+            total: newRecord.total.toString(),
+            amount_in_words: newRecord.amountInWords,
+            status: newRecord.status,
+            notes: newRecord.notes || '',
+            pdf_drive_url: newRecord.pdfDriveUrl || '',
+            created_at: newRecord.createdAt,
+            updated_at: now,
+          });
+        } catch (err) {
+          console.error('Error appending upserted invoice to Sheets:', err);
+        }
+
+        return newRecord;
+      }
+
       const existing = records[idx];
 
       let items = existing.items || [];
@@ -1659,6 +1752,7 @@ export const adminDb = {
             }
           });
           local = Array.from(map.values());
+          writeJSON(FILES.invoiceItems, local);
         }
       } catch {}
       return local.filter(item => item.invoiceId === invoiceId);

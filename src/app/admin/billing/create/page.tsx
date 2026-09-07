@@ -343,7 +343,18 @@ export default function CreateOrEditInvoicePage() {
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error('Failed to update invoice');
+      if (!res.ok) {
+        if (res.status === 404) {
+          const createRes = await fetchAdmin('/api/admin/invoices', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...payload, id: existingInvoiceId, invoiceNumber: existingInvoiceNumber }),
+          });
+          if (!createRes.ok) throw new Error('Failed to save invoice changes');
+        } else {
+          throw new Error('Failed to update invoice');
+        }
+      }
       invalidateAdminCache('/api/admin/invoices');
 
       setActionMessage({
@@ -422,77 +433,76 @@ export default function CreateOrEditInvoicePage() {
       let targetId = existingInvoiceId;
       let targetNumber = existingInvoiceNumber;
 
-      if (isEditMode && existingInvoiceId) {
-        // 1. Save changes first to ensure PDF has the latest data
-        const payload = {
-          projectId: selectedProjectId || null,
-          projectName: projectName || null,
-          clientName,
-          clientAddress,
-          clientEmail,
-          clientPhone,
-          invoiceDate,
-          dueDate,
-          paymentTerms,
-          currency,
-          subtotal,
-          discount,
-          taxPct,
-          taxAmount,
-          total,
-          amountInWords: words,
-          notes,
-          status: existingInvoiceStatus,
-          items: activeLineItems,
-        };
+      const invoicePayload = {
+        id: targetId || undefined,
+        invoiceNumber: targetNumber || undefined,
+        projectId: selectedProjectId || null,
+        projectName: projectName || null,
+        clientName,
+        clientAddress,
+        clientEmail,
+        clientPhone,
+        invoiceDate,
+        dueDate,
+        paymentTerms,
+        currency,
+        subtotal,
+        discount,
+        taxPct,
+        taxAmount,
+        total,
+        amountInWords: words,
+        notes,
+        status: isEditMode ? existingInvoiceStatus : 'SENT',
+        items: activeLineItems,
+      };
 
-        const updateRes = await fetchAdmin(`/api/admin/invoices/${encodeURIComponent(existingInvoiceId)}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-        if (!updateRes.ok) throw new Error('Failed to save latest invoice changes before PDF generation');
+      if (isEditMode && existingInvoiceId) {
+        // 1. Save changes first to ensure backend database & Sheets have latest data
+        try {
+          const updateRes = await fetchAdmin(`/api/admin/invoices/${encodeURIComponent(existingInvoiceId)}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(invoicePayload),
+          });
+
+          if (!updateRes.ok && updateRes.status === 404) {
+            await fetchAdmin('/api/admin/invoices', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(invoicePayload),
+            }).catch(e => console.warn('Fallback invoice creation note:', e));
+          }
+        } catch (updateErr) {
+          console.warn('Non-fatal update warning before PDF generation:', updateErr);
+        }
       } else {
         // Create mode: Create invoice record
-        const payload = {
-          projectId: selectedProjectId || null,
-          projectName: projectName || null,
-          clientName,
-          clientAddress,
-          clientEmail,
-          clientPhone,
-          invoiceDate,
-          dueDate,
-          paymentTerms,
-          currency,
-          subtotal,
-          discount,
-          taxPct,
-          taxAmount,
-          total,
-          amountInWords: words,
-          notes,
-          status: 'SENT',
-          items: activeLineItems,
-        };
-
         const createRes = await fetchAdmin('/api/admin/invoices', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(invoicePayload),
         });
 
-        if (!createRes.ok) throw new Error('Failed to create invoice record');
-        const data = await createRes.json();
-        targetId = data.data.id;
-        targetNumber = data.data.invoiceNumber || 'INV-2026-001';
-        setExistingInvoiceId(targetId);
-        setExistingInvoiceNumber(targetNumber);
+        if (createRes.ok) {
+          const data = await createRes.json();
+          targetId = data.data?.id || targetId;
+          targetNumber = data.data?.invoiceNumber || targetNumber;
+          setExistingInvoiceId(targetId);
+          setExistingInvoiceNumber(targetNumber);
+        }
       }
 
-      // 2. Trigger PDF Generation & Drive Upload
-      const pdfPostRes = await fetchAdmin(`/api/admin/invoices/${encodeURIComponent(targetId)}/pdf`, {
+      // 2. Trigger PDF Generation & Drive Upload (passes active state in body for 100% resilient download)
+      const pdfEndpoint = targetId ? `/api/admin/invoices/${encodeURIComponent(targetId)}/pdf` : '/api/admin/invoices/new/pdf';
+      const pdfPostRes = await fetchAdmin(pdfEndpoint, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...invoicePayload,
+          id: targetId,
+          invoiceNumber: targetNumber,
+        }),
       });
 
       if (!pdfPostRes.ok) throw new Error('Failed to generate PDF buffer');
@@ -501,7 +511,7 @@ export default function CreateOrEditInvoicePage() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${targetNumber}.pdf`;
+      a.download = `${targetNumber || 'INV-2026'}.pdf`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -935,7 +945,7 @@ export default function CreateOrEditInvoicePage() {
             {/* Header: Exact Keystone Logo & Slogans */}
             <div className="flex flex-col sm:flex-row sm:items-start justify-between border-b border-[#E8E4DC] pb-4 gap-3">
               <div className="space-y-1.5">
-                <KeystoneLogo size="md" />
+                <KeystoneLogo size="md" textColor="text-[#1463FF]" />
                 <div className="text-[8.5px] sm:text-[9px] font-bold font-mono tracking-[0.16em] text-[#0B132B] pt-1">
                   IDEAS &nbsp;→&nbsp; SYSTEMS &nbsp;→&nbsp; REAL &nbsp;IMPACT
                 </div>

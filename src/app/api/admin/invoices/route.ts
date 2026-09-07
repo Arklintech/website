@@ -49,6 +49,7 @@ export async function POST(req: NextRequest) {
     const invoiceNumber = body.invoiceNumber || await adminDb.invoices.getNextInvoiceNumber();
 
     const invoice = await adminDb.invoices.create({
+      id: body.id,
       invoiceNumber,
       projectId: body.projectId || null,
       companyId: body.companyId || null,
