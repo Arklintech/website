@@ -168,11 +168,11 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   if (fs.existsSync(headerLogoPath)) {
     const headerBytes = fs.readFileSync(headerLogoPath);
     const headerImg = await doc.embedPng(headerBytes);
-    const imgWidth = 205;
-    const imgHeight = (imgWidth / headerImg.width) * headerImg.height; // ~51pt
+    const imgWidth = 180;
+    const imgHeight = (imgWidth / headerImg.width) * headerImg.height; // ~37pt
     page.drawImage(headerImg, {
       x: marginX,
-      y: headerY - imgHeight + 6,
+      y: headerY - imgHeight + 4,
       width: imgWidth,
       height: imgHeight,
     });
@@ -191,10 +191,22 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
       font: fontBold,
       color: colorBlue,
     });
+  }
+
+  // Tagline directly below logo: IDEAS → SYSTEMS → REAL IMPACT (crisp, bold, native vector text matching preview exactly)
+  try {
+    page.drawText('IDEAS   \u2192   SYSTEMS   \u2192   REAL   IMPACT', {
+      x: marginX + 1,
+      y: headerY - 44,
+      size: 8,
+      font: fontBold,
+      color: colorNavy,
+    });
+  } catch {
     page.drawText('IDEAS   ->   SYSTEMS   ->   REAL   IMPACT', {
-      x: marginX,
-      y: headerY - 42,
-      size: 7.5,
+      x: marginX + 1,
+      y: headerY - 44,
+      size: 8,
       font: fontBold,
       color: colorNavy,
     });
@@ -202,13 +214,13 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
 
   // Right Header Tagline & Accent lines
   page.drawLine({
-    start: { x: width - 150, y: headerY + 8 },
-    end: { x: width - 150, y: headerY - 42 },
+    start: { x: width - 150, y: headerY + 4 },
+    end: { x: width - 150, y: headerY - 46 },
     thickness: 1.5,
     color: colorBlue,
   });
 
-  let tagY = headerY + 2;
+  let tagY = headerY - 2;
   INVOICE_BRAND.tagline.forEach((line) => {
     page.drawText(line, { x: width - 140, y: tagY, size: 7.5, font: fontBold, color: colorNavy });
     tagY -= 10;
@@ -216,14 +228,14 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
 
   // Divider Line below header
   page.drawLine({
-    start: { x: marginX, y: headerY - 50 },
-    end: { x: width - marginX, y: headerY - 50 },
+    start: { x: marginX, y: headerY - 54 },
+    end: { x: width - marginX, y: headerY - 54 },
     thickness: 0.75,
     color: colorBorder,
   });
 
   // 3. Information Grid (BILL TO, PROJECT, INVOICE) with strict non-overlapping column bounds
-  const infoY = headerY - 65;
+  const infoY = headerY - 68;
 
   const col1X = marginX;
   const col1MaxW = 190;

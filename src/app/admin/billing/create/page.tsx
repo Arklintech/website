@@ -945,7 +945,7 @@ export default function CreateOrEditInvoicePage() {
             {/* Header: Exact Keystone Logo & Slogans */}
             <div className="flex flex-col sm:flex-row sm:items-start justify-between border-b border-[#E8E4DC] pb-4 gap-3">
               <div className="space-y-1.5">
-                <KeystoneLogo size="md" textColor="text-[#1463FF]" />
+                <KeystoneLogo size="md" textColor="text-[#0B132B]" />
                 <div className="text-[8.5px] sm:text-[9px] font-bold font-mono tracking-[0.16em] text-[#0B132B] pt-1">
                   IDEAS &nbsp;→&nbsp; SYSTEMS &nbsp;→&nbsp; REAL &nbsp;IMPACT
                 </div>
