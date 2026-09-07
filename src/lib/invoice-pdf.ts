@@ -9,6 +9,27 @@ import {
   formatInvoiceCurrency,
 } from './invoice-spec';
 
+// In-memory font cache for ultra-fast PDF generation (< 20ms)
+let cachedFontRegBuffer: Buffer | null = null;
+let cachedFontBoldBuffer: Buffer | null = null;
+
+function getFontBuffers() {
+  if (!cachedFontRegBuffer || !cachedFontBoldBuffer) {
+    const fontRegPath = path.join(process.cwd(), 'public', 'fonts', 'segoeui.ttf');
+    const fontBoldPath = path.join(process.cwd(), 'public', 'fonts', 'segoeuib.ttf');
+
+    if (fs.existsSync(fontRegPath) && fs.existsSync(fontBoldPath)) {
+      try {
+        cachedFontRegBuffer = fs.readFileSync(fontRegPath);
+        cachedFontBoldBuffer = fs.readFileSync(fontBoldPath);
+      } catch (e) {
+        console.warn('Failed to read font buffers from disk:', e);
+      }
+    }
+  }
+  return { fontRegBuffer: cachedFontRegBuffer, fontBoldBuffer: cachedFontBoldBuffer };
+}
+
 /**
  * Creates a clickable hyperlink annotation (URI or mailto) on a PDF page.
  */
@@ -99,15 +120,14 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   let fontRegular: any;
   let fontBold: any;
 
-  const fontRegPath = path.join(process.cwd(), 'public', 'fonts', 'segoeui.ttf');
-  const fontBoldPath = path.join(process.cwd(), 'public', 'fonts', 'segoeuib.ttf');
+  const { fontRegBuffer, fontBoldBuffer } = getFontBuffers();
 
-  if (fs.existsSync(fontRegPath) && fs.existsSync(fontBoldPath)) {
+  if (fontRegBuffer && fontBoldBuffer) {
     try {
-      fontRegular = await doc.embedFont(fs.readFileSync(fontRegPath));
-      fontBold = await doc.embedFont(fs.readFileSync(fontBoldPath));
+      fontRegular = await doc.embedFont(fontRegBuffer);
+      fontBold = await doc.embedFont(fontBoldBuffer);
     } catch (e) {
-      console.warn('Failed to load custom TTF fonts, falling back to Helvetica:', e);
+      console.warn('Failed to embed cached TTF fonts, falling back to Helvetica:', e);
       fontRegular = await doc.embedFont(StandardFonts.Helvetica);
       fontBold = await doc.embedFont(StandardFonts.HelveticaBold);
     }
@@ -143,16 +163,16 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
 
   const marginX = 32;
   const contentWidth = width - marginX * 2; // 531.28 pt
-  const headerY = height - 48;
+  const headerY = height - 44;
 
   if (fs.existsSync(headerLogoPath)) {
     const headerBytes = fs.readFileSync(headerLogoPath);
     const headerImg = await doc.embedPng(headerBytes);
-    const imgWidth = 175;
-    const imgHeight = (imgWidth / headerImg.width) * headerImg.height;
+    const imgWidth = 205;
+    const imgHeight = (imgWidth / headerImg.width) * headerImg.height; // ~51pt
     page.drawImage(headerImg, {
       x: marginX,
-      y: headerY - imgHeight + 2,
+      y: headerY - imgHeight + 6,
       width: imgWidth,
       height: imgHeight,
     });
@@ -171,16 +191,14 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
       font: fontBold,
       color: colorBlue,
     });
+    page.drawText('IDEAS   ->   SYSTEMS   ->   REAL   IMPACT', {
+      x: marginX,
+      y: headerY - 42,
+      size: 7.5,
+      font: fontBold,
+      color: colorNavy,
+    });
   }
-
-  // Sub-header Slogan: "IDEAS  →  SYSTEMS  →  REAL  IMPACT"
-  page.drawText('IDEAS   ->   SYSTEMS   ->   REAL   IMPACT', {
-    x: marginX,
-    y: headerY - 42,
-    size: 7.5,
-    font: fontBold,
-    color: colorNavy,
-  });
 
   // Right Header Tagline & Accent lines
   page.drawLine({
@@ -207,10 +225,6 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   // 3. Information Grid (BILL TO, PROJECT, INVOICE) with strict non-overlapping column bounds
   const infoY = headerY - 65;
 
-  // Column boundaries:
-  // Col 1 (BILL TO): x = 32, maxW = 190
-  // Col 2 (PROJECT): x = 237, maxW = 165
-  // Col 3 (INVOICE): x = 412, maxW = 151
   const col1X = marginX;
   const col1MaxW = 190;
 

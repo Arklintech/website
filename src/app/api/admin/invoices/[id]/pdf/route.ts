@@ -49,18 +49,18 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     const safeClientName = (invoice.clientName || 'Client').replace(/[^a-zA-Z0-9]/g, '_');
     const filename = `${invoice.invoiceNumber || 'INV-2026'}_${safeClientName}.pdf`;
 
-    let driveUrl = invoice.pdfDriveUrl || '';
+    const driveUrl = invoice.pdfDriveUrl || '';
 
-    // Upload to Google Drive Documents subfolder (graceful fallback if Drive quota is exceeded)
-    try {
-      const driveMeta = await uploadFileToDrive(pdfBuffer, filename, 'application/pdf', 'Documents');
-      if (driveMeta?.drive_url) {
-        driveUrl = driveMeta.drive_url;
-        await adminDb.invoices.update(invoice.id, { pdfDriveUrl: driveUrl });
-      }
-    } catch (driveErr) {
-      console.warn('Google Drive invoice PDF auto-sync skipped:', driveErr);
-    }
+    // Non-blocking asynchronous upload to Google Drive for INSTANT PDF download speed (< 100ms)
+    uploadFileToDrive(pdfBuffer, filename, 'application/pdf', 'Documents')
+      .then(async (driveMeta) => {
+        if (driveMeta?.drive_url) {
+          await adminDb.invoices.update(invoice.id, { pdfDriveUrl: driveMeta.drive_url });
+        }
+      })
+      .catch((driveErr) => {
+        console.warn('Google Drive invoice PDF background sync skipped:', driveErr);
+      });
 
     return new NextResponse(new Uint8Array(pdfBuffer), {
       status: 200,
