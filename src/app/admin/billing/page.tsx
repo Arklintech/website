@@ -4,9 +4,10 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Receipt, Plus, Search, Download, ExternalLink, Filter,
-  FileText, CheckCircle2, Clock, AlertCircle, DollarSign, FileEdit
+  FileText, CheckCircle2, Clock, AlertCircle, DollarSign, FileEdit,
+  Trash2, AlertTriangle
 } from 'lucide-react';
-import { fetchAdmin, fetchAdminJSON } from '@/lib/admin-client';
+import { fetchAdmin, fetchAdminJSON, invalidateAdminCache } from '@/lib/admin-client';
 import type { InvoiceRecord } from '@/lib/admin-db';
 
 export default function BillingDirectoryPage() {
@@ -14,6 +15,9 @@ export default function BillingDirectoryPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [invoiceToDelete, setInvoiceToDelete] = useState<InvoiceRecord | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [actionNotification, setActionNotification] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
   const loadInvoices = async () => {
     try {
@@ -40,6 +44,39 @@ export default function BillingDirectoryPage() {
   useEffect(() => {
     loadInvoices();
   }, []);
+
+  const handleDeleteInvoice = async () => {
+    if (!invoiceToDelete) return;
+    try {
+      setDeleting(true);
+      const res = await fetchAdmin(`/api/admin/invoices/${encodeURIComponent(invoiceToDelete.id)}`, {
+        method: 'DELETE',
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to delete invoice');
+      }
+
+      invalidateAdminCache('/api/admin/invoices');
+      setInvoices((prev) => prev.filter((inv) => inv.id !== invoiceToDelete.id));
+
+      setActionNotification({
+        text: `Invoice ${invoiceToDelete.invoiceNumber} deleted successfully from Sheets and records.`,
+        type: 'success',
+      });
+      setTimeout(() => setActionNotification(null), 5000);
+      setInvoiceToDelete(null);
+    } catch (err: any) {
+      console.error('Error deleting invoice:', err);
+      setActionNotification({
+        text: 'Failed to delete invoice. Please try again.',
+        type: 'error',
+      });
+      setTimeout(() => setActionNotification(null), 5000);
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const totalInvoiced = invoices.reduce((sum, i) => sum + (i.total || 0), 0);
   const totalPaid = invoices.filter((i) => i.status === 'PAID').reduce((sum, i) => sum + (i.total || 0), 0);
@@ -76,6 +113,17 @@ export default function BillingDirectoryPage() {
           <Plus className="w-4 h-4" /> CREATE INVOICE
         </Link>
       </div>
+
+      {actionNotification && (
+        <div className={`p-4 rounded-xl text-xs font-mono font-bold flex items-center gap-2 animate-fadeIn ${
+          actionNotification.type === 'success'
+            ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
+            : 'bg-red-50 border border-red-200 text-red-800'
+        }`}>
+          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+          <span>{actionNotification.text}</span>
+        </div>
+      )}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -213,6 +261,14 @@ export default function BillingDirectoryPage() {
                         Drive <ExternalLink className="w-3 h-3" />
                       </a>
                     )}
+                    <button
+                      type="button"
+                      onClick={() => setInvoiceToDelete(inv)}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-transparent font-mono font-bold text-[11px] text-red-600 hover:bg-red-50 hover:border-red-200 transition-all"
+                      title="Delete this invoice"
+                    >
+                      <Trash2 className="w-3 h-3" /> Delete
+                    </button>
                   </td>
                 </tr>
               ))
@@ -220,6 +276,64 @@ export default function BillingDirectoryPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {invoiceToDelete && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl border border-[#D8D4C9] p-6 w-full max-w-md shadow-2xl space-y-5 animate-fadeIn">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-red-50 border border-red-200 text-red-600 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-bold text-base text-[#0B132B]">DELETE INVOICE?</h3>
+                <p className="text-xs text-[#64748B]">
+                  Are you sure you want to delete this invoice? This will remove the invoice record, associated items, and Drive PDF.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-[#FDFBF7] border border-[#E8E4DC] rounded-xl p-4 space-y-2 text-xs font-mono">
+              <div className="flex items-center justify-between">
+                <span className="text-[#64748B]">Invoice:</span>
+                <strong className="text-[#0B132B] font-bold">{invoiceToDelete.invoiceNumber}</strong>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[#64748B]">Client:</span>
+                <span className="text-[#0B132B] font-bold text-right truncate max-w-[220px]">{invoiceToDelete.clientName}</span>
+              </div>
+              <div className="flex items-center justify-between border-t border-[#F1EDE4] pt-2">
+                <span className="text-[#64748B]">Amount:</span>
+                <strong className="text-[#0B132B] font-black text-sm">₹{invoiceToDelete.total.toLocaleString('en-IN')}</strong>
+              </div>
+            </div>
+
+            <p className="text-[11px] font-bold text-red-600 font-mono">
+              This action cannot be undone.
+            </p>
+
+            <div className="flex items-center justify-end gap-3 pt-2 border-t border-[#F1EDE4]">
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={() => setInvoiceToDelete(null)}
+                className="px-4 py-2 rounded-xl border border-[#D8D4C9] text-xs font-mono font-bold text-[#64748B] hover:text-[#0B132B] hover:bg-[#FDFBF7] transition-all disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={handleDeleteInvoice}
+                className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-mono font-bold transition-all shadow-md shadow-red-600/20 flex items-center gap-1.5 disabled:opacity-50"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                {deleting ? 'Deleting Invoice...' : 'Delete Invoice'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

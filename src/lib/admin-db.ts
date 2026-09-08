@@ -5,6 +5,7 @@
 import fs from 'fs';
 import path from 'path';
 import { sheetsDb } from './sheets-db';
+import { deleteFileFromDrive } from './google-drive';
 
 const DATA_DIR = path.join(process.cwd(), '.data');
 if (!fs.existsSync(DATA_DIR)) {
@@ -1442,13 +1443,15 @@ export const adminDb = {
       let local = readJSON<InvoiceRecord>(FILES.invoices, []);
       try {
         const rows = await sheetsDb.readTab('Invoices');
-        if (rows.length) {
-          const map = new Map<string, InvoiceRecord>();
-          local.forEach(inv => map.set(inv.id, inv));
-          rows.forEach(r => {
-            if (r.invoice_id) {
-              const existing = map.get(r.invoice_id);
-              map.set(r.invoice_id, {
+        if (rows && rows.length) {
+          const localMap = new Map<string, InvoiceRecord>();
+          local.forEach(inv => localMap.set(inv.id, inv));
+
+          const sheetsInvoices: InvoiceRecord[] = rows
+            .filter(r => Boolean(r.invoice_id))
+            .map(r => {
+              const existing = localMap.get(r.invoice_id);
+              return {
                 id: r.invoice_id,
                 invoiceNumber: r.invoice_number,
                 projectId: r.project_id || null,
@@ -1473,10 +1476,10 @@ export const adminDb = {
                 items: existing?.items || [],
                 createdAt: r.created_at || new Date().toISOString(),
                 updatedAt: r.updated_at || new Date().toISOString(),
-              });
-            }
-          });
-          local = Array.from(map.values());
+              };
+            });
+
+          local = sheetsInvoices;
           writeJSON(FILES.invoices, local);
         }
       } catch {}
@@ -1727,6 +1730,50 @@ export const adminDb = {
         console.error('Error updating invoice in Sheets:', err);
       }
       return updatedRecord;
+    },
+
+    delete: async (id: string): Promise<boolean> => {
+      let records = readJSON<InvoiceRecord>(FILES.invoices, []);
+      const target = records.find(inv => inv.id === id || inv.invoiceNumber === id);
+      const targetId = target?.id || id;
+      const targetPdfDriveUrl = target?.pdfDriveUrl;
+
+      // 1. Remove from local JSON
+      records = records.filter(inv => inv.id !== targetId && inv.invoiceNumber !== id);
+      writeJSON(FILES.invoices, records);
+
+      // 2. Remove associated items from local JSON
+      let itemRecords = readJSON<InvoiceItemRecord>(FILES.invoiceItems, []);
+      itemRecords = itemRecords.filter(i => i.invoiceId !== targetId);
+      writeJSON(FILES.invoiceItems, itemRecords);
+
+      // 3. Remove from Google Sheets
+      try {
+        await sheetsDb.deleteRowById('Invoices', 'invoice_id', targetId);
+      } catch (err) {
+        console.warn(`Could not delete invoice ${targetId} from Sheets:`, err);
+      }
+
+      try {
+        const existingItems = await sheetsDb.readTab('InvoiceItems');
+        const remainingItems = existingItems.filter(r => r.invoice_id !== targetId);
+        if (remainingItems.length !== existingItems.length) {
+          await sheetsDb.overwriteTab('InvoiceItems', remainingItems);
+        }
+      } catch (err) {
+        console.warn(`Could not delete invoice items for ${targetId} from Sheets:`, err);
+      }
+
+      // 4. Remove PDF from Google Drive if exists
+      if (targetPdfDriveUrl) {
+        try {
+          await deleteFileFromDrive(targetPdfDriveUrl);
+        } catch (driveErr) {
+          console.warn(`Could not delete Drive PDF for invoice ${targetId}:`, driveErr);
+        }
+      }
+
+      return true;
     },
   },
 

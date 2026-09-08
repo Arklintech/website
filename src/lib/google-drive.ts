@@ -110,3 +110,25 @@ export async function getDriveFileMetadata(fileId: string): Promise<Partial<Driv
     return null;
   }
 }
+
+export async function deleteFileFromDrive(fileIdOrUrl: string): Promise<boolean> {
+  try {
+    let fileId = fileIdOrUrl;
+    const urlMatch = fileIdOrUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || fileIdOrUrl.match(/id=([a-zA-Z0-9_-]+)/);
+    if (urlMatch) {
+      fileId = urlMatch[1];
+    }
+    if (!fileId || fileId.startsWith('http')) return false;
+    const drive = await getDriveClient();
+    await drive.files.delete({
+      fileId,
+      supportsAllDrives: true,
+      supportsTeamDrives: true,
+    });
+    return true;
+  } catch (err: any) {
+    console.warn(`Could not delete Drive file ${fileIdOrUrl}:`, err?.message || err);
+    return false;
+  }
+}
+

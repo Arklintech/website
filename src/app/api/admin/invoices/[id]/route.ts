@@ -38,3 +38,22 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     return NextResponse.json({ error: 'Failed to update invoice' }, { status: 500 });
   }
 }
+
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+  const auth = await verifyAdminRequest(req);
+  if (!auth.valid) {
+    return NextResponse.json({ error: auth.status === 403 ? 'Forbidden: Access denied' : 'Unauthorized' }, { status: auth.status || 401 });
+  }
+
+  try {
+    const success = await adminDb.invoices.delete(params.id);
+    if (!success) {
+      return NextResponse.json({ error: 'Invoice not found or could not be deleted' }, { status: 404 });
+    }
+    return NextResponse.json({ success: true, message: `Invoice ${params.id} deleted successfully` });
+  } catch (err: any) {
+    console.error(`Error deleting invoice ${params.id}:`, err);
+    return NextResponse.json({ error: 'Failed to delete invoice' }, { status: 500 });
+  }
+}
+
