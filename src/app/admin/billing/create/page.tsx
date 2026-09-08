@@ -56,9 +56,20 @@ export default function CreateOrEditInvoicePage() {
   const [showCustomModal, setShowCustomModal] = useState(false);
   const [newCustom, setNewCustom] = useState({ name: '', description: '', amount: 20000 });
 
-  // Commercials
-  const [discount, setDiscount] = useState<number>(0);
-  const [taxPct, setTaxPct] = useState<number>(0);
+  // Commercials input state (string for controlled numeric input UX)
+  const [discountInput, setDiscountInput] = useState<string>('0');
+  const [taxInput, setTaxInput] = useState<string>('0');
+
+  // Commercials numeric values (strictly for calculations and persistence)
+  const discount = useMemo(() => {
+    const parsed = parseFloat(discountInput);
+    return isNaN(parsed) || parsed < 0 ? 0 : parsed;
+  }, [discountInput]);
+
+  const taxPct = useMemo(() => {
+    const parsed = parseFloat(taxInput);
+    return isNaN(parsed) || parsed < 0 ? 0 : Math.min(100, parsed);
+  }, [taxInput]);
 
   // Action states
   const [generating, setGenerating] = useState(false);
@@ -112,8 +123,10 @@ export default function CreateOrEditInvoicePage() {
               if (inv.notes) setNotes(inv.notes);
 
               // Set commercials from saved record strictly (do not auto-apply defaults)
-              setDiscount(inv.discount || 0);
-              setTaxPct(inv.taxPct || 0);
+              const loadedDiscount = typeof inv.discount === 'number' ? inv.discount : parseFloat(inv.discount as any) || 0;
+              const loadedTax = typeof inv.taxPct === 'number' ? inv.taxPct : parseFloat(inv.taxPct as any) || 0;
+              setDiscountInput(String(loadedDiscount));
+              setTaxInput(String(loadedTax));
 
               // Match project
               if (inv.projectId) {
@@ -248,6 +261,58 @@ export default function CreateOrEditInvoicePage() {
     setServiceAmounts({ ...serviceAmounts, [customId]: newCustom.amount });
     setNewCustom({ name: '', description: '', amount: 20000 });
     setShowCustomModal(false);
+  };
+
+  // Controlled input handler for Discount (INR)
+  const handleDiscountChange = (raw: string) => {
+    let val = raw.replace(/[^0-9.]/g, '');
+    const parts = val.split('.');
+    if (parts.length > 2) {
+      val = parts[0] + '.' + parts.slice(1).join('');
+    }
+    if (val === '.') {
+      val = '0.';
+    }
+    if (val.startsWith('0') && val.length > 1 && val[1] !== '.') {
+      val = val.replace(/^0+/, '') || '0';
+    }
+    setDiscountInput(val);
+  };
+
+  const handleDiscountBlur = () => {
+    if (discountInput.trim() === '' || isNaN(parseFloat(discountInput))) {
+      setDiscountInput('0');
+    } else if (discountInput.endsWith('.')) {
+      setDiscountInput(discountInput.slice(0, -1));
+    }
+  };
+
+  // Controlled input handler for Tax (%)
+  const handleTaxChange = (raw: string) => {
+    let val = raw.replace(/[^0-9.]/g, '');
+    const parts = val.split('.');
+    if (parts.length > 2) {
+      val = parts[0] + '.' + parts.slice(1).join('');
+    }
+    if (val === '.') {
+      val = '0.';
+    }
+    if (val.startsWith('0') && val.length > 1 && val[1] !== '.') {
+      val = val.replace(/^0+/, '') || '0';
+    }
+    const num = parseFloat(val);
+    if (!isNaN(num) && num > 100) {
+      val = '100';
+    }
+    setTaxInput(val);
+  };
+
+  const handleTaxBlur = () => {
+    if (taxInput.trim() === '' || isNaN(parseFloat(taxInput))) {
+      setTaxInput('0');
+    } else if (taxInput.endsWith('.')) {
+      setTaxInput(taxInput.slice(0, -1));
+    }
   };
 
   // Compile active selected line items
@@ -840,21 +905,28 @@ export default function CreateOrEditInvoicePage() {
               <div>
                 <label className="text-[#64748B] font-medium block mb-1">Discount (INR)</label>
                 <input
-                  type="number"
-                  min="0"
-                  value={discount}
-                  onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)}
+                  id="billing-discount-input"
+                  type="text"
+                  inputMode="decimal"
+                  value={discountInput}
+                  onChange={(e) => handleDiscountChange(e.target.value)}
+                  onFocus={(e) => e.target.select()}
+                  onBlur={handleDiscountBlur}
+                  placeholder="0"
                   className="w-full bg-[#FDFBF7] border border-[#D8D4C9] rounded-xl px-3 py-2 text-xs font-mono font-bold text-[#0B132B] focus:outline-none focus:border-[#1463FF]"
                 />
               </div>
               <div>
                 <label className="text-[#64748B] font-medium block mb-1">Tax (%)</label>
                 <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={taxPct}
-                  onChange={(e) => setTaxPct(parseFloat(e.target.value) || 0)}
+                  id="billing-tax-input"
+                  type="text"
+                  inputMode="decimal"
+                  value={taxInput}
+                  onChange={(e) => handleTaxChange(e.target.value)}
+                  onFocus={(e) => e.target.select()}
+                  onBlur={handleTaxBlur}
+                  placeholder="0"
                   className="w-full bg-[#FDFBF7] border border-[#D8D4C9] rounded-xl px-3 py-2 text-xs font-mono font-bold text-[#0B132B] focus:outline-none focus:border-[#1463FF]"
                 />
               </div>
