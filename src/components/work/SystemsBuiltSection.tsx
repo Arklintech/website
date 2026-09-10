@@ -147,7 +147,7 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
         </div>
 
         {/* ── MAIN 3-COLUMN EDITORIAL COMPOSITION (MATCHING REFERENCE IMAGE) ── */}
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-[240px_1fr_240px] xl:grid-cols-[260px_1fr_260px] gap-3 sm:gap-4 px-4 sm:px-6 lg:px-8 py-1.5 sm:py-2.5 overflow-hidden min-h-0">
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-[240px_1fr_240px] xl:grid-cols-[260px_1fr_260px] gap-4 sm:gap-6 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 overflow-hidden min-h-0">
 
           {/* ═══════════════════════════════════════════════════════════════════════ */}
           {/* 1. LEFT COLUMN: SYSTEMS WE'VE BUILT + VERTICAL 8-PROJECT INDEX          */}
@@ -319,7 +319,7 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
             </div>
 
             {/* ═══ CENTRAL SYSTEM STAGE VIEWPORT (MAXIMIZED, UNDISTORTED, CLEAN) ═══ */}
-            <div className="flex-1 relative flex items-center justify-center overflow-hidden min-h-[140px] sm:min-h-[180px] lg:min-h-[200px] max-h-[36vh]">
+            <div className="flex-1 relative flex items-center justify-center overflow-hidden min-h-[220px] sm:min-h-[300px] lg:min-h-[360px] max-h-[520px]">
               
               {/* Stacked Layer SVGs with 0ms instantaneous crossfade transitions */}
               {activeLayers.map((layer, idx) => {
@@ -327,7 +327,7 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
                 return (
                   <div
                     key={layer.number}
-                    className="absolute inset-0 flex items-center justify-center p-2 sm:p-3 transition-all duration-200 ease-out"
+                    className="absolute inset-0 flex items-center justify-center p-2 sm:p-4 transition-all duration-200 ease-out"
                     style={{
                       opacity: isVisible ? 1 : 0,
                       transform: isVisible ? 'scale(1) translateY(0)' : 'scale(0.985) translateY(12px)',
@@ -351,15 +351,6 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
                 );
               })}
 
-            </div>
-
-            {/* Bottom Scroll Cue — Fully visible, prominent, and styled pill indicator */}
-            <div className="shrink-0 py-1.5 flex items-center justify-center select-none z-20">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/90 border border-[#D8D4C9] text-[#1463FF] font-mono text-[9px] sm:text-[9.5px] font-bold uppercase tracking-wider shadow-xs backdrop-blur-xs">
-                <Mouse className="w-3.5 h-3.5 text-[#1463FF] animate-bounce shrink-0" />
-                <span>SCROLL TO EXPLORE THE SYSTEM</span>
-                <ChevronDown className="w-3.5 h-3.5 text-[#1463FF]" />
-              </div>
             </div>
 
           </div>
@@ -398,6 +389,15 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Desktop Scroll Indicator positioned below Value Blocks in Right Column */}
+              <div className="pt-2 flex items-center justify-start">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-[#D8D4C9] text-[#1463FF] font-mono text-[8.5px] font-bold uppercase tracking-wider shadow-xs">
+                  <Mouse className="w-3.5 h-3.5 text-[#1463FF] animate-bounce shrink-0" />
+                  <span>SCROLL TO EXPLORE THE SYSTEM</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-[#1463FF]" />
+                </div>
               </div>
             </div>
 
