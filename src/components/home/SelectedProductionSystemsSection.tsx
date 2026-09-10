@@ -61,7 +61,7 @@ export default function SelectedProductionSystemsSection() {
   };
 
   return (
-    <section className="py-12 sm:py-16 lg:py-24 bg-[#F7F4EC] text-[#0B132B] border-b border-[#D8D4C9] relative">
+    <section id="work" className="py-12 sm:py-16 lg:py-24 bg-[#F7F4EC] text-[#0B132B] border-b border-[#D8D4C9] relative">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* ═══ TOP TWO-COLUMN MASTER COMPOSITION (LEFT: Index · RIGHT: Showcase) ═══ */}

@@ -98,12 +98,12 @@ export default function Footer() {
                 HOW WE HELP
               </div>
               <ul className="space-y-2 text-xs text-[#536070]">
-                <li><Link href="/how-we-help#connected-operations" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Connected Operations</Link></li>
-                <li><Link href="/how-we-help#intelligent-automation" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Intelligent Automation</Link></li>
-                <li><Link href="/how-we-help#digital-platform-engineering" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Digital Platform Engineering</Link></li>
-                <li><Link href="/how-we-help#systems-modernization" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Systems Modernization</Link></li>
-                <li><Link href="/how-we-help#operational-intelligence" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Operational Intelligence</Link></li>
-                <li><Link href="/how-we-help#ai-enabled-operations" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">AI-Enabled Operations</Link></li>
+                <li><Link href="/how-we-help" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Connected Operations</Link></li>
+                <li><Link href="/how-we-help" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Intelligent Automation</Link></li>
+                <li><Link href="/how-we-help" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Digital Platform Engineering</Link></li>
+                <li><Link href="/how-we-help" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Systems Modernization</Link></li>
+                <li><Link href="/how-we-help" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Operational Intelligence</Link></li>
+                <li><Link href="/how-we-help" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">AI-Enabled Operations</Link></li>
               </ul>
             </div>
 
@@ -113,11 +113,11 @@ export default function Footer() {
                 INDUSTRIES
               </div>
               <ul className="space-y-2 text-xs text-[#536070]">
-                <li><Link href="/industries#commerce" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Commerce</Link></li>
-                <li><Link href="/industries#education" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Education</Link></li>
-                <li><Link href="/industries#hospitality" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Hospitality</Link></li>
-                <li><Link href="/industries#healthcare" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Healthcare</Link></li>
-                <li><Link href="/industries#non-profit" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Non-Profit</Link></li>
+                <li><Link href="/industries" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Commerce</Link></li>
+                <li><Link href="/industries" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Education</Link></li>
+                <li><Link href="/industries" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Hospitality</Link></li>
+                <li><Link href="/industries" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Healthcare</Link></li>
+                <li><Link href="/industries" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Non-Profit</Link></li>
               </ul>
             </div>
 
@@ -129,10 +129,9 @@ export default function Footer() {
               <ul className="space-y-2 text-xs text-[#536070]">
                 <li><Link href="/work" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Systems We&apos;ve Built</Link></li>
                 <li><Link href="/work/daarayn" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">DAARAYN Case Study</Link></li>
-                <li><Link href="/work/neominds" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">NEOMINDS Case Study</Link></li>
-                <li><Link href="/work/parivar" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">PARIVAR Case Study</Link></li>
+                <li><Link href="/work/neominds-enrollment" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">NEOMINDS Case Study</Link></li>
+                <li><Link href="/work/parivar-restaurant" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">PARIVAR Case Study</Link></li>
                 <li><Link href="/insights#articles" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Articles</Link></li>
-                <li><Link href="/insights#engineering-notes" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Engineering Notes</Link></li>
               </ul>
             </div>
 

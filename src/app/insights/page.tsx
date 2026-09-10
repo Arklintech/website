@@ -35,11 +35,133 @@ export default function InsightsPage() {
 
             {/* Articles List */}
             <div className="space-y-6">
-              {INSIGHTS_ARTICLES.map((art) => (
-                <div
-                  key={art.id}
-                  className="p-6 sm:p-8 rounded-lg bg-z-surface border border-z-border space-y-4"
-                >
+              {/* Articles section */}
+              <div id="articles" className="space-y-6">
+                {INSIGHTS_ARTICLES.filter(art => art.category === 'Articles').map((art) => (
+                  <div
+                    key={art.id}
+                    className="p-6 sm:p-8 rounded-lg bg-z-surface border border-z-border space-y-4"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-z-border/60 font-mono text-[10px]">
+                      <span className="font-bold text-z-cyan-400 uppercase tracking-widest bg-z-blue-900/50 px-2 py-0.5 rounded border border-z-blue-500/30">
+                        {art.category}
+                      </span>
+                      <div className="flex items-center gap-4 text-z-dim">
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3 text-z-muted" />
+                          {art.publishDate}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3 text-z-muted" />
+                          {art.readTime}
+                        </span>
+                      </div>
+                    </div>
+
+                    <h2 className="text-lg sm:text-2xl font-display font-bold text-z-white uppercase hover:text-z-cyan-300 transition-colors">
+                      {art.title}
+                    </h2>
+
+                    <p className="text-xs sm:text-sm text-z-text font-body leading-relaxed">
+                      {art.excerpt}
+                    </p>
+
+                    <div className="space-y-1.5 pt-2">
+                      <span className="font-mono text-[10px] text-z-dim uppercase font-semibold block">
+                        KEY ARCHITECTURAL TAKEAWAYS:
+                      </span>
+                      {art.keyTakeaways.map((tk, i) => (
+                        <div key={i} className="flex items-start gap-1.5 text-xs text-z-muted font-body">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-z-cyan-400 shrink-0 mt-0.5" />
+                          <span>{tk}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="pt-3 border-t border-z-border/50 flex flex-wrap items-center justify-between gap-4 font-mono text-[10px]">
+                      <div className="flex flex-wrap gap-1 text-z-dim">
+                        {art.tags.map((t) => (
+                          <span key={t} className="bg-z-surface-2 px-1.5 py-0.5 rounded border border-z-border/40 text-z-blue-300">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="text-z-dim">
+                        AUTHORED BY <span className="text-z-white">{art.author}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Engineering Notes section */}
+              <div id="engineering-notes" className="space-y-6 pt-4">
+                {INSIGHTS_ARTICLES.filter(art => art.category === 'Engineering Notes').map((art) => (
+                  <div
+                    key={art.id}
+                    className="p-6 sm:p-8 rounded-lg bg-z-surface border border-z-border space-y-4"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-z-border/60 font-mono text-[10px]">
+                      <span className="font-bold text-z-cyan-400 uppercase tracking-widest bg-z-blue-900/50 px-2 py-0.5 rounded border border-z-blue-500/30">
+                        {art.category}
+                      </span>
+                      <div className="flex items-center gap-4 text-z-dim">
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3 text-z-muted" />
+                          {art.publishDate}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3 text-z-muted" />
+                          {art.readTime}
+                        </span>
+                      </div>
+                    </div>
+
+                    <h2 className="text-lg sm:text-2xl font-display font-bold text-z-white uppercase hover:text-z-cyan-300 transition-colors">
+                      {art.title}
+                    </h2>
+
+                    <p className="text-xs sm:text-sm text-z-text font-body leading-relaxed">
+                      {art.excerpt}
+                    </p>
+
+                    <div className="space-y-1.5 pt-2">
+                      <span className="font-mono text-[10px] text-z-dim uppercase font-semibold block">
+                        KEY ARCHITECTURAL TAKEAWAYS:
+                      </span>
+                      {art.keyTakeaways.map((tk, i) => (
+                        <div key={i} className="flex items-start gap-1.5 text-xs text-z-muted font-body">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-z-cyan-400 shrink-0 mt-0.5" />
+                          <span>{tk}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="pt-3 border-t border-z-border/50 flex flex-wrap items-center justify-between gap-4 font-mono text-[10px]">
+                      <div className="flex flex-wrap gap-1 text-z-dim">
+                        {art.tags.map((t) => (
+                          <span key={t} className="bg-z-surface-2 px-1.5 py-0.5 rounded border border-z-border/40 text-z-blue-300">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="text-z-dim">
+                        AUTHORED BY <span className="text-z-white">{art.author}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Research section */}
+              <div id="research" className="space-y-6 pt-4">
+                {INSIGHTS_ARTICLES.filter(art => art.category === 'Research').map((art) => (
+                  <div
+                    key={art.id}
+                    className="p-6 sm:p-8 rounded-lg bg-z-surface border border-z-border space-y-4"
+                  >
                   <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-z-border/60 font-mono text-[10px]">
                     <span className="font-bold text-z-cyan-400 uppercase tracking-widest bg-z-blue-900/50 px-2 py-0.5 rounded border border-z-blue-500/30">
                       {art.category}
@@ -89,8 +211,9 @@ export default function InsightsPage() {
                       AUTHORED BY <span className="text-z-white">{art.author}</span>
                     </div>
                   </div>
-                </div>
-              ))}
+                  </div>
+                ))}
+              </div>
             </div>
           </PageContainer>
         </div>
