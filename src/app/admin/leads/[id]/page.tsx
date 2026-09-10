@@ -59,18 +59,24 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
   };
 
 
-  if (loading) return (
-    <div className="flex items-center justify-center min-h-[400px]">
-      <div className="w-8 h-8 border-2 border-[#1463FF] border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
-
-  if (!lead) return (
-    <div className="p-6 text-center">
-      <p className="text-[#94A3B8]">Lead not found.</p>
-      <Link href="/admin/leads" className="text-[#1463FF] text-sm font-mono font-bold mt-2 inline-block">← Back to Leads</Link>
-    </div>
-  );
+  if (!lead) {
+    if (loading) {
+      return (
+        <div className="p-6 max-w-[1280px] mx-auto">
+          <div className="animate-pulse space-y-4">
+            <div className="h-6 w-48 bg-[#E8E4DC] rounded" />
+            <div className="h-40 bg-white rounded-xl border border-[#E8E4DC]" />
+          </div>
+        </div>
+      );
+    }
+    return (
+      <div className="p-6 text-center">
+        <p className="text-[#94A3B8]">Lead not found.</p>
+        <Link href="/admin/leads" className="text-[#1463FF] text-sm font-mono font-bold mt-2 inline-block">← Back to Leads</Link>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 max-w-[1200px] mx-auto">

@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import PageShell from '@/components/layout/PageShell';
+import SystemsBuiltSection from '@/components/work/SystemsBuiltSection';
 
 interface WorkDetailPageProps {
   params: { slug: string };
@@ -20,10 +22,10 @@ export default function WorkDetailPage({ params }: WorkDetailPageProps) {
   }, [slug, router]);
 
   return (
-    <div className="min-h-screen bg-[#F5F1E8] flex items-center justify-center p-8">
-      <div className="font-mono text-xs text-[#1463FF] animate-pulse">
-        LOADING WORK FEATURE...
-      </div>
-    </div>
+    <PageShell>
+      {({ onOpenProjectModal }) => (
+        <SystemsBuiltSection onOpenProjectModal={onOpenProjectModal} />
+      )}
+    </PageShell>
   );
 }

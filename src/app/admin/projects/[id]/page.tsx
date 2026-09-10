@@ -171,16 +171,17 @@ export default function ProjectWorkspacePage({ params }: { params: { id: string 
     }
   };
 
-  if (loading) {
-    return (
-      <div className="p-12 max-w-[1280px] mx-auto text-center">
-        <div className="w-8 h-8 border-2 border-[#1463FF] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-        <span className="text-xs font-mono text-[#64748B]">Loading project workspace...</span>
-      </div>
-    );
-  }
-
   if (!project) {
+    if (loading) {
+      return (
+        <div className="p-6 max-w-[1280px] mx-auto">
+          <div className="animate-pulse space-y-4">
+            <div className="h-6 w-48 bg-[#E8E4DC] rounded" />
+            <div className="h-40 bg-white rounded-xl border border-[#E8E4DC]" />
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="p-12 max-w-[1280px] mx-auto text-center space-y-4">
         <h2 className="text-base font-bold text-[#0B132B]">Project Not Found</h2>

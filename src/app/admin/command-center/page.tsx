@@ -131,14 +131,7 @@ export default function CommandCenterPage() {
 
   const totalFollowups = followupCounts.overdue + followupCounts.dueToday + followupCounts.dueThisWeek + followupCounts.upcoming;
 
-  if (loading) return (
-    <div className="flex items-center justify-center min-h-[400px]">
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-8 h-8 rounded-full border-2 border-[#1463FF] border-t-transparent animate-spin" />
-        <span className="font-mono text-xs text-[#94A3B8] uppercase tracking-widest">Loading Command Center</span>
-      </div>
-    </div>
-  );
+
 
   return (
     <div className="p-6 max-w-[1400px] mx-auto">
