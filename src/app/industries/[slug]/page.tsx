@@ -67,7 +67,7 @@ export default function IndustryDetailPage({ params }: IndustryDetailPageProps) 
                 </div>
 
                 <Link
-                  href={`/work/${ind.realWorkId}`}
+                  href={`/work?project=${ind.realWorkId}`}
                   className="font-mono text-xs text-z-blue-400 hover:text-z-cyan-300 flex items-center gap-1 font-semibold group self-start sm:self-auto"
                 >
                   <span>RELEVANT SYSTEM: {ind.realWorkName}</span>

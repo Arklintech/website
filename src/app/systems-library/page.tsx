@@ -107,7 +107,7 @@ export default function SystemsLibraryPage() {
                       {concept.relatedProjects.map((rp) => (
                         <Link
                           key={rp}
-                          href={`/work/${rp}`}
+                          href={`/work?project=${rp}`}
                           className="text-z-cyan-400 hover:text-z-white transition-colors font-semibold"
                         >
                           {rp.toUpperCase()} →

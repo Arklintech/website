@@ -128,9 +128,9 @@ export default function Footer() {
               </div>
               <ul className="space-y-2 text-xs text-[#536070]">
                 <li><Link href="/work" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Systems We&apos;ve Built</Link></li>
-                <li><Link href="/work/daarayn" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">DAARAYN Case Study</Link></li>
-                <li><Link href="/work/neominds-enrollment" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">NEOMINDS Case Study</Link></li>
-                <li><Link href="/work/parivar-restaurant" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">PARIVAR Case Study</Link></li>
+                <li><Link href="/work?project=daarayn" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">DAARAYN Case Study</Link></li>
+                <li><Link href="/work?project=neominds" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">NEOMINDS Case Study</Link></li>
+                <li><Link href="/work?project=parivar" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">PARIVAR Case Study</Link></li>
                 <li><Link href="/insights#articles" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Articles</Link></li>
               </ul>
             </div>

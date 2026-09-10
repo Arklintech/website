@@ -46,7 +46,7 @@ export default function CaseStudyExperienceSection() {
           </div>
 
           <Link
-            href="/work/daarayn"
+            href="/work?project=daarayn"
             className="inline-flex items-center gap-1.5 font-mono text-xs text-[#1463FF] hover:text-[#1463FF] font-semibold transition-colors group self-start sm:self-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1677FF] rounded px-1 -mx-1"
           >
             <span>VIEW FULL RESULTS</span>
