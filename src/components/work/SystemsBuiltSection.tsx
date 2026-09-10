@@ -147,7 +147,7 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
         </div>
 
         {/* ── MAIN 3-COLUMN EDITORIAL COMPOSITION (MATCHING REFERENCE IMAGE) ── */}
-        <div className="flex-1 grid grid-cols-1 lg:grid-cols-[240px_1fr_240px] xl:grid-cols-[260px_1fr_260px] gap-4 sm:gap-6 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 overflow-hidden min-h-0">
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-[240px_1fr_240px] xl:grid-cols-[260px_1fr_260px] gap-3 sm:gap-4 px-4 sm:px-6 lg:px-8 py-1.5 sm:py-2.5 overflow-hidden min-h-0">
 
           {/* ═══════════════════════════════════════════════════════════════════════ */}
           {/* 1. LEFT COLUMN: SYSTEMS WE'VE BUILT + VERTICAL 8-PROJECT INDEX          */}
@@ -319,7 +319,7 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
             </div>
 
             {/* ═══ CENTRAL SYSTEM STAGE VIEWPORT (MAXIMIZED, UNDISTORTED, CLEAN) ═══ */}
-            <div className="flex-1 relative flex items-center justify-center overflow-hidden min-h-[160px] sm:min-h-[220px] lg:min-h-[260px] max-h-[460px]">
+            <div className="flex-1 relative flex items-center justify-center overflow-hidden min-h-[140px] sm:min-h-[180px] lg:min-h-[200px] max-h-[36vh]">
               
               {/* Stacked Layer SVGs with 0ms instantaneous crossfade transitions */}
               {activeLayers.map((layer, idx) => {
