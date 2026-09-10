@@ -319,7 +319,7 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
             </div>
 
             {/* ═══ CENTRAL SYSTEM STAGE VIEWPORT (MAXIMIZED, UNDISTORTED, CLEAN) ═══ */}
-            <div className="flex-1 relative flex items-center justify-center overflow-hidden min-h-[220px] sm:min-h-[300px] lg:min-h-[360px] max-h-[520px]">
+            <div className="flex-1 relative flex items-center justify-center overflow-hidden min-h-[160px] sm:min-h-[220px] lg:min-h-[260px] max-h-[460px]">
               
               {/* Stacked Layer SVGs with 0ms instantaneous crossfade transitions */}
               {activeLayers.map((layer, idx) => {
@@ -327,7 +327,7 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
                 return (
                   <div
                     key={layer.number}
-                    className="absolute inset-0 flex items-center justify-center p-2 sm:p-4 transition-all duration-200 ease-out"
+                    className="absolute inset-0 flex items-center justify-center p-2 sm:p-3 transition-all duration-200 ease-out"
                     style={{
                       opacity: isVisible ? 1 : 0,
                       transform: isVisible ? 'scale(1) translateY(0)' : 'scale(0.985) translateY(12px)',
@@ -353,11 +353,13 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
 
             </div>
 
-            {/* Bottom Scroll Cue */}
-            <div className="shrink-0 pt-2 flex items-center justify-center gap-2 font-mono text-[8px] sm:text-[8.5px] font-bold text-[#556375] uppercase tracking-wider select-none">
-              <Mouse className="w-3 h-3 text-[#1463FF] animate-bounce shrink-0" />
-              <span>SCROLL TO EXPLORE THE SYSTEM</span>
-              <ChevronDown className="w-3 h-3 text-[#1463FF]" />
+            {/* Bottom Scroll Cue — Fully visible, prominent, and styled pill indicator */}
+            <div className="shrink-0 py-1.5 flex items-center justify-center select-none z-20">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/90 border border-[#D8D4C9] text-[#1463FF] font-mono text-[9px] sm:text-[9.5px] font-bold uppercase tracking-wider shadow-xs backdrop-blur-xs">
+                <Mouse className="w-3.5 h-3.5 text-[#1463FF] animate-bounce shrink-0" />
+                <span>SCROLL TO EXPLORE THE SYSTEM</span>
+                <ChevronDown className="w-3.5 h-3.5 text-[#1463FF]" />
+              </div>
             </div>
 
           </div>
@@ -428,11 +430,12 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
         </div>
 
         {/* ── MOBILE LAYER PROGRESS & INFO BAR (< lg) ── */}
-        <div className="flex lg:hidden flex-col items-center justify-center bg-white/95 backdrop-blur-md border-t border-[#D8D4C9] text-xs font-mono shrink-0 px-4 py-2.5 space-y-1 text-center z-20">
-          <span className="text-[#1463FF] font-bold text-[11px] sm:text-xs uppercase tracking-wider">
-            LAYER {currentLayer.number} / {String(totalLayers).padStart(2, '0')} · {currentLayer.name}
-          </span>
-          <p className="text-[9.5px] sm:text-[10px] text-[#475569] font-sans font-medium line-clamp-1">
+        <div className="flex lg:hidden flex-col items-center justify-center bg-white/95 backdrop-blur-md border-t border-[#D8D4C9] text-xs font-mono shrink-0 px-4 py-2 space-y-0.5 text-center z-20">
+          <div className="inline-flex items-center gap-1.5 text-[#1463FF] font-bold text-[9.5px] sm:text-[10px] uppercase tracking-wider">
+            <Mouse className="w-3 h-3 animate-bounce shrink-0 text-[#1463FF]" />
+            <span>SCROLL TO EXPLORE · LAYER {currentLayer.number} / {String(totalLayers).padStart(2, '0')}</span>
+          </div>
+          <p className="text-[9px] sm:text-[9.5px] text-[#475569] font-sans font-medium line-clamp-1">
             {currentLayer.description}
           </p>
         </div>
