@@ -109,9 +109,9 @@ export default function WhatWeDoExperience({ onOpenProjectModal }: WhatWeDoExper
           {/* Sub-Brand Core Motto: ENGINEER · ORCHESTRATE · EVOLVE */}
           <div className="flex items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm lg:text-base font-mono font-bold uppercase tracking-[0.2em] pt-2">
             <span className="text-[#111827]">ENGINEER</span>
-            <span className="text-[#1463FF]">·</span>
-            <span className="text-[#1463FF]">ORCHESTRATE</span>
-            <span className="text-[#1463FF]">·</span>
+            <span className="text-[#0050E6]">·</span>
+            <span className="text-[#0050E6]">ORCHESTRATE</span>
+            <span className="text-[#0050E6]">·</span>
             <span className="text-[#111827]">EVOLVE</span>
           </div>
 
@@ -204,7 +204,7 @@ export default function WhatWeDoExperience({ onOpenProjectModal }: WhatWeDoExper
 
             {/* Right Content */}
             <div className="lg:col-span-5 order-1 lg:order-2 space-y-4 sm:space-y-6">
-              <div className="inline-block font-mono text-sm sm:text-base font-bold text-[#1463FF] uppercase tracking-wider">02</div>
+              <div className="inline-block font-mono text-sm sm:text-base font-bold text-[#0050E6] uppercase tracking-wider">02</div>
               <h3 className="text-2xl sm:text-4xl font-display font-bold text-[#111827] uppercase tracking-tight">SEO</h3>
               <p className="text-sm sm:text-base text-[#536070] font-body leading-relaxed">
                 Data-driven SEO strategies that increase visibility, drive organic traffic and grow your brand.
@@ -274,7 +274,7 @@ export default function WhatWeDoExperience({ onOpenProjectModal }: WhatWeDoExper
 
             {/* Right Content */}
             <div className="lg:col-span-5 order-1 lg:order-2 space-y-4 sm:space-y-6">
-              <div className="inline-block font-mono text-sm sm:text-base font-bold text-[#1463FF] uppercase tracking-wider">04</div>
+              <div className="inline-block font-mono text-sm sm:text-base font-bold text-[#0050E6] uppercase tracking-wider">04</div>
               <h3 className="text-2xl sm:text-4xl font-display font-bold text-[#111827] uppercase tracking-tight">AI AUTOMATION</h3>
               <p className="text-sm sm:text-base text-[#536070] font-body leading-relaxed">
                 Automate repetitive tasks, streamline workflows and boost productivity with intelligent automation.
@@ -344,7 +344,7 @@ export default function WhatWeDoExperience({ onOpenProjectModal }: WhatWeDoExper
 
             {/* Right Content */}
             <div className="lg:col-span-5 order-1 lg:order-2 space-y-4 sm:space-y-6">
-              <div className="inline-block font-mono text-sm sm:text-base font-bold text-[#1463FF] uppercase tracking-wider">06</div>
+              <div className="inline-block font-mono text-sm sm:text-base font-bold text-[#0050E6] uppercase tracking-wider">06</div>
               <h3 className="text-2xl sm:text-4xl font-display font-bold text-[#111827] uppercase tracking-tight">LEAD MANAGEMENT SYSTEM</h3>
               <p className="text-sm sm:text-base text-[#536070] font-body leading-relaxed">
                 Organize leads, track interactions and convert more opportunities with a powerful CRM system.

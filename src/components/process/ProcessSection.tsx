@@ -1,16 +1,9 @@
-import ArklintechWordmark from '@/components/brand/ArklintechWordmark';
 'use client';
-import { ChevronA } from '@/components/brand/KeystoneLogo';
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import {
-  Search,
   ArrowRight,
-  Database,
-  Globe,
-  Bot,
-  Zap,
 } from 'lucide-react';
 
 const PROCESS_STAGES = [
@@ -110,22 +103,27 @@ export default function ProcessSection() {
         <div className="max-w-4xl mx-auto text-center space-y-6 pt-4 pb-16 sm:pb-24 select-none">
           {/* Main Headline */}
           <div className="space-y-1">
-            <h2
+            <h1
               className="text-3xl sm:text-5xl lg:text-6xl font-black text-[#111827] uppercase tracking-tight leading-[1.05]"
               style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif" }}
             >
-              HOW <span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: "0.08em" }} className="font-extrabold text-[#1463FF]"><span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: '0.12em' }} className="font-extrabold uppercase">ARKLINTECH</span></span>
-            </h2>
-            <h2
-              className="text-3xl sm:text-5xl lg:text-6xl font-black text-[#0F172A] uppercase tracking-tight leading-[1.05] relative inline-block"
-              style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif" }}
-            >
-              ACTUALLY WORKS
-              {/* Blue Brush Accent Underline */}
-              <svg className="w-full h-3.5 text-[#1463FF] -mt-1" viewBox="0 0 300 12" fill="none">
-                <path d="M 5 8 Q 150 2 295 9" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
-              </svg>
-            </h2>
+              <span className="block">
+                HOW{' '}
+                <span
+                  style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: "0.08em" }}
+                  className="font-extrabold text-[#1463FF]"
+                >
+                  ARKLINTECH
+                </span>
+              </span>
+              <span className="text-[#0F172A] relative inline-block mt-1">
+                ACTUALLY WORKS
+                {/* Blue Brush Accent Underline */}
+                <svg className="w-full h-3.5 text-[#1463FF] -mt-1" viewBox="0 0 300 12" fill="none">
+                  <path d="M 5 8 Q 150 2 295 9" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+                </svg>
+              </span>
+            </h1>
           </div>
 
           {/* Conversational Sentence Structure with Black Handwriting Font */}
@@ -212,7 +210,7 @@ export default function ProcessSection() {
                 <div className="md:col-span-6 flex items-center justify-center p-2">
                   <img
                     src="/How%20we%20help%20images/01-understand.svg"
-                    alt="01 Understand Visual"
+                    alt="01 Understand: Diagnostic operational analysis and systems discovery diagram"
                     className="w-full h-auto max-h-[340px] object-contain select-none pointer-events-none"
                   />
                 </div>
@@ -222,11 +220,11 @@ export default function ProcessSection() {
               <div className="hidden lg:flex lg:col-span-3 items-center justify-end pr-4 z-10 select-none">
                 <a href="#stage-01" className="flex items-center gap-3.5 group focus-visible:outline-none">
                   <div className="flex flex-col text-right">
-                    <span className={`font-display text-sm font-extrabold transition-colors ${activeStageIndex === 0 ? 'text-[#1463FF]' : 'text-[#94A3B8]'}`}>01</span>
-                    <span className={`font-mono text-[11px] font-bold uppercase tracking-wider transition-colors ${activeStageIndex === 0 ? 'text-[#111827]' : 'text-[#536070]'}`}>UNDERSTAND</span>
+                    <span className={`font-display text-sm font-extrabold transition-colors ${activeStageIndex === 0 ? 'text-[#0050E6]' : 'text-[#475569]'}`}>01</span>
+                    <span className={`font-mono text-[11px] font-bold uppercase tracking-wider transition-colors ${activeStageIndex === 0 ? 'text-[#111827]' : 'text-[#475569]'}`}>UNDERSTAND</span>
                   </div>
                   <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${activeStageIndex === 0 ? 'bg-white ring-4 ring-[#1463FF]/25 shadow-sm' : 'bg-[#F5F1E8]'}`}>
-                    <div className={`rounded-full transition-all ${activeStageIndex === 0 ? 'w-2.5 h-2.5 bg-[#1463FF]' : 'w-2 h-2 bg-[#94A3B8]'}`} />
+                    <div className={`rounded-full transition-all ${activeStageIndex === 0 ? 'w-2.5 h-2.5 bg-[#0050E6]' : 'w-2 h-2 bg-[#475569]'}`} />
                   </div>
                 </a>
               </div>
@@ -255,7 +253,7 @@ export default function ProcessSection() {
                 <div className="md:col-span-6 flex items-center justify-center p-2">
                   <img
                     src="/How%20we%20help%20images/02-architect.svg"
-                    alt="02 Architect Visual"
+                    alt="02 Architect: System topology, workflow blueprints, and data connections diagram"
                     className="w-full h-auto max-h-[340px] object-contain select-none pointer-events-none"
                   />
                 </div>
@@ -265,11 +263,11 @@ export default function ProcessSection() {
               <div className="hidden lg:flex lg:col-span-3 items-center justify-end pr-4 z-10 select-none">
                 <a href="#stage-02" className="flex items-center gap-3.5 group focus-visible:outline-none">
                   <div className="flex flex-col text-right">
-                    <span className={`font-display text-sm font-extrabold transition-colors ${activeStageIndex === 1 ? 'text-[#1463FF]' : 'text-[#94A3B8]'}`}>02</span>
-                    <span className={`font-mono text-[11px] font-bold uppercase tracking-wider transition-colors ${activeStageIndex === 1 ? 'text-[#111827]' : 'text-[#536070]'}`}>ARCHITECT</span>
+                    <span className={`font-display text-sm font-extrabold transition-colors ${activeStageIndex === 1 ? 'text-[#0050E6]' : 'text-[#475569]'}`}>02</span>
+                    <span className={`font-mono text-[11px] font-bold uppercase tracking-wider transition-colors ${activeStageIndex === 1 ? 'text-[#111827]' : 'text-[#475569]'}`}>ARCHITECT</span>
                   </div>
                   <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${activeStageIndex === 1 ? 'bg-white ring-4 ring-[#1463FF]/25 shadow-sm' : 'bg-[#F5F1E8]'}`}>
-                    <div className={`rounded-full transition-all ${activeStageIndex === 1 ? 'w-2.5 h-2.5 bg-[#1463FF]' : 'w-2 h-2 bg-[#94A3B8]'}`} />
+                    <div className={`rounded-full transition-all ${activeStageIndex === 1 ? 'w-2.5 h-2.5 bg-[#0050E6]' : 'w-2 h-2 bg-[#475569]'}`} />
                   </div>
                 </a>
               </div>
@@ -298,7 +296,7 @@ export default function ProcessSection() {
                 <div className="md:col-span-6 flex items-center justify-center p-2">
                   <img
                     src="/How%20we%20help%20images/03-engineer.svg"
-                    alt="03 Engineer Visual"
+                    alt="03 Engineer: Software development and automation engineering diagram"
                     className="w-full h-auto max-h-[340px] object-contain select-none pointer-events-none"
                   />
                 </div>
@@ -308,11 +306,11 @@ export default function ProcessSection() {
               <div className="hidden lg:flex lg:col-span-3 items-center justify-end pr-4 z-10 select-none">
                 <a href="#stage-03" className="flex items-center gap-3.5 group focus-visible:outline-none">
                   <div className="flex flex-col text-right">
-                    <span className={`font-display text-sm font-extrabold transition-colors ${activeStageIndex === 2 ? 'text-[#1463FF]' : 'text-[#94A3B8]'}`}>03</span>
-                    <span className={`font-mono text-[11px] font-bold uppercase tracking-wider transition-colors ${activeStageIndex === 2 ? 'text-[#111827]' : 'text-[#536070]'}`}>ENGINEER</span>
+                    <span className={`font-display text-sm font-extrabold transition-colors ${activeStageIndex === 2 ? 'text-[#0050E6]' : 'text-[#475569]'}`}>03</span>
+                    <span className={`font-mono text-[11px] font-bold uppercase tracking-wider transition-colors ${activeStageIndex === 2 ? 'text-[#111827]' : 'text-[#475569]'}`}>ENGINEER</span>
                   </div>
                   <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${activeStageIndex === 2 ? 'bg-white ring-4 ring-[#1463FF]/25 shadow-sm' : 'bg-[#F5F1E8]'}`}>
-                    <div className={`rounded-full transition-all ${activeStageIndex === 2 ? 'w-2.5 h-2.5 bg-[#1463FF]' : 'w-2 h-2 bg-[#94A3B8]'}`} />
+                    <div className={`rounded-full transition-all ${activeStageIndex === 2 ? 'w-2.5 h-2.5 bg-[#0050E6]' : 'w-2 h-2 bg-[#475569]'}`} />
                   </div>
                 </a>
               </div>
@@ -341,7 +339,7 @@ export default function ProcessSection() {
                 <div className="md:col-span-6 flex items-center justify-center p-2">
                   <img
                     src="/How%20we%20help%20images/04-integrate.svg"
-                    alt="04 Integrate Visual"
+                    alt="04 Integrate: Unified data flow and ecosystem connectivity diagram"
                     className="w-full h-auto max-h-[340px] object-contain select-none pointer-events-none"
                   />
                 </div>
@@ -351,11 +349,11 @@ export default function ProcessSection() {
               <div className="hidden lg:flex lg:col-span-3 items-center justify-end pr-4 z-10 select-none">
                 <a href="#stage-04" className="flex items-center gap-3.5 group focus-visible:outline-none">
                   <div className="flex flex-col text-right">
-                    <span className={`font-display text-sm font-extrabold transition-colors ${activeStageIndex === 3 ? 'text-[#1463FF]' : 'text-[#94A3B8]'}`}>04</span>
-                    <span className={`font-mono text-[11px] font-bold uppercase tracking-wider transition-colors ${activeStageIndex === 3 ? 'text-[#111827]' : 'text-[#536070]'}`}>INTEGRATE</span>
+                    <span className={`font-display text-sm font-extrabold transition-colors ${activeStageIndex === 3 ? 'text-[#0050E6]' : 'text-[#475569]'}`}>04</span>
+                    <span className={`font-mono text-[11px] font-bold uppercase tracking-wider transition-colors ${activeStageIndex === 3 ? 'text-[#111827]' : 'text-[#475569]'}`}>INTEGRATE</span>
                   </div>
                   <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${activeStageIndex === 3 ? 'bg-white ring-4 ring-[#1463FF]/25 shadow-sm' : 'bg-[#F5F1E8]'}`}>
-                    <div className={`rounded-full transition-all ${activeStageIndex === 3 ? 'w-2.5 h-2.5 bg-[#1463FF]' : 'w-2 h-2 bg-[#94A3B8]'}`} />
+                    <div className={`rounded-full transition-all ${activeStageIndex === 3 ? 'w-2.5 h-2.5 bg-[#0050E6]' : 'w-2 h-2 bg-[#475569]'}`} />
                   </div>
                 </a>
               </div>
@@ -384,7 +382,7 @@ export default function ProcessSection() {
                 <div className="md:col-span-6 flex items-center justify-center p-2">
                   <img
                     src="/How%20we%20help%20images/05-deploy.svg"
-                    alt="05 Deploy Visual"
+                    alt="05 Deploy: Production staging, real-world testing, and precision rollout diagram"
                     className="w-full h-auto max-h-[340px] object-contain select-none pointer-events-none"
                   />
                 </div>
@@ -394,11 +392,11 @@ export default function ProcessSection() {
               <div className="hidden lg:flex lg:col-span-3 items-center justify-end pr-4 z-10 select-none">
                 <a href="#stage-05" className="flex items-center gap-3.5 group focus-visible:outline-none">
                   <div className="flex flex-col text-right">
-                    <span className={`font-display text-sm font-extrabold transition-colors ${activeStageIndex === 4 ? 'text-[#1463FF]' : 'text-[#94A3B8]'}`}>05</span>
-                    <span className={`font-mono text-[11px] font-bold uppercase tracking-wider transition-colors ${activeStageIndex === 4 ? 'text-[#111827]' : 'text-[#536070]'}`}>DEPLOY</span>
+                    <span className={`font-display text-sm font-extrabold transition-colors ${activeStageIndex === 4 ? 'text-[#0050E6]' : 'text-[#475569]'}`}>05</span>
+                    <span className={`font-mono text-[11px] font-bold uppercase tracking-wider transition-colors ${activeStageIndex === 4 ? 'text-[#111827]' : 'text-[#475569]'}`}>DEPLOY</span>
                   </div>
                   <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${activeStageIndex === 4 ? 'bg-white ring-4 ring-[#1463FF]/25 shadow-sm' : 'bg-[#F5F1E8]'}`}>
-                    <div className={`rounded-full transition-all ${activeStageIndex === 4 ? 'w-2.5 h-2.5 bg-[#1463FF]' : 'w-2 h-2 bg-[#94A3B8]'}`} />
+                    <div className={`rounded-full transition-all ${activeStageIndex === 4 ? 'w-2.5 h-2.5 bg-[#0050E6]' : 'w-2 h-2 bg-[#475569]'}`} />
                   </div>
                 </a>
               </div>
@@ -427,7 +425,7 @@ export default function ProcessSection() {
                 <div className="md:col-span-6 flex items-center justify-center p-2 relative z-10">
                   <img
                     src="/How%20we%20help%20images/06-evolve.svg"
-                    alt="06 Evolve Visual"
+                    alt="06 Evolve: Continuous telemetry monitoring, feedback loops, and architectural iteration diagram"
                     className="w-full h-auto max-h-[340px] object-contain select-none pointer-events-none"
                   />
                 </div>
@@ -437,11 +435,11 @@ export default function ProcessSection() {
               <div className="hidden lg:flex lg:col-span-3 items-center justify-end pr-4 z-10 select-none">
                 <a href="#stage-06" className="flex items-center gap-3.5 group focus-visible:outline-none">
                   <div className="flex flex-col text-right">
-                    <span className={`font-display text-sm font-extrabold transition-colors ${activeStageIndex === 5 ? 'text-[#1463FF]' : 'text-[#94A3B8]'}`}>06</span>
-                    <span className={`font-mono text-[11px] font-bold uppercase tracking-wider transition-colors ${activeStageIndex === 5 ? 'text-[#111827]' : 'text-[#536070]'}`}>EVOLVE</span>
+                    <span className={`font-display text-sm font-extrabold transition-colors ${activeStageIndex === 5 ? 'text-[#0050E6]' : 'text-[#475569]'}`}>06</span>
+                    <span className={`font-mono text-[11px] font-bold uppercase tracking-wider transition-colors ${activeStageIndex === 5 ? 'text-[#111827]' : 'text-[#475569]'}`}>EVOLVE</span>
                   </div>
                   <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${activeStageIndex === 5 ? 'bg-white ring-4 ring-[#1463FF]/25 shadow-sm' : 'bg-[#F5F1E8]'}`}>
-                    <div className={`rounded-full transition-all ${activeStageIndex === 5 ? 'w-2.5 h-2.5 bg-[#1463FF]' : 'w-2 h-2 bg-[#94A3B8]'}`} />
+                    <div className={`rounded-full transition-all ${activeStageIndex === 5 ? 'w-2.5 h-2.5 bg-[#0050E6]' : 'w-2 h-2 bg-[#475569]'}`} />
                   </div>
                 </a>
               </div>

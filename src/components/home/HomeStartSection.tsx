@@ -40,10 +40,10 @@ export default function HomeStartSection({ onOpenProjectModal }: HomeStartSectio
           {/* Left Column: Heading & 3-Step Protocol */}
           <div className="lg:col-span-5 space-y-4">
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-bold text-[#1463FF] border border-[#D8D4C9] px-2 py-0.5 rounded bg-[#EDF4FF]">
+              <span className="font-mono text-xs font-bold text-[#0050E6] border border-[#D8D4C9] px-2 py-0.5 rounded bg-[#EDF4FF]">
                 03
               </span>
-              <span className="font-mono text-xs uppercase tracking-wider text-[#1463FF] font-bold">
+              <span className="font-mono text-xs uppercase tracking-wider text-[#0050E6] font-bold">
                 SYSTEM INTAKE
               </span>
             </div>
@@ -52,49 +52,49 @@ export default function HomeStartSection({ onOpenProjectModal }: HomeStartSectio
               TELL US WHAT THE SYSTEM NEEDS TO DO.
             </h2>
 
-            <p className="text-sm text-[#536070] font-body leading-relaxed">
+            <p className="text-sm text-[#475569] font-body leading-relaxed">
               Describe the operation, product, workflow or technical constraint you are trying to address. We begin with the problem before discussing implementation.
             </p>
 
             {/* 3-Step Execution Protocol */}
             <div className="space-y-2.5 pt-2">
               <div className="p-3 rounded-lg bg-white border border-[#D8D4C9] flex items-start gap-3">
-                <span className="font-mono text-xs font-bold text-[#1463FF] bg-[#EDF4FF] px-2 py-0.5 rounded border border-[#D8D4C9]">
+                <span className="font-mono text-xs font-bold text-[#0050E6] bg-[#EDF4FF] px-2 py-0.5 rounded border border-[#D8D4C9]">
                   01
                 </span>
                 <div>
                   <div className="font-mono text-xs font-bold text-[#111827] uppercase">
                     REVIEW
                   </div>
-                  <div className="text-xs text-[#768494] mt-0.5">
+                  <div className="text-xs text-[#475569] mt-0.5">
                     Our team reviews your system architecture requirement.
                   </div>
                 </div>
               </div>
 
               <div className="p-3 rounded-lg bg-white border border-[#D8D4C9] flex items-start gap-3">
-                <span className="font-mono text-xs font-bold text-[#1463FF] bg-[#EDF4FF] px-2 py-0.5 rounded border border-[#D8D4C9]">
+                <span className="font-mono text-xs font-bold text-[#0050E6] bg-[#EDF4FF] px-2 py-0.5 rounded border border-[#D8D4C9]">
                   02
                 </span>
                 <div>
                   <div className="font-mono text-xs font-bold text-[#111827] uppercase">
                     CONTACT
                   </div>
-                  <div className="text-xs text-[#768494] mt-0.5">
+                  <div className="text-xs text-[#475569] mt-0.5">
                     We reach out within 24 hours with architectural feedback.
                   </div>
                 </div>
               </div>
 
               <div className="p-3 rounded-lg bg-white border border-[#D8D4C9] flex items-start gap-3">
-                <span className="font-mono text-xs font-bold text-[#1463FF] bg-[#EDF4FF] px-2 py-0.5 rounded border border-[#D8D4C9]">
+                <span className="font-mono text-xs font-bold text-[#0050E6] bg-[#EDF4FF] px-2 py-0.5 rounded border border-[#D8D4C9]">
                   03
                 </span>
                 <div>
                   <div className="font-mono text-xs font-bold text-[#111827] uppercase">
                     DISCOVERY
                   </div>
-                  <div className="text-xs text-[#768494] mt-0.5">
+                  <div className="text-xs text-[#475569] mt-0.5">
                     We discuss technical boundaries and determine the appropriate direction.
                   </div>
                 </div>
@@ -107,11 +107,11 @@ export default function HomeStartSection({ onOpenProjectModal }: HomeStartSectio
             {!submitted ? (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-[#D8D4C9]">
-                  <span className="font-mono text-xs text-[#1463FF] font-semibold tracking-wider uppercase flex items-center gap-2">
+                  <span className="font-mono text-xs text-[#0050E6] font-semibold tracking-wider uppercase flex items-center gap-2">
                     <Sparkles className="w-3.5 h-3.5" />
                     PUBLIC SYSTEM BRIEF INTAKE
                   </span>
-                  <span className="font-mono text-xs text-[#768494] uppercase">24H RESPONSE SLA</span>
+                  <span className="font-mono text-xs text-[#475569] uppercase">24H RESPONSE SLA</span>
                 </div>
 
                 {/* Form Controls - Issue 27 Fix: Accessible htmlFor, id, space-y-2, legible labels */}

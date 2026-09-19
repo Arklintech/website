@@ -22,6 +22,7 @@ import {
 
 interface SystemsBuiltSectionProps {
   onOpenProjectModal?: () => void;
+  initialProjectId?: string;
 }
 
 function ProjectNavIcon({ projectId, className = 'w-4 h-4' }: { projectId?: string; className?: string }) {
@@ -43,8 +44,8 @@ function ValueBlockIcon({ iconName, className = 'w-4 h-4 text-[#1463FF]' }: { ic
   return <ShieldCheck className={className} />;
 }
 
-export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuiltSectionProps) {
-  const [activeProjectId, setActiveProjectId] = useState('daarayn');
+export default function SystemsBuiltSection({ onOpenProjectModal, initialProjectId }: SystemsBuiltSectionProps) {
+  const [activeProjectId, setActiveProjectId] = useState(initialProjectId || 'daarayn');
   const [layerProgress, setLayerProgress] = useState(0);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -126,6 +127,7 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
         className="sticky top-16 sm:top-20 flex flex-col justify-between bg-[#F5F1E8] h-[calc(100vh-4rem)] sm:h-[calc(100vh-5rem)] overflow-hidden"
       >
         {/* ── MOBILE HORIZONTAL PROJECT SELECTOR (< lg) ── */}
+        <h1 className="sr-only">SYSTEMS WE&apos;VE BUILT — ARKLINTECH Technology Systems</h1>
         <div className="flex lg:hidden overflow-x-auto gap-2 px-4 py-2 scrollbar-none shrink-0 bg-white/70 border-b border-[#D8D4C9] touch-pan-x">
           {WORK_REVEAL_PROJECTS.map((p) => {
             const isActive = p.id === activeProjectId;
@@ -208,13 +210,13 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5">
                         <span className={`font-mono text-[10px] font-bold ${
-                          isActive ? 'text-[#1463FF]' : 'text-[#64748B]'
+                          isActive ? 'text-[#0050E6]' : 'text-[#475569]'
                         }`}>
                           {proj.number}
                         </span>
                         <span
                           className={`font-black uppercase tracking-wider text-[9.5px] truncate ${
-                            isActive ? 'text-[#0B132B]' : 'text-[#334155]'
+                            isActive ? 'text-[#0B132B]' : 'text-[#1e293b]'
                           }`}
                           style={{ fontFamily: "'Syncopate', sans-serif" }}
                         >
@@ -222,7 +224,7 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
                         </span>
                       </div>
                       <p className={`text-[8px] font-medium leading-tight truncate ${
-                        isActive ? 'text-[#1463FF]' : 'text-[#64748B]'
+                            isActive ? 'text-[#0050E6]' : 'text-[#475569]'
                       }`}>
                         {proj.systemType}
                       </p>
@@ -366,24 +368,24 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
                 <h3 className="text-sm font-bold text-[#0B132B] tracking-tight leading-snug">
                   The screen is only the part you can see.
                 </h3>
-                <h3 className="text-sm font-bold text-[#1463FF] tracking-tight leading-snug">
+                <h3 className="text-sm font-bold text-[#0050E6] tracking-tight leading-snug">
                   The real work is everything underneath it.
                 </h3>
-                <div className="w-8 h-[2px] bg-[#1463FF] mt-2" />
+                <div className="w-8 h-[2px] bg-[#0050E6] mt-2" />
               </div>
 
               {/* 3 Value Blocks */}
               <div className="space-y-3 pt-1">
                 {activeProject.valueBlocks.map((block, idx) => (
                   <div key={idx} className="flex items-start gap-2.5">
-                    <div className="shrink-0 w-6 h-6 rounded-lg bg-[#EDF4FF] border border-[#1463FF]/30 flex items-center justify-center text-[#1463FF] mt-0.5">
+                    <div className="shrink-0 w-6 h-6 rounded-lg bg-[#EDF4FF] border border-[#1463FF]/30 flex items-center justify-center text-[#0050E6] mt-0.5">
                       <ValueBlockIcon iconName={block.icon} className="w-3.5 h-3.5" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h4 className="font-mono text-[8.5px] font-bold text-[#0B132B] leading-tight">
+                       <h4 className="font-mono text-[8.5px] font-bold text-[#0B132B] leading-tight">
                         {block.title}
                       </h4>
-                      <p className="text-[8px] text-[#556375] leading-relaxed mt-0.5">
+                      <p className="text-[8px] text-[#475569] leading-relaxed mt-0.5">
                         {block.desc}
                       </p>
                     </div>
@@ -393,17 +395,17 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
 
               {/* Desktop Scroll Indicator positioned below Value Blocks in Right Column */}
               <div className="pt-2 flex items-center justify-start">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-[#D8D4C9] text-[#1463FF] font-mono text-[8.5px] font-bold uppercase tracking-wider shadow-xs">
-                  <Mouse className="w-3.5 h-3.5 text-[#1463FF] animate-bounce shrink-0" />
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-[#D8D4C9] text-[#0050E6] font-mono text-[8.5px] font-bold uppercase tracking-wider shadow-xs">
+                  <Mouse className="w-3.5 h-3.5 text-[#0050E6] animate-bounce shrink-0" />
                   <span>SCROLL TO EXPLORE THE SYSTEM</span>
-                  <ChevronDown className="w-3.5 h-3.5 text-[#1463FF]" />
+                  <ChevronDown className="w-3.5 h-3.5 text-[#0050E6]" />
                 </div>
               </div>
             </div>
 
             {/* Bottom Active Layer Progress Display */}
             <div className="pt-4 border-t border-[#D8D4C9]/60 space-y-1">
-              <span className="font-mono text-[8px] font-bold text-[#64748B] uppercase tracking-wider block">
+              <span className="font-mono text-[8px] font-bold text-[#475569] uppercase tracking-wider block">
                 LAYER {currentLayer.number} OF {String(totalLayers).padStart(2, '0')}
               </span>
 
@@ -411,16 +413,16 @@ export default function SystemsBuiltSection({ onOpenProjectModal }: SystemsBuilt
                 <span className="font-mono text-3xl font-black text-[#0B132B]">
                   {currentLayer.number}
                 </span>
-                <span className="font-mono text-lg font-bold text-[#64748B]">
+                <span className="font-mono text-lg font-bold text-[#475569]">
                   / {String(totalLayers).padStart(2, '0')}
                 </span>
               </div>
 
-              <span className="font-mono text-xs font-bold text-[#1463FF] uppercase tracking-wider block pt-0.5">
+              <span className="font-mono text-xs font-bold text-[#0050E6] uppercase tracking-wider block pt-0.5">
                 {currentLayer.name}
               </span>
 
-              <p className="text-[8.5px] text-[#556375] font-medium leading-tight">
+              <p className="text-[8.5px] text-[#475569] font-medium leading-tight">
                 {currentLayer.description}
               </p>
             </div>

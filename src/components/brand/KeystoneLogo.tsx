@@ -17,6 +17,7 @@ interface KeystoneLogoProps {
  * High-precision vector matching the brand identity 1:1
  */
 export function KeystoneMark({ className = 'w-7 h-7' }: { className?: string }) {
+  const gradientId = React.useId();
   return (
     <svg
       viewBox="0 0 1000 850"
@@ -28,14 +29,14 @@ export function KeystoneMark({ className = 'w-7 h-7' }: { className?: string }) 
       aria-label="ARKLINTECH Keystone Logo"
     >
       <defs>
-        <linearGradient id="keystoneGradient" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#1463FF" />
           <stop offset="100%" stopColor="#0052E0" />
         </linearGradient>
       </defs>
 
       <path
-        fill="url(#keystoneGradient)"
+        fill={`url(#${gradientId})`}
         d="M 309 17 C 298 17 288 23 281 37 L 25 822 L 404 821 L 444 357 L 336 268 L 572 271 L 572 652 L 676 822 L 979 822 L 741 39 C 735 25 726 17 714 17 Z"
       />
     </svg>

@@ -136,8 +136,8 @@ export default function SelectedProductionSystemsSection() {
                       {/* Timeline dot / icon */}
                       <div className={`relative z-10 w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all border ${
                         isActive
-                          ? 'bg-[#EDF4FF] border-[#1463FF] text-[#1463FF] shadow-sm'
-                          : 'bg-[#F7F4EC] border-[#D8D4C9] text-[#94A3B8] group-hover:border-[#1463FF]/40 group-hover:text-[#1463FF]'
+                          ? 'bg-[#EDF4FF] border-[#1463FF] text-[#0050E6] shadow-sm'
+                          : 'bg-[#F7F4EC] border-[#D8D4C9] text-[#475569] group-hover:border-[#1463FF]/40 group-hover:text-[#0050E6]'
                       }`}>
                         {PROJECT_ICONS[project.icon] ?? <Sparkles className="w-3.5 h-3.5" />}
                       </div>
@@ -145,19 +145,19 @@ export default function SelectedProductionSystemsSection() {
                       {/* Text content */}
                       <div className="min-w-0">
                         <div className="flex items-baseline gap-1">
-                          <span className={`font-mono text-[9px] font-bold shrink-0 ${isActive ? 'text-[#1463FF]' : 'text-[#94A3B8]'}`}>
+                          <span className={`font-mono text-[9px] font-bold shrink-0 ${isActive ? 'text-[#0050E6]' : 'text-[#475569]'}`}>
                             {project.number}
                           </span>
                           <span
                             className={`font-black uppercase text-[10px] tracking-wide transition-colors leading-tight ${
-                              isActive ? 'text-[#1463FF]' : 'text-[#0B132B] group-hover:text-[#1463FF]'
+                              isActive ? 'text-[#0050E6]' : 'text-[#0B132B] group-hover:text-[#0050E6]'
                             }`}
                             style={{ fontFamily: "'Syncopate', sans-serif" }}
                           >
                             {project.name}
                           </span>
                         </div>
-                        <span className="text-[9px] text-[#64748B] leading-tight block truncate pr-2">
+                        <span className="text-[9px] text-[#475569] leading-tight block truncate pr-2">
                           {project.shortCategory}
                         </span>
                       </div>
@@ -203,11 +203,11 @@ export default function SelectedProductionSystemsSection() {
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                     ACTIVE SYSTEM
                   </span>
-                  <span className="font-mono text-[10px] text-[#64748B] uppercase tracking-wider">
+                  <span className="font-mono text-[10px] text-[#475569] uppercase tracking-wider">
                     {activeProject.whyWeBuiltThis?.slice(0, 40)}
                     {(activeProject.whyWeBuiltThis?.length ?? 0) > 40 ? '...' : ''}
                   </span>
-                  <ArrowRight className="w-3 h-3 text-[#1463FF]" />
+                  <ArrowRight className="w-3 h-3 text-[#0050E6]" />
                 </div>
 
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
@@ -215,7 +215,7 @@ export default function SelectedProductionSystemsSection() {
                     <h3 className="text-xl sm:text-2xl font-black text-[#0B132B] tracking-tight leading-tight uppercase" style={{ fontFamily: "'Syncopate', sans-serif" }}>
                       {activeProject.number} {activeProject.name}
                     </h3>
-                    <p className="font-mono text-[10px] text-[#1463FF] uppercase tracking-wider">{activeProject.shortCategory}</p>
+                    <p className="font-mono text-[10px] text-[#0050E6] uppercase tracking-wider">{activeProject.shortCategory}</p>
                     <p className="text-xs sm:text-[13px] text-[#475569] leading-relaxed max-w-lg">
                       {activeProject.description}
                     </p>
@@ -230,7 +230,7 @@ export default function SelectedProductionSystemsSection() {
                       { label: 'YEAR', value: activeProject.year },
                     ].map((item) => (
                       <div key={item.label}>
-                        <div className="font-mono text-[9px] text-[#94A3B8] uppercase tracking-wider">{item.label}</div>
+                        <div className="font-mono text-[9px] text-[#475569] uppercase tracking-wider">{item.label}</div>
                         <div className="font-mono text-[10px] font-bold text-[#0B132B] truncate max-w-[120px]">{item.value}</div>
                       </div>
                     ))}
@@ -242,12 +242,12 @@ export default function SelectedProductionSystemsSection() {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {activeProject.valueBlocks.map((block, idx) => (
                       <div key={idx} className="flex items-start gap-2.5">
-                        <div className="w-6 h-6 rounded-lg bg-[#EDF4FF] border border-[#1463FF]/20 flex items-center justify-center text-[#1463FF] shrink-0 mt-0.5">
+                        <div className="w-6 h-6 rounded-lg bg-[#EDF4FF] border border-[#1463FF]/20 flex items-center justify-center text-[#0050E6] shrink-0 mt-0.5">
                           <ValueBlockIcon name={block.icon} className="w-3.5 h-3.5" />
                         </div>
                         <div>
                           <span className="font-bold text-xs text-[#0B132B] block leading-tight">{block.title}</span>
-                          <span className="text-[11px] text-[#64748B] leading-tight block mt-0.5">{block.desc}</span>
+                          <span className="text-[11px] text-[#475569] leading-tight block mt-0.5">{block.desc}</span>
                         </div>
                       </div>
                     ))}
@@ -257,15 +257,15 @@ export default function SelectedProductionSystemsSection() {
                 {/* Bottom: Layer indicator + VIEW SYSTEM CTA */}
                 <div className="flex items-center justify-between mt-4 pt-3 border-t border-[#F1F5F9]">
                   <div>
-                    <div className="font-mono text-[9px] text-[#94A3B8] uppercase tracking-wider">LAYER 01 OF 08</div>
+                    <div className="font-mono text-[9px] text-[#475569] uppercase tracking-wider">LAYER 01 OF 08</div>
                     <div className="flex items-baseline gap-1 mt-0.5">
                       <span className="font-black text-2xl text-[#0B132B]" style={{ fontFamily: "'Syncopate', sans-serif" }}>
                         01
                       </span>
-                      <span className="text-[#94A3B8] font-bold text-sm">/ 06</span>
+                      <span className="text-[#475569] font-bold text-sm">/ 06</span>
                     </div>
-                    <div className="font-mono text-[10px] text-[#1463FF] font-bold uppercase tracking-wider">INTERFACE</div>
-                    <div className="text-[10px] text-[#64748B]">What users see and interact with.</div>
+                    <div className="font-mono text-[10px] text-[#0050E6] font-bold uppercase tracking-wider">INTERFACE</div>
+                    <div className="text-[10px] text-[#475569]">What users see and interact with.</div>
                   </div>
                   <Link
                     href={`/work?project=${activeProject.id}`}

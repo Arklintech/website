@@ -1,34 +1,53 @@
-'use client';
+import type { Metadata } from 'next';
+import HomeView from '@/components/home/HomeView';
+import JsonLd from '@/components/seo/JsonLd';
+import {
+  CANONICAL_SITE_URL,
+  COMPANY_NAME,
+  COMPANY_DESCRIPTION,
+  getWebPageSchema,
+} from '@/lib/seo-schema';
 
-import React from 'react';
-import PageShell from '@/components/layout/PageShell';
-import ArkParticleRobot from '@/components/robot/ArkParticleRobot';
-import Hero from '@/components/hero/Hero';
-import OrientationSection from '@/components/home/OrientationSection';
-import SelectedProductionSystemsSection from '@/components/home/SelectedProductionSystemsSection';
-import HomeStartSection from '@/components/home/HomeStartSection';
+export const metadata: Metadata = {
+  title: `${COMPANY_NAME} — Technology Systems`,
+  description: COMPANY_DESCRIPTION,
+  alternates: {
+    canonical: CANONICAL_SITE_URL,
+  },
+  openGraph: {
+    type: 'website',
+    url: CANONICAL_SITE_URL,
+    title: `${COMPANY_NAME} — Technology Systems`,
+    description: COMPANY_DESCRIPTION,
+    siteName: COMPANY_NAME,
+    images: [
+      {
+        url: `${CANONICAL_SITE_URL}/brand/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: `${COMPANY_NAME} — Technology Systems`,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${COMPANY_NAME} — Technology Systems`,
+    description: COMPANY_DESCRIPTION,
+    images: [`${CANONICAL_SITE_URL}/brand/og-image.png`],
+  },
+};
 
 export default function HomePage() {
+  const pageSchema = getWebPageSchema({
+    title: `${COMPANY_NAME} — Technology Systems`,
+    description: COMPANY_DESCRIPTION,
+    url: '/',
+  });
+
   return (
-    <PageShell>
-      {({ onOpenProjectModal }) => (
-        <>
-          {/* 00 — INTRO LANDING: Scroll-Driven Particle Robot Traversal */}
-          <ArkParticleRobot />
-
-          {/* 01 — HERO (Approved Blueprint Composition) */}
-          <Hero onOpenProjectModal={onOpenProjectModal} />
-
-          {/* 02 — ORIENTATION (Plain-Language Business Explanation) */}
-          <OrientationSection />
-
-          {/* 03 — SELECTED PRODUCTION SYSTEMS (Clean, Curated Preview with Direct Work Handoff) */}
-          <SelectedProductionSystemsSection />
-
-          {/* 04 — START A SYSTEM (Short Intake & 3-Step Confirmation) */}
-          <HomeStartSection onOpenProjectModal={onOpenProjectModal} />
-        </>
-      )}
-    </PageShell>
+    <>
+      <JsonLd schema={pageSchema} />
+      <HomeView />
+    </>
   );
 }

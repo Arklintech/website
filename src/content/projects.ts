@@ -62,7 +62,7 @@ export const PROJECTS: Project[] = [
     focalPoint: 'object-top',
     stack: ['Next.js', 'Node.js', 'PostgreSQL', 'Stripe API', 'Redis'],
     features: ['Real-time Inventory Sync', 'Sub-500ms Checkout Flow', 'Bespoke Design System', 'Automated Sales Telemetry'],
-    href: '#daarayn',
+    href: '/work/daarayn',
   },
   {
     id: 'neominds-enrollment',
@@ -80,7 +80,7 @@ export const PROJECTS: Project[] = [
     focalPoint: 'object-top',
     stack: ['React', 'TypeScript', 'Express', 'Prisma', 'AWS S3'],
     features: ['Multi-Stage Application Pipeline', 'Automated Document Verification', 'Role-Based Counselor Dashboard', 'Instant Notification Engine'],
-    href: '#neominds-enrollment',
+    href: '/work/neominds',
   },
   {
     id: 'parivar-restaurant',
@@ -98,6 +98,6 @@ export const PROJECTS: Project[] = [
     focalPoint: 'object-top',
     stack: ['React', 'Electron', 'WebSockets', 'GraphQL', 'Tailwind CSS'],
     features: ['Live Kitchen Queue Display', 'Interactive Floor Map', 'Instant Table Billing', 'Zero-Latency Order Dispatch'],
-    href: '#parivar-restaurant',
+    href: '/work/parivar',
   },
 ];

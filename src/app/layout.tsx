@@ -59,6 +59,8 @@ export const metadata: Metadata = {
 };
 
 import VisitorTracker from '@/components/VisitorTracker';
+import JsonLd from '@/components/seo/JsonLd';
+import { getOrganizationSchema, getWebSiteSchema } from '@/lib/seo-schema';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -72,11 +74,14 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const globalSchemas = [getOrganizationSchema(), getWebSiteSchema()];
+
   return (
     <html lang="en" className="light" style={{ backgroundColor: '#F5F1E8', color: '#111827' }}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <JsonLd schema={globalSchemas} />
       </head>
       <body
         className="bg-[#F5F1E8] text-[#111827] font-body antialiased min-h-screen"

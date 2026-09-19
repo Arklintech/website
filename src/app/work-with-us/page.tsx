@@ -1,3 +1,5 @@
-'use client';
+import { redirect } from 'next/navigation';
 
-export { default } from '../work-with-zaqvoro/page';
+export default function WorkWithUsPage() {
+  redirect('/start-a-system');
+}

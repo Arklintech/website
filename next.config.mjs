@@ -16,22 +16,42 @@ const nextConfig = {
       {
         source: '/start',
         destination: '/start-a-system',
-        permanent: false,
+        permanent: true,
       },
       {
         source: '/request',
         destination: '/start-a-system',
-        permanent: false,
+        permanent: true,
       },
       {
         source: '/contact',
         destination: '/start-a-system',
-        permanent: false,
+        permanent: true,
       },
       {
         source: '/start-project',
         destination: '/start-a-system',
-        permanent: false,
+        permanent: true,
+      },
+      {
+        source: '/work-with-us',
+        destination: '/start-a-system',
+        permanent: true,
+      },
+      {
+        source: '/work-with-zaqvoro',
+        destination: '/start-a-system',
+        permanent: true,
+      },
+      {
+        source: '/work/neominds-enrollment',
+        destination: '/work/neominds',
+        permanent: true,
+      },
+      {
+        source: '/work/parivar-restaurant',
+        destination: '/work/parivar',
+        permanent: true,
       },
     ];
   },

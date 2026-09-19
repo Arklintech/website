@@ -1,7 +1,5 @@
-'use client';
-
-import StartASystemPage from '../start-a-system/page';
+import { redirect } from 'next/navigation';
 
 export default function RequestPage() {
-  return <StartASystemPage />;
+  redirect('/start-a-system');
 }

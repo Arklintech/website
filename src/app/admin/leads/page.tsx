@@ -23,7 +23,7 @@ const STAGES: { value: LeadStatus | 'ALL'; label: string }[] = [
 ];
 
 const PRIORITY_COLORS: Record<string, string> = {
-  HIGH: 'text-rose-600', MEDIUM: 'text-amber-600', LOW: 'text-[#94A3B8]',
+  HIGH: 'text-rose-600', MEDIUM: 'text-amber-600', LOW: 'text-[#475569]',
 };
 
 function timeAgo(ts: string): string {
@@ -156,7 +156,7 @@ export default function LeadsPage() {
         {loading ? (
           <div className="p-16 text-center">
             <div className="w-8 h-8 border-2 border-[#1463FF] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-            <p className="font-mono text-xs text-[#94A3B8] uppercase">Loading leads...</p>
+            <p className="font-mono text-xs text-[#475569] uppercase">Loading leads...</p>
           </div>
         ) : errorMsg ? (
           <div className="p-16 text-center bg-rose-50/50">
@@ -174,7 +174,7 @@ export default function LeadsPage() {
           <div className="p-16 text-center">
             <Zap className="w-10 h-10 text-[#D8D4C9] mx-auto mb-3" />
             <p className="font-bold text-[#0B132B] mb-1">No leads found</p>
-            <p className="text-sm text-[#64748B]">Leads submitted via the website form will appear here.</p>
+            <p className="text-sm text-[#475569]">Leads submitted via the website form will appear here.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -182,7 +182,7 @@ export default function LeadsPage() {
               <thead>
                 <tr className="border-b border-[#F1EDE4] bg-[#FDFBF7]">
                   {['Lead', 'Company', 'Interest', 'Status', 'Priority', 'Added', ''].map(h => (
-                    <th key={h} className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">
+                    <th key={h} className="px-4 py-3 font-mono text-[9px] font-bold text-[#475569] uppercase tracking-wider whitespace-nowrap">
                       {h}
                     </th>
                   ))}

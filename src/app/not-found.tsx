@@ -1,6 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { Compass, Home, ArrowLeft } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: '404 — Resource Unmapped | ARKLINTECH',
+  description: 'The requested system node or route does not exist in the current architecture registry.',
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function NotFound() {
   return (

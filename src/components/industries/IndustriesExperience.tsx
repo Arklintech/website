@@ -200,14 +200,14 @@ export default function IndustriesExperience({ onOpenProjectModal }: IndustriesE
         {/* ── TOP BADGE STRIP ── */}
         <div className="shrink-0 flex items-center justify-between px-4 sm:px-6 py-2.5 bg-[#F5F1E8]">
           <div className="flex items-center gap-2 font-mono">
-            <span className="text-[9px] font-bold text-[#556375]">02</span>
-            <span className="text-[8px] uppercase tracking-[0.2em] font-bold text-[#1463FF]">
+            <span className="text-[9px] font-bold text-[#475569]">02</span>
+            <span className="text-[8px] uppercase tracking-[0.2em] font-bold text-[#0050E6]">
               PROVEN INDUSTRY SYSTEMS
             </span>
           </div>
 
-          <div className="flex items-center gap-2 font-mono text-[8px] font-bold text-[#7A889B] uppercase">
-            <span className="w-2 h-2 rounded-full bg-[#1463FF] animate-pulse" />
+          <div className="flex items-center gap-2 font-mono text-[8px] font-bold text-[#475569] uppercase">
+            <span className="w-2 h-2 rounded-full bg-[#0050E6] animate-pulse" />
             <span>STAGE {activeIndustry.number} / 05</span>
           </div>
         </div>
@@ -223,7 +223,7 @@ export default function IndustriesExperience({ onOpenProjectModal }: IndustriesE
                 className={`px-3 py-1.5 rounded-full font-mono text-[9px] font-bold uppercase shrink-0 flex items-center gap-1.5 transition-all whitespace-nowrap ${
                   isActive
                     ? 'bg-[#1463FF] text-white shadow-sm'
-                    : 'bg-white text-[#556375] hover:bg-white/80'
+                    : 'bg-white text-[#475569] hover:bg-white/80'
                 }`}
               >
                 <span>{ind.number}</span>
@@ -256,24 +256,24 @@ export default function IndustriesExperience({ onOpenProjectModal }: IndustriesE
                     >
                       {/* Active Blue Line Segment Overlay */}
                       {isActive && (
-                        <div className="absolute left-[11.25px] -top-3 -bottom-3 w-[1.5px] bg-[#1463FF] z-0 pointer-events-none" />
+                        <div className="absolute left-[11.25px] -top-3 -bottom-3 w-[1.5px] bg-[#0050E6] z-0 pointer-events-none" />
                       )}
 
                       {/* Timeline Node Ring / Target Dot (Matching Image 2 Reference) */}
                       <div className="shrink-0 relative flex items-center justify-center w-6 h-6 mt-0.5 z-10">
                         {isActive ? (
                           <div className="w-6 h-6 rounded-full border-2 border-[#1463FF]/50 bg-[#EDF4FF] flex items-center justify-center shadow-md shadow-[#1463FF]/25">
-                            <div className="w-2.5 h-2.5 rounded-full bg-[#1463FF]" />
+                            <div className="w-2.5 h-2.5 rounded-full bg-[#0050E6]" />
                           </div>
                         ) : (
-                          <div className="w-2.5 h-2.5 rounded-full bg-[#536070] group-hover:bg-[#1463FF] transition-colors" />
+                          <div className="w-2.5 h-2.5 rounded-full bg-[#475569] group-hover:bg-[#0050E6] transition-colors" />
                         )}
                       </div>
 
                       {/* Industry Label (Matching Image 2 Clean Typography) */}
                       <div className="min-w-0 flex-1 z-10">
                         <span className={`font-mono text-xs sm:text-[13px] font-bold block leading-none ${
-                          isActive ? 'text-[#1463FF]' : 'text-[#334155]'
+                          isActive ? 'text-[#0050E6]' : 'text-[#334155]'
                         }`}>
                           {ind.number}
                         </span>
@@ -308,22 +308,21 @@ export default function IndustriesExperience({ onOpenProjectModal }: IndustriesE
               {/* Left Column: Headline & Statement */}
               <div className="lg:col-span-4 flex flex-col justify-center space-y-2 sm:space-y-3 pr-2 mb-2 lg:mb-0">
                 <div>
-                  <h2
-                    className="text-base sm:text-2xl xl:text-3xl font-black text-[#0B132B] uppercase tracking-tight leading-[0.95]"
+                  <h1
+                    className="text-base sm:text-2xl xl:text-3xl font-black uppercase tracking-tight leading-[0.95]"
                     style={{ fontFamily: "'Syncopate', sans-serif" }}
                   >
-                    THE CONTEXT<br />CHANGES.
-                  </h2>
-                  <h2
-                    className="text-base sm:text-2xl xl:text-3xl font-black text-[#1463FF] uppercase tracking-tight leading-[0.95] mt-1"
-                    style={{ fontFamily: "'Syncopate', sans-serif" }}
-                  >
-                    THE SYSTEM<br />ADAPTS.
-                  </h2>
-                  <div className="w-8 h-[2px] bg-[#1463FF] mt-2 sm:mt-2.5" />
+                    <span className="text-[#0B132B] block">
+                      THE CONTEXT<br />CHANGES.
+                    </span>
+                    <span className="text-[#0050E6] block mt-1">
+                      THE SYSTEM<br />ADAPTS.
+                    </span>
+                  </h1>
+                  <div className="w-8 h-[2px] bg-[#0050E6] mt-2 sm:mt-2.5" />
                 </div>
 
-                <p className="text-[10.5px] sm:text-[11px] text-[#4A5568] leading-relaxed max-w-sm">
+                <p className="text-[10.5px] sm:text-[11px] text-[#475569] leading-relaxed max-w-sm">
                   {activeIndustry.tagline}
                 </p>
               </div>
@@ -335,22 +334,22 @@ export default function IndustriesExperience({ onOpenProjectModal }: IndustriesE
                 <div className="shrink-0 flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-4 mb-2">
                   <div>
                     <div className="flex items-start gap-2">
-                      <span className="font-mono text-xs sm:text-sm font-bold text-[#1463FF] shrink-0 mt-0.5">{activeIndustry.number} —</span>
-                      <h3
+                      <span className="font-mono text-xs sm:text-sm font-bold text-[#0050E6] shrink-0 mt-0.5">{activeIndustry.number} —</span>
+                      <h2
                         className="text-xs sm:text-sm lg:text-base font-black text-[#0B132B] uppercase tracking-wider leading-snug"
                         style={{ fontFamily: "'Syncopate', sans-serif", letterSpacing: '0.04em' }}
                       >
                         {activeIndustry.name}
-                      </h3>
+                      </h2>
                     </div>
-                    <p className="text-[9.5px] sm:text-[10.5px] text-[#556375] font-medium leading-tight mt-1">
+                    <p className="text-[9.5px] sm:text-[10.5px] text-[#475569] font-medium leading-tight mt-1">
                       {activeIndustry.headline}
                     </p>
                   </div>
 
                   <button
                     onClick={onOpenProjectModal}
-                    className="shrink-0 inline-flex items-center gap-1 font-mono text-[8.5px] sm:text-[9px] font-bold text-[#1463FF] hover:text-[#004AD6] transition-colors mt-0.5 group"
+                    className="shrink-0 inline-flex items-center gap-1 font-mono text-[8.5px] sm:text-[9px] font-bold text-[#0050E6] hover:text-[#004AD6] transition-colors mt-0.5 group"
                   >
                     <span>EXPLORE THIS CONTEXT</span>
                     <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
@@ -372,7 +371,7 @@ export default function IndustriesExperience({ onOpenProjectModal }: IndustriesE
                       >
                         <img
                           src={ind.svgPath}
-                          alt={ind.name}
+                          alt={`${ind.name}: Technology systems architecture diagram`}
                           style={{
                             width: '100%',
                             height: '100%',
@@ -396,25 +395,25 @@ export default function IndustriesExperience({ onOpenProjectModal }: IndustriesE
                 {/* Micro Header */}
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#1463FF]" />
-                    <span className="font-mono text-[8px] uppercase tracking-[0.18em] font-bold text-[#1463FF]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#0050E6]" />
+                    <span className="font-mono text-[8px] uppercase tracking-[0.18em] font-bold text-[#0050E6]">
                       WHAT ARKLINTECH ADAPTS IN {activeIndustry.name}
                     </span>
                   </div>
-                  <span className="font-mono text-[8px] text-[#7A889B] font-bold">5 CORE ADAPTATIONS</span>
+                  <span className="font-mono text-[8px] text-[#475569] font-bold">5 CORE ADAPTATIONS</span>
                 </div>
 
                 {/* 5-Column Responsive Adaptations Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
                   {activeIndustry.adaptations.map((adapt, i) => (
                     <div key={i} className="flex flex-col justify-start">
-                      <div className="flex items-center gap-1.5 text-[#1463FF] mb-1">
+                      <div className="flex items-center gap-1.5 text-[#0050E6] mb-1">
                         <IconRenderer name={adapt.icon} className="w-3.5 h-3.5" />
                         <span className="font-mono text-[8px] font-bold text-[#0B132B] leading-none truncate">
                           {adapt.title}
                         </span>
                       </div>
-                      <p className="text-[7.5px] text-[#556375] leading-relaxed line-clamp-2">
+                      <p className="text-[7.5px] text-[#475569] leading-relaxed line-clamp-2">
                         {adapt.desc}
                       </p>
                     </div>
