@@ -111,7 +111,7 @@ export default function ProcessSection() {
                 HOW{' '}
                 <span
                   style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: "0.08em" }}
-                  className="font-extrabold text-[#1463FF]"
+                  className="font-extrabold text-[#0050E6]"
                 >
                   ARKLINTECH
                 </span>
@@ -119,7 +119,7 @@ export default function ProcessSection() {
               <span className="text-[#0F172A] relative inline-block mt-1">
                 ACTUALLY WORKS
                 {/* Blue Brush Accent Underline */}
-                <svg className="w-full h-3.5 text-[#1463FF] -mt-1" viewBox="0 0 300 12" fill="none">
+                <svg className="w-full h-3.5 text-[#0050E6] -mt-1" viewBox="0 0 300 12" fill="none">
                   <path d="M 5 8 Q 150 2 295 9" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
                 </svg>
               </span>
@@ -141,7 +141,7 @@ export default function ProcessSection() {
               <p>What should work better.</p>
             </div>
 
-            <p className="pt-2 font-semibold text-[#1463FF]">
+            <p className="pt-2 font-semibold text-[#0050E6]">
               Then we build the system around the answers.
             </p>
           </div>
@@ -149,7 +149,7 @@ export default function ProcessSection() {
           {/* Action Cue */}
           <div className="pt-4 flex justify-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#D8D4C9] bg-white/80 text-[11px] font-mono font-bold text-[#536070] uppercase tracking-wider shadow-xs">
-              <span className="w-2 h-2 rounded-full bg-[#1463FF] animate-ping" />
+              <span className="w-2 h-2 rounded-full bg-[#0050E6] animate-ping" />
               <span>SCROLL TO SEE THE PROCESS</span>
             </div>
           </div>
@@ -166,10 +166,10 @@ export default function ProcessSection() {
                 className={`flex items-center gap-1.5 shrink-0 px-2.5 py-1 rounded-full transition-all ${
                   isActive
                     ? 'bg-[#1463FF] text-white font-bold'
-                    : 'text-[#536070] hover:text-[#111827]'
+                    : 'text-[#475569] hover:text-[#111827]'
                 }`}
               >
-                <span className={`w-2 h-2 rounded-full ${isActive ? 'bg-white' : 'bg-[#94A3B8]'}`} />
+                <span className={`w-2 h-2 rounded-full ${isActive ? 'bg-white' : 'bg-[#475569]'}`} />
                 <span>{stg.number} {isActive ? stg.title : ''}</span>
               </a>
             );

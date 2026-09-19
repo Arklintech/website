@@ -279,7 +279,7 @@ export default function IndustriesExperience({ onOpenProjectModal }: IndustriesE
                         </span>
                         <span
                           className={`font-bold uppercase tracking-wider block mt-1 leading-tight text-[11px] sm:text-[11.5px] font-sans ${
-                            isActive ? 'text-[#1463FF]' : 'text-[#475569] group-hover:text-[#1463FF]'
+                            isActive ? 'text-[#0050E6]' : 'text-[#475569] group-hover:text-[#0050E6]'
                           }`}
                         >
                           {ind.line1}
@@ -293,8 +293,8 @@ export default function IndustriesExperience({ onOpenProjectModal }: IndustriesE
             </div>
 
             {/* Bottom Scroll Cue */}
-            <div className="shrink-0 pb-3 flex items-center gap-2 font-mono text-[6.5px] text-[#7A889B] font-bold uppercase">
-              <Mouse className="w-3.5 h-3.5 text-[#1463FF] animate-bounce shrink-0" />
+            <div className="shrink-0 pb-3 flex items-center gap-2 font-mono text-[6.5px] text-[#475569] font-bold uppercase">
+              <Mouse className="w-3.5 h-3.5 text-[#0050E6] animate-bounce shrink-0" />
               <span className="leading-tight">SCROLL TO EXPLORE<br />DIFFERENT CONTEXTS</span>
             </div>
           </div>

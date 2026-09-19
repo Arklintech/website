@@ -159,10 +159,10 @@ export default function SystemsBuiltSection({ onOpenProjectModal, initialProject
             {/* Header Block */}
             <div className="shrink-0 space-y-2 pb-2">
               <div className="flex items-center gap-1.5">
-                <span className="font-mono text-[9px] font-bold text-[#1463FF] border border-[#D8D4C9] bg-[#EDF4FF] px-1.5 py-0.5 rounded">
+                <span className="font-mono text-[9px] font-bold text-[#0050E6] border border-[#D8D4C9] bg-[#EDF4FF] px-1.5 py-0.5 rounded">
                   04
                 </span>
-                <span className="font-mono text-[8.5px] uppercase tracking-[0.16em] font-bold text-[#1463FF]">
+                <span className="font-mono text-[8.5px] uppercase tracking-[0.16em] font-bold text-[#0050E6]">
                   PROVEN PRODUCTION EVIDENCE
                 </span>
               </div>
@@ -240,7 +240,7 @@ export default function SystemsBuiltSection({ onOpenProjectModal, initialProject
                 onClick={() => {
                   window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
                 }}
-                className="inline-flex items-center gap-1 font-mono text-[9px] font-bold text-[#1463FF] hover:text-[#004AD6] transition-colors group"
+                className="inline-flex items-center gap-1 font-mono text-[9px] font-bold text-[#0050E6] hover:text-[#004AD6] transition-colors group"
               >
                 <span>VIEW ALL SYSTEMS</span>
                 <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
@@ -267,7 +267,7 @@ export default function SystemsBuiltSection({ onOpenProjectModal, initialProject
                     </span>
                     <button
                       onClick={onOpenProjectModal}
-                      className="inline-flex items-center gap-1 font-mono text-[8px] font-bold text-[#1463FF] hover:text-[#004AD6] transition-colors group"
+                      className="inline-flex items-center gap-1 font-mono text-[8px] font-bold text-[#0050E6] hover:text-[#004AD6] transition-colors group"
                     >
                       <span>WHY WE BUILT THIS SYSTEM</span>
                       <ArrowRight className="w-2.5 h-2.5 transition-transform group-hover:translate-x-0.5" />
@@ -286,7 +286,7 @@ export default function SystemsBuiltSection({ onOpenProjectModal, initialProject
                     </h2>
                   </div>
 
-                  <p className="font-mono text-[8.5px] sm:text-[9px] font-bold text-[#1463FF] uppercase tracking-[0.14em]">
+                  <p className="font-mono text-[8.5px] sm:text-[9px] font-bold text-[#0050E6] uppercase tracking-[0.14em]">
                     {activeProject.systemType}
                   </p>
 
@@ -304,7 +304,7 @@ export default function SystemsBuiltSection({ onOpenProjectModal, initialProject
                     { label: 'YEAR', value: activeProject.year },
                   ].map(({ label, value, live }) => (
                     <div key={label} className="min-w-[50px]">
-                      <span className="font-mono text-[7px] uppercase tracking-widest text-[#64748B] font-bold block">
+                      <span className="font-mono text-[7px] uppercase tracking-widest text-[#475569] font-bold block">
                         {label}
                       </span>
                       <div className="flex items-center gap-1 mt-0.5">

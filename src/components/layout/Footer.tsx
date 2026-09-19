@@ -89,7 +89,7 @@ export default function Footer() {
                 <li><Link href="/what-we-do/software-platforms" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Software & Platforms</Link></li>
                 <li><Link href="/what-we-do/automation-orchestration" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Automation & Orchestration</Link></li>
                 <li><Link href="/what-we-do/business-systems" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Business Systems</Link></li>
-                <li className="pt-1 border-t border-[#D8D4C9]/50"><Link href="/about" className="text-[#1463FF] hover:text-[#0B2E73] transition-colors font-semibold">About ARKLINTECH →</Link></li>
+                <li className="pt-1 border-t border-[#D8D4C9]/50"><Link href="/about" className="text-[#0050E6] hover:text-[#0B2E73] transition-colors font-semibold">About ARKLINTECH →</Link></li>
               </ul>
             </div>
 
@@ -118,8 +118,8 @@ export default function Footer() {
                 <li><Link href="/industries/education" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Education & Academia</Link></li>
                 <li><Link href="/industries/hospitality" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Hospitality & POS</Link></li>
                 <li><Link href="/industries/healthcare" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Healthcare & Clinical</Link></li>
-                <li><Link href="/industries/civic" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Non-Profit & Civic</Link></li>
-                <li className="pt-1 border-t border-[#D8D4C9]/50"><Link href="/trust-security" className="text-[#1463FF] hover:text-[#0B2E73] transition-colors font-semibold">Trust & Security →</Link></li>
+                <li><Link href="/industries" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Non-Profit & Civic</Link></li>
+                <li className="pt-1 border-t border-[#D8D4C9]/50"><Link href="/trust-security" className="text-[#0050E6] hover:text-[#0B2E73] transition-colors font-semibold">Trust & Security →</Link></li>
               </ul>
             </div>
 
