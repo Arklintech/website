@@ -6,9 +6,8 @@ export default function GlobalPresenceMap() {
   return (
     <div className="w-full space-y-3">
       {/* Title */}
-      <div className="font-mono text-xs font-bold text-[#111827] uppercase tracking-wider pb-1 border-b border-[#D8D4C9] flex items-center justify-between">
+      <div className="font-mono text-xs font-bold text-[#111827] uppercase tracking-wider pb-1 border-b border-[#D8D4C9] flex items-center justify-center text-center">
         <span>GLOBAL PRESENCE</span>
-        <span className="text-xs text-[#0050E6] font-semibold">4 ACTIVE HUBS</span>
       </div>
 
       {/* Real GeoJSON Dotted World Map Graphic */}

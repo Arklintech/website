@@ -281,12 +281,11 @@ export default function SelectedProductionSystemsSection() {
         </div>
 
         {/* ═══ BOTTOM STATS STRIP ═══ */}
-        <div className="rounded-3xl border border-[#D8D4C9] bg-white/70 backdrop-blur-xs p-6 sm:p-8 mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-4 gap-6 items-center shadow-xs">
+        <div className="rounded-3xl border border-[#D8D4C9] bg-white/70 backdrop-blur-xs p-6 sm:p-8 mt-10 sm:mt-14 grid grid-cols-1 sm:grid-cols-3 gap-6 items-center shadow-xs">
           {[
-            { icon: <Users className="w-5 h-5 text-[#1463FF]" />, stat: '08+', label: 'Systems Built', sub: 'Across Industries' },
-            { icon: <Users className="w-5 h-5 text-[#1463FF]" />, stat: '50K+', label: 'Users Impacted', sub: 'Everyday' },
-            { icon: <Clock className="w-5 h-5 text-[#1463FF]" />, stat: '99.9%', label: 'System Uptime', sub: 'Across Platforms' },
-            { icon: <Globe className="w-5 h-5 text-[#1463FF]" />, stat: '05+', label: 'Years Building', sub: 'Intelligent Systems' },
+            { icon: <Users className="w-5 h-5 text-[#0050E6]" />, stat: '08+', label: 'Systems Built', sub: 'Across Industries' },
+            { icon: <Users className="w-5 h-5 text-[#0050E6]" />, stat: '50K+', label: 'Users Impacted', sub: 'Everyday' },
+            { icon: <Clock className="w-5 h-5 text-[#0050E6]" />, stat: '99.9%', label: 'System Uptime', sub: 'Across Platforms' },
           ].map((card, i) => (
             <div key={i} className="flex flex-col space-y-1">
               <div className="flex items-center gap-2">
@@ -295,7 +294,7 @@ export default function SelectedProductionSystemsSection() {
               </div>
               <div className="leading-tight">
                 <span className="font-bold text-xs text-[#0B132B] block">{card.label}</span>
-                <span className="text-[10px] text-[#64748B] block">{card.sub}</span>
+                <span className="text-[10px] text-[#475569] block">{card.sub}</span>
               </div>
             </div>
           ))}
