@@ -178,7 +178,7 @@ export default function CommandShell({ children }: CommandShellProps) {
             {/* Logo */}
             <div className="flex flex-col items-center justify-center text-center mb-6">
               <KeystoneLogo size="md" />
-              <div className="font-mono text-[9px] font-bold text-[#1463FF] uppercase tracking-widest mt-3 bg-[#EDF4FF] border border-[#1463FF]/20 px-2.5 py-0.5 rounded-full">
+              <div className="font-mono text-[9px] font-bold text-[#0050E6] uppercase tracking-widest mt-3 bg-[#EDF4FF] border border-[#1463FF]/20 px-2.5 py-0.5 rounded-full">
                 ADMINISTRATIVE COMMAND PLATFORM
               </div>
             </div>
@@ -263,10 +263,10 @@ export default function CommandShell({ children }: CommandShellProps) {
 
             <div className="mt-6 pt-4 border-t border-[#E8E4DC] flex items-center justify-between">
               <div className="flex items-center gap-1.5">
-                <ShieldCheck className="w-3 h-3 text-[#1463FF]" />
-                <span className="font-mono text-[9px] font-bold text-[#64748B]">FIREBASE AUTHENTICATED SESSION</span>
+                <ShieldCheck className="w-3 h-3 text-[#0050E6]" />
+                <span className="font-mono text-[9px] font-bold text-[#475569]">FIREBASE AUTHENTICATED SESSION</span>
               </div>
-              <span className="font-mono text-[9px] text-[#94A3B8]">v1.0</span>
+              <span className="font-mono text-[9px] font-medium text-[#475569]">v1.0</span>
             </div>
           </div>
         </div>

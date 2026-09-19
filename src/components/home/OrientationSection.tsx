@@ -15,10 +15,10 @@ export default function OrientationSection() {
           {/* Left Column: Core Positioning Narrative */}
           <div className="lg:col-span-5 space-y-4">
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-bold text-[#1463FF] border border-[#D8D4C9] px-2 py-0.5 rounded bg-[#EDF4FF]">
+              <span className="font-mono text-xs font-bold text-[#0050E6] border border-[#D8D4C9] px-2 py-0.5 rounded bg-[#EDF4FF]">
                 01
               </span>
-              <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#1463FF]">
+              <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#0050E6]">
                 COMPANY ORIENTATION
               </span>
             </div>
@@ -31,13 +31,13 @@ export default function OrientationSection() {
             </h2>
 
             <p className="text-sm sm:text-base text-[#536070] font-body leading-relaxed">
-              <span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: "0.08em" }} className="font-extrabold text-[#1463FF]"><span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: '0.12em' }} className="font-extrabold uppercase">ARKLINTECH</span></span> approaches technology as a systems engineering problem. Disconnected software tools create disconnected operational work. We design and engineer unified digital platforms, automated workflow state machines, and business systems that establish clear operational lineage across an enterprise.
+              <span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: "0.08em" }} className="font-extrabold text-[#0050E6]"><span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: '0.12em' }} className="font-extrabold uppercase">ARKLINTECH</span></span> approaches technology as a systems engineering problem. Disconnected software tools create disconnected operational work. We design and engineer unified digital platforms, automated workflow state machines, and business systems that establish clear operational lineage across an enterprise.
             </p>
 
             <div className="pt-2">
               <Link
                 href="/about"
-                className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-[#1463FF] hover:text-[#0050E6] transition-colors group"
+                className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-[#0050E6] hover:text-[#003BB0] transition-colors group"
               >
                 <span>READ ABOUT OUR OPERATING MODEL</span>
                 <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
@@ -50,10 +50,10 @@ export default function OrientationSection() {
             {/* 1. What We Build */}
             <div className="p-5 rounded-xl bg-white border border-[#D8D4C9] hover:border-[#1463FF] shadow-sm transition-all flex flex-col justify-between">
               <div>
-                <div className="w-8 h-8 rounded-lg bg-[#EDF4FF] border border-[#1463FF]/30 flex items-center justify-center text-[#1463FF] mb-3">
+                <div className="w-8 h-8 rounded-lg bg-[#EDF4FF] border border-[#1463FF]/30 flex items-center justify-center text-[#0050E6] mb-3">
                   <Layers className="w-4 h-4" />
                 </div>
-                <div className="font-mono text-[11px] uppercase tracking-wider text-[#1463FF] font-bold mb-1">
+                <div className="font-mono text-[11px] uppercase tracking-wider text-[#0050E6] font-bold mb-1">
                   WHAT WE ENGINEER
                 </div>
                 <div className="font-bold text-[#111827] text-sm mb-1.5">
@@ -63,7 +63,7 @@ export default function OrientationSection() {
                   Custom software platforms, state machine pipelines, and business infrastructure engineered around your operating model.
                 </p>
               </div>
-              <div className="mt-4 pt-3 border-t border-[#D8D4C9]/60 font-mono text-[10px] font-bold text-[#768494]">
+              <div className="mt-4 pt-3 border-t border-[#D8D4C9]/60 font-mono text-[10px] font-bold text-[#475569]">
                 PROPRIETARY ASSETS
               </div>
             </div>
@@ -71,10 +71,10 @@ export default function OrientationSection() {
             {/* 2. What Problems We Solve */}
             <div className="p-5 rounded-xl bg-white border border-[#D8D4C9] hover:border-[#1463FF] shadow-sm transition-all flex flex-col justify-between">
               <div>
-                <div className="w-8 h-8 rounded-lg bg-[#EDF4FF] border border-[#1463FF]/30 flex items-center justify-center text-[#1463FF] mb-3">
+                <div className="w-8 h-8 rounded-lg bg-[#EDF4FF] border border-[#1463FF]/30 flex items-center justify-center text-[#0050E6] mb-3">
                   <Cpu className="w-4 h-4" />
                 </div>
-                <div className="font-mono text-[11px] uppercase tracking-wider text-[#1463FF] font-bold mb-1">
+                <div className="font-mono text-[11px] uppercase tracking-wider text-[#0050E6] font-bold mb-1">
                   PROBLEMS WE ADDRESS
                 </div>
                 <div className="font-bold text-[#111827] text-sm mb-1.5">
@@ -84,7 +84,7 @@ export default function OrientationSection() {
                   Fragmented application silos, manual data transfer bottlenecks, legacy debt, and operational blind spots.
                 </p>
               </div>
-              <div className="mt-4 pt-3 border-t border-[#D8D4C9]/60 font-mono text-[10px] font-bold text-[#768494]">
+              <div className="mt-4 pt-3 border-t border-[#D8D4C9]/60 font-mono text-[10px] font-bold text-[#475569]">
                 OPERATIONAL LINEAGE
               </div>
             </div>
@@ -92,10 +92,10 @@ export default function OrientationSection() {
             {/* 3. Who We Help */}
             <div className="p-5 rounded-xl bg-white border border-[#D8D4C9] hover:border-[#1463FF] shadow-sm transition-all flex flex-col justify-between">
               <div>
-                <div className="w-8 h-8 rounded-lg bg-[#EDF4FF] border border-[#1463FF]/30 flex items-center justify-center text-[#1463FF] mb-3">
+                <div className="w-8 h-8 rounded-lg bg-[#EDF4FF] border border-[#1463FF]/30 flex items-center justify-center text-[#0050E6] mb-3">
                   <Shield className="w-4 h-4" />
                 </div>
-                <div className="font-mono text-[11px] uppercase tracking-wider text-[#1463FF] font-bold mb-1">
+                <div className="font-mono text-[11px] uppercase tracking-wider text-[#0050E6] font-bold mb-1">
                   WHO WE SUPPORT
                 </div>
                 <div className="font-bold text-[#111827] text-sm mb-1.5">
@@ -105,7 +105,7 @@ export default function OrientationSection() {
                   Founders, CEOs, COOs, and technical leaders seeking reliable systems engineering execution with zero fluff.
                 </p>
               </div>
-              <div className="mt-4 pt-3 border-t border-[#D8D4C9]/60 font-mono text-[10px] font-bold text-[#768494]">
+              <div className="mt-4 pt-3 border-t border-[#D8D4C9]/60 font-mono text-[10px] font-bold text-[#475569]">
                 EXECUTIVE PARTNERSHIP
               </div>
             </div>

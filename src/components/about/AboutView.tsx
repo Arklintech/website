@@ -51,7 +51,7 @@ export default function AboutView() {
                   <span style={{ fontFamily: "'Caveat', var(--font-handwriting), cursive" }}>{ABOUT_CONTENT.hero.subtitle}</span>
                 </p>
 
-                <div className="pt-2 flex flex-wrap items-center gap-3 font-mono text-xs text-[#1463FF] font-semibold tracking-wider uppercase">
+                <div className="pt-2 flex flex-wrap items-center gap-3 font-mono text-xs text-[#0050E6] font-semibold tracking-wider uppercase">
                   <span>{ABOUT_CONTENT.hero.signal}</span>
                 </div>
               </div>
@@ -65,7 +65,7 @@ export default function AboutView() {
             <section className="py-16 md:py-24 border-b border-[#D8D4C9]">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
                 <div className="lg:col-span-4 space-y-2">
-                  <div className="font-mono text-xs font-bold text-[#1463FF] uppercase tracking-widest">
+                  <div className="font-mono text-xs font-bold text-[#0050E6] uppercase tracking-widest">
                     {ABOUT_CONTENT.whoWeAre.sectionNumber} — IDENTITY
                   </div>
                   <h2 className="text-2xl sm:text-3xl font-display font-bold text-[#111827] uppercase tracking-tight">
@@ -96,7 +96,7 @@ export default function AboutView() {
             {/* 03 — THE ARKLINTECH SYSTEM MODEL */}
             <section className="py-16 md:py-24 border-b border-[#D8D4C9]">
               <div className="space-y-4 mb-12">
-                <div className="font-mono text-xs font-bold text-[#1463FF] uppercase tracking-widest">
+                <div className="font-mono text-xs font-bold text-[#0050E6] uppercase tracking-widest">
                   {ABOUT_CONTENT.systemModel.sectionNumber} — ARCHITECTURAL FRAMEWORK
                 </div>
                 <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#111827] uppercase tracking-tight">
@@ -115,7 +115,7 @@ export default function AboutView() {
             {/* 04 — SYSTEMS OVER FEATURES */}
             <section className="py-16 md:py-24 border-b border-[#D8D4C9]">
               <div className="max-w-4xl space-y-6">
-                <div className="font-mono text-xs font-bold text-[#1463FF] uppercase tracking-widest">
+                <div className="font-mono text-xs font-bold text-[#0050E6] uppercase tracking-widest">
                   {ABOUT_CONTENT.systemsOverFeatures.sectionNumber} — PHILOSOPHY
                 </div>
 
@@ -135,7 +135,7 @@ export default function AboutView() {
                           {item}
                         </div>
                         {index < ABOUT_CONTENT.systemsOverFeatures.flow.length - 1 && (
-                          <ChevronRight className="w-4 h-4 text-[#1463FF] shrink-0" />
+                          <ChevronRight className="w-4 h-4 text-[#0050E6] shrink-0" />
                         )}
                       </React.Fragment>
                     ))}
@@ -153,7 +153,7 @@ export default function AboutView() {
             <section className="py-16 md:py-24 border-b border-[#D8D4C9]">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                 <div className="space-y-3">
-                  <div className="font-mono text-xs font-bold text-[#1463FF] uppercase tracking-widest">
+                  <div className="font-mono text-xs font-bold text-[#0050E6] uppercase tracking-widest">
                     {ABOUT_CONTENT.proofThroughWork.sectionNumber} — VERIFIED PROOF
                   </div>
                   <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#111827] uppercase tracking-tight">
@@ -166,7 +166,7 @@ export default function AboutView() {
 
                 <Link
                   href="/work"
-                  className="inline-flex items-center gap-2 text-xs font-mono text-[#1463FF] hover:text-[#111827] transition-colors"
+                  className="inline-flex items-center gap-2 text-xs font-mono text-[#0050E6] hover:text-[#003BB0] transition-colors"
                 >
                   <span>EXPLORE ALL SYSTEMS</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -180,12 +180,12 @@ export default function AboutView() {
                     className="p-6 rounded-xl bg-white border border-[rgba(148,163,184,0.15)] space-y-4 flex flex-col justify-between hover:border-[#1677FF]/50 transition-all group"
                   >
                     <div className="space-y-3">
-                      <div className="flex items-center justify-between font-mono text-xs text-[#768494]">
-                        <span className="text-[#1463FF] font-semibold">{project.systemType ?? project.type}</span>
+                      <div className="flex items-center justify-between font-mono text-xs text-[#475569]">
+                        <span className="text-[#0050E6] font-semibold">{project.systemType ?? project.type}</span>
                         <span>{project.id.toUpperCase()}</span>
                       </div>
 
-                      <h3 className="text-xl font-display font-bold text-[#111827] group-hover:text-[#1463FF] transition-colors">
+                      <h3 className="text-xl font-display font-bold text-[#111827] group-hover:text-[#0050E6] transition-colors">
                         {project.name}
                       </h3>
 
@@ -197,16 +197,16 @@ export default function AboutView() {
                     <div className="pt-4 border-t border-[rgba(148,163,184,0.1)] flex items-center justify-between">
                       <div className="font-mono text-[11px] text-[#111827]">
                         {project.metrics?.[0]
-                          ? <>{project.metrics[0].label}: <span className="text-[#1463FF] font-bold">{project.metrics[0].value}</span></>
-                          : <span className="text-[#1463FF] font-bold">{project.type}</span>}
+                          ? <>{project.metrics[0].label}: <span className="text-[#0050E6] font-bold">{project.metrics[0].value}</span></>
+                          : <span className="text-[#0050E6] font-bold">{project.type}</span>}
                       </div>
 
                       <Link
                         href={project.href}
-                        className="inline-flex items-center gap-1.5 text-xs font-mono text-[#111827] hover:text-[#1463FF] transition-colors"
+                        className="inline-flex items-center gap-1.5 text-xs font-mono text-[#111827] hover:text-[#0050E6] transition-colors"
                       >
                         <span>DOSSIER</span>
-                        <ChevronRight className="w-3.5 h-3.5 text-[#1463FF]" />
+                        <ChevronRight className="w-3.5 h-3.5 text-[#0050E6]" />
                       </Link>
                     </div>
                   </div>
@@ -217,7 +217,7 @@ export default function AboutView() {
             {/* 07 — WHY ARKLINTECH */}
             <section className="py-16 md:py-24 border-b border-[#D8D4C9]">
               <div className="space-y-4 mb-12">
-                <div className="font-mono text-xs font-bold text-[#1463FF] uppercase tracking-widest">
+                <div className="font-mono text-xs font-bold text-[#0050E6] uppercase tracking-widest">
                   {ABOUT_CONTENT.whyAklintech.sectionNumber} — CORE PRINCIPLES
                 </div>
                 <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#111827] uppercase tracking-tight">
@@ -231,7 +231,7 @@ export default function AboutView() {
                     <h3 className="font-mono text-base font-bold text-[#111827]">
                       {pr.title}
                     </h3>
-                    <div className="font-mono text-xs text-[#1463FF] font-semibold">
+                    <div className="font-mono text-xs text-[#0050E6] font-semibold">
                       {pr.subtitle}
                     </div>
                     <p className="text-xs text-[#536070] font-body leading-relaxed">
@@ -245,7 +245,7 @@ export default function AboutView() {
             {/* 08 — DIRECTION / CAPABILITY EVOLUTION */}
             <section className="py-16 md:py-24 border-b border-[#D8D4C9]">
               <div className="space-y-4 mb-12">
-                <div className="font-mono text-xs font-bold text-[#1463FF] uppercase tracking-widest">
+                <div className="font-mono text-xs font-bold text-[#0050E6] uppercase tracking-widest">
                   {ABOUT_CONTENT.evolution.sectionNumber} — {ABOUT_CONTENT.evolution.title}
                 </div>
                 <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#111827] uppercase tracking-tight">
@@ -257,9 +257,9 @@ export default function AboutView() {
                 {ABOUT_CONTENT.evolution.steps.map((step, idx) => (
                   <div
                     key={idx}
-                    className="flex-1 p-4 rounded-lg bg-white border border-[rgba(148,163,184,0.15)] flex flex-col justify-between space-y-3 hover:border-[#1677FF]/50 transition-colors"
+                    className="flex-1 p-4 rounded-lg bg-white border border-[rgba(148,163,184,0.15)] flex flex-col justify-between space-y-3 hover:border-[#0050E6]/50 transition-colors"
                   >
-                    <div className="text-[10px] text-[#1463FF]">STAGE 0{idx + 1}</div>
+                    <div className="text-[10px] text-[#0050E6]">STAGE 0{idx + 1}</div>
                     <div className="font-bold text-xs">{step}</div>
                   </div>
                 ))}
@@ -270,7 +270,7 @@ export default function AboutView() {
             <section className="py-16 md:py-24">
               <div className="p-8 sm:p-12 rounded-xl bg-white border border-[#D8D4C9] flex flex-col md:flex-row items-center justify-between gap-8">
                 <div className="space-y-2 text-center md:text-left">
-                  <div className="font-mono text-xs font-bold text-[#1463FF] uppercase tracking-widest">
+                  <div className="font-mono text-xs font-bold text-[#0050E6] uppercase tracking-widest">
                     {ABOUT_CONTENT.cta.sectionNumber} — ENGAGEMENT
                   </div>
                   <h2 className="text-2xl sm:text-3xl font-display font-bold text-[#111827] uppercase tracking-tight">
@@ -283,7 +283,7 @@ export default function AboutView() {
 
                 <button
                   onClick={onOpenProjectModal}
-                  className="px-6 py-3.5 rounded-lg bg-[#1677FF] hover:bg-[#1677FF]/90 text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all shadow-lg hover:shadow-[#1677FF]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  className="px-6 py-3.5 rounded-lg bg-[#0050E6] hover:bg-[#0042BD] text-white font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all shadow-lg hover:shadow-[#0050E6]/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0050E6]"
                 >
                   <span>{ABOUT_CONTENT.cta.buttonText}</span>
                   <ArrowRight className="w-4 h-4" />

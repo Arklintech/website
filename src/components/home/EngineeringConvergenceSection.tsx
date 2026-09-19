@@ -381,7 +381,7 @@ export default function EngineeringConvergenceSection() {
         {/* SECTION HEADER */}
         <div className="mb-4 sm:mb-6">
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-mono text-[10px] sm:text-[11px] font-semibold text-[#1463FF] tracking-wider uppercase">
+            <span className="font-mono text-[10px] sm:text-[11px] font-semibold text-[#0050E6] tracking-wider uppercase">
               05 — TECHNICAL INFRASTRUCTURE
             </span>
           </div>

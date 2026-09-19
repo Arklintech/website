@@ -98,21 +98,21 @@ export default function HeroContent({ onOpenProjectModal }: HeroContentProps) {
               >
                 <div className="flex items-center gap-1.5">
                   <span
-                    className={`font-mono text-[10px] font-bold transition-colors duration-700 ${
-                      isLit ? 'text-[#1463FF]' : 'text-[#768494]'
+                    className={`font-mono text-[10px] font-bold transition-colors duration-200 ${
+                      isLit ? 'text-[#0050E6]' : 'text-[#475569]'
                     }`}
                   >
                     — {step.num}
                   </span>
                   <span
-                    className={`font-mono text-[11px] font-bold uppercase transition-colors duration-700 ${
-                      isLit ? 'text-[#1463FF]' : 'text-[#111827]'
+                    className={`font-mono text-[11px] font-bold uppercase transition-colors duration-200 ${
+                      isLit ? 'text-[#0050E6]' : 'text-[#111827]'
                     }`}
                   >
                     {step.title}
                   </span>
                 </div>
-                <p className="text-[10px] text-[#536070] font-body mt-1 line-clamp-2 leading-tight">
+                <p className="text-[10px] text-[#475569] font-body mt-1 line-clamp-2 leading-tight">
                   {step.desc}
                 </p>
               </div>

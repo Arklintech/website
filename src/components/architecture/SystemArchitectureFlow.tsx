@@ -226,7 +226,7 @@ export default function SystemArchitectureFlow() {
             <text x="150" y="74" textAnchor="middle" fill="#111827" fontFamily="system-ui, sans-serif" fontSize="17" fontWeight="bold" letterSpacing="0.04em">INTELLIGENCE</text>
             <text x="150" y="93" textAnchor="middle" fill="#536070" fontFamily="system-ui, sans-serif" fontSize="11">Central Decision System</text>
             <line x1="20" y1="113" x2="280" y2="113" stroke="#1463FF" strokeOpacity="0.25" strokeWidth="1" />
-            <text x="150" y="123" textAnchor="middle" fill="#1463FF" fontFamily="monospace" fontSize="9.5" fontWeight="600">Inference · Analysis · Optimization</text>
+            <text x="150" y="123" textAnchor="middle" fill="#0050E6" fontFamily="monospace" fontSize="9.5" fontWeight="600">Inference · Analysis · Optimization</text>
           </g>
 
           {/* 2. NODE: SOFTWARE (x=40, y=120, w=220, h=120) */}
@@ -242,7 +242,7 @@ export default function SystemArchitectureFlow() {
             <text x="110" y="66" textAnchor="middle" fill="#111827" fontFamily="system-ui, sans-serif" fontSize="14.5" fontWeight="bold" letterSpacing="0.04em">SOFTWARE</text>
             <text x="110" y="84" textAnchor="middle" fill="#536070" fontFamily="system-ui, sans-serif" fontSize="10.5">Interfaces &amp; Platforms</text>
             <line x1="15" y1="101" x2="205" y2="101" stroke="#D8D4C9" strokeOpacity="0.8" strokeWidth="1" />
-            <text x="110" y="112" textAnchor="middle" fill="#768494" fontFamily="monospace" fontSize="9">Applications · APIs · Data</text>
+            <text x="110" y="112" textAnchor="middle" fill="#475569" fontFamily="monospace" fontSize="9">Applications · APIs · Data</text>
           </g>
 
           {/* 3. NODE: ORCHESTRATION (x=350, y=200, w=300, h=120) */}
@@ -260,7 +260,7 @@ export default function SystemArchitectureFlow() {
             <text x="150" y="66" textAnchor="middle" fill="#111827" fontFamily="system-ui, sans-serif" fontSize="15" fontWeight="bold" letterSpacing="0.04em">ORCHESTRATION</text>
             <text x="150" y="84" textAnchor="middle" fill="#536070" fontFamily="system-ui, sans-serif" fontSize="10.5">Coordination Layer</text>
             <line x1="20" y1="101" x2="280" y2="101" stroke="#D8D4C9" strokeOpacity="0.8" strokeWidth="1" />
-            <text x="150" y="112" textAnchor="middle" fill="#768494" fontFamily="monospace" fontSize="9.5">Rules · Logic · Scheduling</text>
+            <text x="150" y="112" textAnchor="middle" fill="#475569" fontFamily="monospace" fontSize="9.5">Rules · Logic · Scheduling</text>
           </g>
 
           {/* 4. NODE: AUTOMATION (x=740, y=120, w=220, h=120) */}
@@ -274,7 +274,7 @@ export default function SystemArchitectureFlow() {
             <text x="110" y="66" textAnchor="middle" fill="#111827" fontFamily="system-ui, sans-serif" fontSize="14.5" fontWeight="bold" letterSpacing="0.04em">AUTOMATION</text>
             <text x="110" y="84" textAnchor="middle" fill="#536070" fontFamily="system-ui, sans-serif" fontSize="10.5">Execution Engine</text>
             <line x1="15" y1="101" x2="205" y2="101" stroke="#D8D4C9" strokeOpacity="0.8" strokeWidth="1" />
-            <text x="110" y="112" textAnchor="middle" fill="#768494" fontFamily="monospace" fontSize="9">Workflows · Actions · Integrations</text>
+            <text x="110" y="112" textAnchor="middle" fill="#475569" fontFamily="monospace" fontSize="9">Workflows · Actions · Integrations</text>
           </g>
 
           {/* 5. NODE: DATA SOURCES (x=40, y=380, w=220, h=120) */}
@@ -290,7 +290,7 @@ export default function SystemArchitectureFlow() {
             <text x="110" y="70" textAnchor="middle" fill="#111827" fontFamily="system-ui, sans-serif" fontSize="14" fontWeight="bold" letterSpacing="0.04em">DATA SOURCES</text>
             <text x="110" y="88" textAnchor="middle" fill="#536070" fontFamily="system-ui, sans-serif" fontSize="10.5">Internal &amp; External Data</text>
             <line x1="15" y1="99" x2="205" y2="99" stroke="#D8D4C9" strokeOpacity="0.8" strokeWidth="1" />
-            <text x="110" y="111" textAnchor="middle" fill="#768494" fontFamily="monospace" fontSize="8.5">Structured · Unstructured · Streams</text>
+            <text x="110" y="111" textAnchor="middle" fill="#475569" fontFamily="monospace" fontSize="8.5">Structured · Unstructured · Streams</text>
           </g>
 
           {/* 6. NODE: OPERATIONS (x=350, y=360, w=300, h=120) */}
@@ -305,7 +305,7 @@ export default function SystemArchitectureFlow() {
             <text x="150" y="66" textAnchor="middle" fill="#111827" fontFamily="system-ui, sans-serif" fontSize="15" fontWeight="bold" letterSpacing="0.04em">OPERATIONS</text>
             <text x="150" y="84" textAnchor="middle" fill="#536070" fontFamily="system-ui, sans-serif" fontSize="10.5">Operational Management</text>
             <line x1="20" y1="101" x2="280" y2="101" stroke="#D8D4C9" strokeOpacity="0.8" strokeWidth="1" />
-            <text x="150" y="112" textAnchor="middle" fill="#768494" fontFamily="monospace" fontSize="9.5">Monitoring · Control · Governance</text>
+            <text x="150" y="112" textAnchor="middle" fill="#475569" fontFamily="monospace" fontSize="9.5">Monitoring · Control · Governance</text>
           </g>
 
           {/* 7. NODE: OUTCOME (x=350, y=520, w=300, h=120) */}
@@ -321,7 +321,7 @@ export default function SystemArchitectureFlow() {
             <text x="150" y="66" textAnchor="middle" fill="#111827" fontFamily="system-ui, sans-serif" fontSize="15" fontWeight="bold" letterSpacing="0.04em">OUTCOME</text>
             <text x="150" y="84" textAnchor="middle" fill="#536070" fontFamily="system-ui, sans-serif" fontSize="10.5">Measured Operational Result</text>
             <line x1="20" y1="101" x2="280" y2="101" stroke="#D8D4C9" strokeOpacity="0.8" strokeWidth="1" />
-            <text x="150" y="112" textAnchor="middle" fill="#768494" fontFamily="monospace" fontSize="9.5">Impact · Value · Continuous Improvement</text>
+            <text x="150" y="112" textAnchor="middle" fill="#475569" fontFamily="monospace" fontSize="9.5">Impact · Value · Continuous Improvement</text>
           </g>
         </svg>
       </div>
@@ -332,12 +332,12 @@ export default function SystemArchitectureFlow() {
       <div className="lg:hidden flex flex-col items-center space-y-0 w-full py-2">
         {/* Node: SOFTWARE */}
         <div className="w-full p-5 rounded-2xl bg-white border border-[#D8D4C9] text-center flex flex-col items-center shadow-sm">
-          <div className="w-10 h-10 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/25 flex items-center justify-center text-[#1463FF] mb-2">
+          <div className="w-10 h-10 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/25 flex items-center justify-center text-[#0050E6] mb-2">
             <Monitor className="w-5 h-5" />
           </div>
-          <span className="font-mono text-[10px] font-bold text-[#1463FF]">SOFTWARE</span>
+          <span className="font-mono text-[10px] font-bold text-[#0050E6]">SOFTWARE</span>
           <h3 className="text-base font-display font-bold text-[#111827] uppercase">Interfaces &amp; Platforms</h3>
-          <p className="text-[11px] text-[#768494] font-mono mt-1">Applications · APIs · Data</p>
+          <p className="text-[11px] text-[#475569] font-mono mt-1">Applications · APIs · Data</p>
         </div>
 
         <div className="h-12 w-full flex items-center justify-center relative">
@@ -352,12 +352,12 @@ export default function SystemArchitectureFlow() {
 
         {/* Node: INTELLIGENCE */}
         <div className="w-full p-5 rounded-2xl bg-[#F6FAFF] border-2 border-[#1463FF]/50 text-center flex flex-col items-center shadow-md">
-          <div className="w-11 h-11 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/40 flex items-center justify-center text-[#1463FF] mb-2 shadow-[0_0_10px_rgba(20,99,255,0.15)]">
+          <div className="w-11 h-11 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/40 flex items-center justify-center text-[#0050E6] mb-2 shadow-[0_0_10px_rgba(20,99,255,0.15)]">
             <Brain className="w-6 h-6" />
           </div>
-          <span className="font-mono text-[10px] font-bold text-[#1463FF]">INTELLIGENCE</span>
+          <span className="font-mono text-[10px] font-bold text-[#0050E6]">INTELLIGENCE</span>
           <h3 className="text-lg font-display font-bold text-[#111827] uppercase">Central Decision System</h3>
-          <p className="text-[11px] text-[#1463FF] font-mono mt-1 font-semibold">Inference · Analysis · Optimization</p>
+          <p className="text-[11px] text-[#0050E6] font-mono mt-1 font-semibold">Inference · Analysis · Optimization</p>
         </div>
 
         <div className="h-12 w-full flex items-center justify-center relative">
@@ -372,12 +372,12 @@ export default function SystemArchitectureFlow() {
 
         {/* Node: ORCHESTRATION */}
         <div className="w-full p-5 rounded-2xl bg-white border border-[#D8D4C9] text-center flex flex-col items-center shadow-sm">
-          <div className="w-10 h-10 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/25 flex items-center justify-center text-[#1463FF] mb-2">
+          <div className="w-10 h-10 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/25 flex items-center justify-center text-[#0050E6] mb-2">
             <Workflow className="w-5 h-5" />
           </div>
-          <span className="font-mono text-[10px] font-bold text-[#1463FF]">ORCHESTRATION</span>
+          <span className="font-mono text-[10px] font-bold text-[#0050E6]">ORCHESTRATION</span>
           <h3 className="text-base font-display font-bold text-[#111827] uppercase">Coordination Layer</h3>
-          <p className="text-[11px] text-[#768494] font-mono mt-1">Rules · Logic · Scheduling</p>
+          <p className="text-[11px] text-[#475569] font-mono mt-1">Rules · Logic · Scheduling</p>
         </div>
 
         <div className="h-12 w-full flex items-center justify-center relative">
@@ -392,12 +392,12 @@ export default function SystemArchitectureFlow() {
 
         {/* Node: AUTOMATION */}
         <div className="w-full p-5 rounded-2xl bg-white border border-[#D8D4C9] text-center flex flex-col items-center shadow-sm">
-          <div className="w-10 h-10 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/25 flex items-center justify-center text-[#1463FF] mb-2">
+          <div className="w-10 h-10 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/25 flex items-center justify-center text-[#0050E6] mb-2">
             <Zap className="w-5 h-5" />
           </div>
-          <span className="font-mono text-[10px] font-bold text-[#1463FF]">AUTOMATION</span>
+          <span className="font-mono text-[10px] font-bold text-[#0050E6]">AUTOMATION</span>
           <h3 className="text-base font-display font-bold text-[#111827] uppercase">Execution Engine</h3>
-          <p className="text-[11px] text-[#768494] font-mono mt-1">Workflows · Actions · Integrations</p>
+          <p className="text-[11px] text-[#475569] font-mono mt-1">Workflows · Actions · Integrations</p>
         </div>
 
         <div className="h-12 w-full flex items-center justify-center relative">
@@ -412,11 +412,11 @@ export default function SystemArchitectureFlow() {
 
         {/* Data Sources */}
         <div className="w-full p-5 rounded-2xl bg-white border border-[#D8D4C9] text-center flex flex-col items-center shadow-sm">
-          <div className="w-10 h-10 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/25 flex items-center justify-center text-[#1463FF] mb-2">
+          <div className="w-10 h-10 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/25 flex items-center justify-center text-[#0050E6] mb-2">
             <Database className="w-5 h-5" />
           </div>
           <h3 className="text-base font-display font-bold text-[#111827] uppercase">DATA SOURCES</h3>
-          <p className="text-[11px] text-[#768494] font-mono mt-1">Structured · Unstructured · Streams</p>
+          <p className="text-[11px] text-[#475569] font-mono mt-1">Structured · Unstructured · Streams</p>
         </div>
 
         <div className="h-12 w-full flex items-center justify-center relative">
@@ -431,12 +431,12 @@ export default function SystemArchitectureFlow() {
 
         {/* Node: OPERATIONS */}
         <div className="w-full p-5 rounded-2xl bg-white border border-[#D8D4C9] text-center flex flex-col items-center shadow-sm">
-          <div className="w-10 h-10 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/25 flex items-center justify-center text-[#1463FF] mb-2">
+          <div className="w-10 h-10 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/25 flex items-center justify-center text-[#0050E6] mb-2">
             <Cog className="w-5 h-5" />
           </div>
-          <span className="font-mono text-[10px] font-bold text-[#1463FF]">OPERATIONS</span>
+          <span className="font-mono text-[10px] font-bold text-[#0050E6]">OPERATIONS</span>
           <h3 className="text-base font-display font-bold text-[#111827] uppercase">Operational Management</h3>
-          <p className="text-[11px] text-[#768494] font-mono mt-1">Monitoring · Control · Governance</p>
+          <p className="text-[11px] text-[#475569] font-mono mt-1">Monitoring · Control · Governance</p>
         </div>
 
         <div className="h-12 w-full flex items-center justify-center relative">
@@ -451,12 +451,12 @@ export default function SystemArchitectureFlow() {
 
         {/* Node: OUTCOME */}
         <div className="w-full p-5 rounded-2xl bg-white border border-[#D8D4C9] text-center flex flex-col items-center shadow-sm">
-          <div className="w-10 h-10 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/25 flex items-center justify-center text-[#1463FF] mb-2">
+          <div className="w-10 h-10 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/25 flex items-center justify-center text-[#0050E6] mb-2">
             <Target className="w-5 h-5" />
           </div>
-          <span className="font-mono text-[10px] font-bold text-[#1463FF]">OUTCOME</span>
+          <span className="font-mono text-[10px] font-bold text-[#0050E6]">OUTCOME</span>
           <h3 className="text-base font-display font-bold text-[#111827] uppercase">Measured Operational Result</h3>
-          <p className="text-[11px] text-[#768494] font-mono mt-1">Impact · Value · Continuous Improvement</p>
+          <p className="text-[11px] text-[#475569] font-mono mt-1">Impact · Value · Continuous Improvement</p>
         </div>
       </div>
 

@@ -73,10 +73,10 @@ export default function SelectedProductionSystemsSection() {
             {/* Header Block */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <span className="font-mono text-xs font-bold text-[#1463FF] border border-[#D8D4C9] px-2 py-0.5 rounded bg-[#EDF4FF]">
+                <span className="font-mono text-xs font-bold text-[#0050E6] border border-[#D8D4C9] px-2 py-0.5 rounded bg-[#EDF4FF]">
                   04
                 </span>
-                <span className="font-mono text-[10px] font-bold text-[#1463FF] uppercase tracking-wider">
+                <span className="font-mono text-[10px] font-bold text-[#0050E6] uppercase tracking-wider">
                   PROVEN PRODUCTION EVIDENCE
                 </span>
               </div>
@@ -91,7 +91,7 @@ export default function SelectedProductionSystemsSection() {
               </p>
               <Link
                 href="/work"
-                className="inline-flex items-center gap-1.5 font-mono text-xs font-bold text-[#1463FF] hover:text-[#004AD6] transition-colors group"
+                className="inline-flex items-center gap-1.5 font-mono text-xs font-bold text-[#0050E6] hover:text-[#003BB0] transition-colors group"
               >
                 <span>VIEW ALL SYSTEMS</span>
                 <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
@@ -199,8 +199,8 @@ export default function SelectedProductionSystemsSection() {
               <div className="p-5 sm:p-6 bg-white border-t border-[#E2E8F0]">
                 {/* Top row: Active indicator + meta */}
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="inline-flex items-center gap-1.5 font-mono text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="inline-flex items-center gap-1.5 font-mono text-[10px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-300 px-2 py-0.5 rounded-full">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
                     ACTIVE SYSTEM
                   </span>
                   <span className="font-mono text-[10px] text-[#475569] uppercase tracking-wider">
