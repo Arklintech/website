@@ -26,17 +26,17 @@ export default function TeamPage() {
   };
 
   return (
-    <div className="p-6 max-w-[1200px] mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-3.5 sm:p-6 max-w-[1200px] mx-auto space-y-5 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="font-black text-2xl text-[#0B132B] tracking-tight" style={{ fontFamily: "'Syncopate', sans-serif" }}>
+          <h1 className="font-black text-xl sm:text-2xl text-[#0B132B] tracking-tight" style={{ fontFamily: "'Syncopate', sans-serif" }}>
             Team Members
           </h1>
-          <p className="text-sm text-[#64748B] mt-0.5">Manage administrative accounts and operational access.</p>
+          <p className="text-xs sm:text-sm text-[#64748B] mt-0.5">Manage administrative accounts and operational access.</p>
         </div>
         <button
           onClick={() => setShowInviteModal(true)}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#1463FF] hover:bg-[#004AD6] text-white text-[11px] font-bold font-mono transition-all shadow-md shadow-[#1463FF]/20"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#1463FF] hover:bg-[#004AD6] text-white text-[11px] font-bold font-mono transition-all shadow-md shadow-[#1463FF]/20 self-start sm:self-auto"
         >
           <Plus className="w-3.5 h-3.5" /> INVITE MEMBER
         </button>
@@ -44,43 +44,45 @@ export default function TeamPage() {
 
       {/* Team Table */}
       <div className="bg-white rounded-xl border border-[#E8E4DC] overflow-hidden">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="border-b border-[#F1EDE4] bg-[#FDFBF7]">
-              {['Member', 'Role', 'Status', 'Last Active'].map((h) => (
-                <th key={h} className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase tracking-wider">
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[#F8F5F0]">
-            {members.map((m) => (
-              <tr key={m.id} className="hover:bg-[#FDFBF7] transition-colors">
-                <td className="px-4 py-3.5">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#EDF4FF] border border-[#1463FF]/15 flex items-center justify-center font-bold text-xs text-[#1463FF]">
-                      {m.name.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-xs text-[#0B132B]">{m.name}</p>
-                      <p className="font-mono text-[10px] text-[#64748B]">{m.email}</p>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-4 py-3.5">
-                  <span className="font-mono text-[10px] font-bold text-[#1463FF] bg-[#EDF4FF] border border-[#1463FF]/20 px-2 py-0.5 rounded-full">
-                    {m.role}
-                  </span>
-                </td>
-                <td className="px-4 py-3.5">
-                  <StatusBadge status={m.status} />
-                </td>
-                <td className="px-4 py-3.5 font-mono text-xs text-[#64748B]">{m.lastActive}</td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left min-w-[550px]">
+            <thead>
+              <tr className="border-b border-[#F1EDE4] bg-[#FDFBF7]">
+                {['Member', 'Role', 'Status', 'Last Active'].map((h) => (
+                  <th key={h} className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">
+                    {h}
+                  </th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-[#F8F5F0]">
+              {members.map((m) => (
+                <tr key={m.id} className="hover:bg-[#FDFBF7] transition-colors">
+                  <td className="px-4 py-3.5">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-[#EDF4FF] border border-[#1463FF]/15 flex items-center justify-center font-bold text-xs text-[#1463FF] shrink-0">
+                        {m.name.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-semibold text-xs text-[#0B132B] truncate">{m.name}</p>
+                        <p className="font-mono text-[10px] text-[#64748B] truncate">{m.email}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3.5 whitespace-nowrap">
+                    <span className="font-mono text-[10px] font-bold text-[#1463FF] bg-[#EDF4FF] border border-[#1463FF]/20 px-2 py-0.5 rounded-full">
+                      {m.role}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3.5 whitespace-nowrap">
+                    <StatusBadge status={m.status} />
+                  </td>
+                  <td className="px-4 py-3.5 font-mono text-xs text-[#64748B] whitespace-nowrap">{m.lastActive}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Invite Modal */}

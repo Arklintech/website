@@ -74,7 +74,7 @@ export default function InboxPage() {
   });
 
   return (
-    <div className="h-[calc(100vh-56px)] min-h-[500px] flex overflow-hidden">
+    <div className="h-[calc(100dvh-56px)] min-h-[500px] flex overflow-hidden">
       {/* Left: Conversation List */}
       <div className={`w-full md:w-[320px] shrink-0 border-r border-[#E8E4DC] bg-white flex-col ${selected ? 'hidden md:flex' : 'flex'}`}>
         <div className="p-4 border-b border-[#E8E4DC]">
@@ -154,18 +154,37 @@ export default function InboxPage() {
         ) : (
           <>
             {/* Thread Header */}
-            <div className="px-4 md:px-6 py-4 border-b border-[#E8E4DC] bg-white flex items-center gap-3">
+            <div className="px-3.5 sm:px-6 py-3 sm:py-4 border-b border-[#E8E4DC] bg-white flex items-center gap-3">
               <button
                 onClick={() => setSelected(null)}
-                className="md:hidden p-1.5 rounded-lg text-[#64748B] hover:bg-[#F5F1E8]"
+                className="md:hidden px-2.5 py-1 rounded-lg text-[#1463FF] bg-[#EDF4FF] hover:bg-[#DBEAFE] font-mono text-xs font-bold shrink-0"
                 aria-label="Back to conversations"
               >
-                ←
+                ← Back
               </button>
               <div className="flex-1 min-w-0">
-                <h2 className="font-bold text-[#0B132B] truncate">{selected.subject || 'Conversation'}</h2>
-                <div className="flex items-center gap-2 mt-0.5">
-                  <StatusBadge status={selected.status} />
+                <h2 className="font-bold text-sm sm:text-base text-[#0B132B] truncate">{selected.subject || 'Conversation'}</h2>
+                <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                  <select
+                    value={selected.status}
+                    onChange={async (e) => {
+                      const newStatus = e.target.value as any;
+                      const res = await fetchAdmin(`/api/admin/conversations/${selected.id}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: newStatus }),
+                      });
+                      if (res.ok) setSelected(prev => prev ? { ...prev, status: newStatus } : null);
+                    }}
+                    className="lg:hidden text-[10px] font-mono font-bold bg-[#EDF4FF] text-[#1463FF] border border-[#1463FF]/20 rounded px-1.5 py-0.5 outline-none cursor-pointer"
+                  >
+                    {(['OPEN', 'WAITING_FOR_THEM', 'WAITING_FOR_US', 'SNOOZED', 'CLOSED'] as const).map(s => (
+                      <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>
+                    ))}
+                  </select>
+                  <div className="hidden lg:block">
+                    <StatusBadge status={selected.status} />
+                  </div>
                   <span className="font-mono text-[9px] text-[#94A3B8]">
                     {selected.assigneeId ? 'Assigned' : 'Unassigned'}
                   </span>
@@ -174,7 +193,7 @@ export default function InboxPage() {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            <div className="flex-1 overflow-y-auto p-3.5 sm:p-6 space-y-4">
               {messages.length === 0 ? (
                 <div className="text-center py-12">
                   <MessageSquare className="w-8 h-8 text-[#D8D4C9] mx-auto mb-2" />
@@ -186,7 +205,7 @@ export default function InboxPage() {
                     <div className="w-8 h-8 rounded-full bg-[#EDF4FF] border border-[#1463FF]/15 flex items-center justify-center text-[#1463FF] font-bold text-[11px] shrink-0">
                       {msg.direction === 'OUTBOUND' ? 'A' : 'C'}
                     </div>
-                    <div className={`max-w-[70%] ${msg.direction === 'OUTBOUND' ? 'items-end' : ''} flex flex-col gap-1`}>
+                    <div className={`max-w-[85%] sm:max-w-[70%] ${msg.direction === 'OUTBOUND' ? 'items-end' : ''} flex flex-col gap-1`}>
                       {msg.isInternal && (
                         <span className="font-mono text-[9px] text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
                           INTERNAL NOTE
@@ -209,23 +228,23 @@ export default function InboxPage() {
             </div>
 
             {/* Internal Note & Journal Input */}
-            <div className="p-4 border-t border-[#E8E4DC] bg-white">
-              <div className="mb-2 flex items-center justify-between">
-                <span className="font-mono text-[9px] font-bold text-[#64748B] uppercase">Internal Operational Note (work@arklintech.com)</span>
-                <span className="text-[10px] text-[#94A3B8]">Replies sent manually via corporate mailbox</span>
+            <div className="p-3 sm:p-4 border-t border-[#E8E4DC] bg-white">
+              <div className="mb-2 flex items-center justify-between flex-wrap gap-1">
+                <span className="font-mono text-[9px] font-bold text-[#64748B] uppercase">Internal Note (work@arklintech.com)</span>
+                <span className="text-[10px] text-[#94A3B8]">Manual mailbox replies</span>
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <textarea
                   value={replyBody}
                   onChange={e => setReplyBody(e.target.value)}
                   rows={2}
                   placeholder="Record an internal operational note or call summary..."
-                  className="flex-1 bg-[#F7F4EC] border border-[#D8D4C9] rounded-xl px-4 py-2.5 text-sm text-[#0B132B] placeholder-[#94A3B8] focus:outline-none focus:border-[#1463FF] resize-none"
+                  className="flex-1 bg-[#F7F4EC] border border-[#D8D4C9] rounded-xl px-3.5 py-2 text-sm text-[#0B132B] placeholder-[#94A3B8] focus:outline-none focus:border-[#1463FF] resize-none"
                 />
                 <button
                   onClick={addInternalNote}
                   disabled={sendingReply || !replyBody.trim()}
-                  className="px-4 py-2 bg-[#1463FF] hover:bg-[#004AD6] text-white text-[11px] font-bold font-mono rounded-lg transition-all disabled:opacity-50 flex items-center gap-1.5 shrink-0 self-end"
+                  className="px-4 py-2.5 bg-[#1463FF] hover:bg-[#004AD6] text-white text-[11px] font-bold font-mono rounded-lg transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 shrink-0"
                 >
                   {sendingReply ? 'SAVING...' : 'SAVE NOTE'} <ArrowRight className="w-3 h-3" />
                 </button>
@@ -237,7 +256,7 @@ export default function InboxPage() {
 
       {/* Right: Context Panel */}
       {selected && (
-        <div className="w-[260px] shrink-0 border-l border-[#E8E4DC] bg-white overflow-y-auto">
+        <div className="hidden lg:block w-[260px] shrink-0 border-l border-[#E8E4DC] bg-white overflow-y-auto">
           <div className="p-4 border-b border-[#E8E4DC]">
             <h3 className="font-bold text-sm text-[#0B132B]">Context</h3>
           </div>

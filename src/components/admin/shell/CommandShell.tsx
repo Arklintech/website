@@ -24,6 +24,22 @@ export default function CommandShell({ children }: CommandShellProps) {
   const [initializing, setInitializing] = useState(true);
   const [sidebarData, setSidebarData] = useState({ inboxUnread: 0, followupsOverdue: 0, leadsNew: 0, unreadNotifications: 0 });
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('ark_sidebar_collapsed') === 'true';
+    }
+    return false;
+  });
+
+  const handleToggleSidebar = () => {
+    setIsSidebarCollapsed(prev => {
+      const next = !prev;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('ark_sidebar_collapsed', String(next));
+      }
+      return next;
+    });
+  };
 
   // Authenticate session state via Firebase onAuthStateChanged
   useEffect(() => {
@@ -276,16 +292,18 @@ export default function CommandShell({ children }: CommandShellProps) {
 
   // ── Authenticated Shell ───────────────────────────────────────────────────────
   return (
-    <div className="h-screen w-full bg-[#F7F4EC] flex overflow-hidden">
+    <div className="h-[100dvh] min-h-[100dvh] w-full bg-[#F7F4EC] flex overflow-hidden">
       <AdminSidebar
         inboxUnread={sidebarData.inboxUnread}
         followupsOverdue={sidebarData.followupsOverdue}
         leadsNew={sidebarData.leadsNew}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={handleToggleSidebar}
         isMobileOpen={isMobileSidebarOpen}
         onCloseMobile={() => setIsMobileSidebarOpen(false)}
       />
 
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 h-[100dvh] overflow-hidden">
         <AdminTopbar
           unreadNotifications={sidebarData.unreadNotifications}
           adminKey={adminKey}

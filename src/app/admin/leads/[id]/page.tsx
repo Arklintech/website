@@ -79,20 +79,20 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
   }
 
   return (
-    <div className="p-6 max-w-[1200px] mx-auto">
+    <div className="p-3.5 sm:p-6 max-w-[1200px] mx-auto">
       {/* Back + Header */}
       <div className="mb-6">
         <Link href="/admin/leads" className="flex items-center gap-1 text-[11px] font-mono font-bold text-[#64748B] hover:text-[#1463FF] transition-colors mb-3">
           <ChevronLeft className="w-3.5 h-3.5" /> Back to Leads
         </Link>
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/20 flex items-center justify-center text-[#1463FF] font-black text-xl">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/20 flex items-center justify-center text-[#1463FF] font-black text-lg sm:text-xl shrink-0">
               {lead.name.charAt(0)}
             </div>
-            <div>
-              <h1 className="font-black text-2xl text-[#0B132B]" style={{ fontFamily: "'Syncopate', sans-serif" }}>{lead.name}</h1>
-              <div className="flex items-center gap-3 mt-1">
+            <div className="min-w-0">
+              <h1 className="font-black text-xl sm:text-2xl text-[#0B132B] truncate" style={{ fontFamily: "'Syncopate', sans-serif" }}>{lead.name}</h1>
+              <div className="flex items-center gap-2 sm:gap-3 mt-1 flex-wrap">
                 <StatusBadge status={lead.status} size="md" />
                 <span className="font-mono text-[9px] font-bold text-[#94A3B8]">
                   Added {new Date(lead.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
@@ -101,7 +101,7 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <button className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#D8D4C9] bg-white text-[11px] font-bold font-mono text-[#475569] hover:border-[#1463FF] hover:text-[#1463FF] transition-all">
               <MessageSquare className="w-3.5 h-3.5" />
               <span>NEW CONVERSATION</span>
@@ -119,11 +119,11 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
 
           {/* Pipeline Stage */}
           <div className="bg-white rounded-xl border border-[#E8E4DC] overflow-hidden">
-            <div className="px-5 py-4 border-b border-[#E8E4DC]">
+            <div className="px-4 sm:px-5 py-3.5 sm:py-4 border-b border-[#E8E4DC]">
               <h2 className="font-bold text-sm text-[#0B132B]">Pipeline Stage</h2>
             </div>
-            <div className="p-5">
-              <div className="flex items-center gap-0">
+            <div className="p-4 sm:p-5 overflow-x-auto">
+              <div className="flex items-center gap-0 min-w-[520px] sm:min-w-0">
                 {STAGES.map((stage, i) => {
                   const isActive = lead.status === stage;
                   const isPassed = STAGES.indexOf(lead.status) > i;
@@ -158,10 +158,10 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
 
           {/* Lead Info */}
           <div className="bg-white rounded-xl border border-[#E8E4DC] overflow-hidden">
-            <div className="px-5 py-4 border-b border-[#E8E4DC]">
+            <div className="px-4 sm:px-5 py-3.5 sm:py-4 border-b border-[#E8E4DC]">
               <h2 className="font-bold text-sm text-[#0B132B]">Lead Information</h2>
             </div>
-            <div className="p-5 grid grid-cols-2 gap-4">
+            <div className="p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               {[
                 { label: 'Email', value: lead.email, icon: <Mail className="w-3.5 h-3.5" /> },
                 { label: 'Phone', value: lead.phone, icon: <Phone className="w-3.5 h-3.5" /> },
@@ -174,7 +174,7 @@ export default function LeadDetailPage({ params }: LeadDetailPageProps) {
                   <span className="font-mono text-[9px] font-bold text-[#94A3B8] uppercase tracking-wider flex items-center gap-1">
                     {item.icon} {item.label}
                   </span>
-                  <span className="text-[13px] font-medium text-[#0B132B]">{item.value || <span className="text-[#D8D4C9]">—</span>}</span>
+                  <span className="text-[13px] font-medium text-[#0B132B] break-all">{item.value || <span className="text-[#D8D4C9]">—</span>}</span>
                 </div>
               ))}
             </div>

@@ -28,7 +28,14 @@ export default function MetricSparkline({ data, color = '#1463FF', height = 36, 
   const areaD = `M 0,${height} L ${points.join(' L ')} L ${width},${height} Z`;
 
   return (
-    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} fill="none">
+    <svg
+      width={width}
+      height={height}
+      viewBox={`0 0 ${width} ${height}`}
+      fill="none"
+      className="max-w-full shrink-0"
+      style={{ maxWidth: `${width}px`, height: 'auto', maxHeight: `${height}px` }}
+    >
       <defs>
         <linearGradient id={`grad-${color.replace('#', '')}`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor={color} stopOpacity="0.15" />

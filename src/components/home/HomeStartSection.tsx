@@ -21,14 +21,44 @@ export default function HomeStartSection({ onOpenProjectModal }: HomeStartSectio
     requirement: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSubmitting) return;
     setIsSubmitting(true);
-    setTimeout(() => {
+    setSubmitError(null);
+
+    try {
+      const res = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formState.name,
+          company: formState.company,
+          email: formState.email,
+          phone: formState.phone || undefined,
+          industry: formState.industry,
+          service: formState.service,
+          requirement: formState.requirement,
+        }),
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (res.ok && data?.success) {
+        setSubmitted(true);
+      } else {
+        setSubmitError(
+          data?.error ||
+          'Unable to submit your inquiry right now. Please try again or contact us directly.'
+        );
+      }
+    } catch {
+      setSubmitError('A network error occurred. Please check your connection and try again.');
+    } finally {
       setIsSubmitting(false);
-      setSubmitted(true);
-    }, 450);
+    }
   };
 
   return (
@@ -258,6 +288,13 @@ export default function HomeStartSection({ onOpenProjectModal }: HomeStartSectio
                     className="w-full px-3.5 py-2.5 rounded-lg bg-[#EDF4FF] border border-[#D8D4C9] text-xs sm:text-sm text-[#111827] placeholder:text-[#768494] focus:outline-none focus:border-[#1677FF] focus:ring-1 focus:ring-[#1677FF] font-body resize-none transition-colors"
                   />
                 </div>
+
+                {/* Error message */}
+                {submitError && (
+                  <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-700 font-mono">
+                    {submitError}
+                  </div>
+                )}
 
                 {/* Issue 19 Fix: Closely grouped confidentiality & submit CTA */}
                 <div className="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-4">

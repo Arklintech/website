@@ -203,39 +203,22 @@ export default function ProjectWorkspacePage({ params }: { params: { id: string 
   ];
 
   return (
-    <div className="p-6 max-w-[1280px] mx-auto space-y-6">
-      {/* Top Header Breadcrumb & Search Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-2 text-xs font-medium text-[#64748B]">
-          <Link href="/admin/projects" className="hover:text-[#1463FF] transition-colors">Projects</Link>
+    <div className="p-3.5 sm:p-6 max-w-[1280px] mx-auto space-y-5 sm:space-y-6">
+      {/* Top Header Breadcrumb */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-2 text-xs font-medium text-[#64748B] flex-wrap">
+          <Link href="/admin/projects" className="hover:text-[#1463FF] transition-colors font-mono">Projects</Link>
           <span>/</span>
-          <span className="font-bold text-[#0B132B]">{project.name}</span>
-        </div>
-
-        <div className="flex items-center gap-3 self-end sm:self-auto">
-          <div className="relative">
-            <Search className="w-3.5 h-3.5 text-[#94A3B8] absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Search projects, clients..."
-              className="bg-white border border-[#E8E4DC] rounded-xl pl-8 pr-3 py-1.5 text-xs text-[#0B132B] w-56 focus:outline-none focus:border-[#1463FF]"
-            />
-          </div>
-          <button className="p-2 rounded-xl bg-white border border-[#E8E4DC] text-[#64748B] hover:text-[#0B132B]">
-            <Bell className="w-4 h-4" />
-          </button>
-          <div className="w-8 h-8 rounded-full bg-[#0B132B] text-white flex items-center justify-center font-bold text-xs">
-            AA
-          </div>
+          <span className="font-bold text-[#0B132B] truncate max-w-[200px] sm:max-w-none">{project.name}</span>
         </div>
       </div>
 
       {/* Project Identity Header Card (Matching Reference 1) */}
-      <div className="bg-white rounded-2xl border border-[#E8E4DC] p-6 shadow-sm">
+      <div className="bg-white rounded-2xl border border-[#E8E4DC] p-4 sm:p-6 shadow-sm">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           {/* Left: Thumbnail & Project Meta */}
-          <div className="flex items-start gap-4">
-            <div className="w-20 h-20 rounded-xl overflow-hidden bg-[#0B132B] border border-[#E8E4DC] shrink-0 relative flex items-center justify-center shadow-inner">
+          <div className="flex flex-col sm:flex-row items-start gap-4 w-full lg:w-auto">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-[#0B132B] border border-[#E8E4DC] shrink-0 relative flex items-center justify-center shadow-inner">
               <img
                 src="/visuals/work/cafe-digital.png"
                 alt="Project Thumbnail"
@@ -247,13 +230,13 @@ export default function ProjectWorkspacePage({ params }: { params: { id: string 
               />
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <span className="px-2.5 py-0.5 rounded-full font-mono text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                   {project.status || 'Active'}
                 </span>
               </div>
-              <h1 className="font-black text-2xl text-[#0B132B] tracking-tight">
+              <h1 className="font-black text-xl sm:text-2xl text-[#0B132B] tracking-tight truncate">
                 {project.name}
               </h1>
               <p className="text-xs text-[#64748B] font-medium">
@@ -632,40 +615,42 @@ export default function ProjectWorkspacePage({ params }: { params: { id: string 
           </div>
 
           <div className="bg-white rounded-xl border border-[#E8E4DC] overflow-hidden">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="border-b border-[#F1EDE4] bg-[#FDFBF7]">
-                  <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Title</th>
-                  <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Description</th>
-                  <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Due Date</th>
-                  <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#F8F5F0]">
-                {(!project.milestones || project.milestones.length === 0) ? (
-                  <tr>
-                    <td colSpan={4} className="p-8 text-center text-[#94A3B8]">
-                      No milestones recorded yet. Click &quot;Add Milestone&quot; to create one.
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs min-w-[550px]">
+                <thead>
+                  <tr className="border-b border-[#F1EDE4] bg-[#FDFBF7]">
+                    <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Title</th>
+                    <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Description</th>
+                    <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Due Date</th>
+                    <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Status</th>
                   </tr>
-                ) : (
-                  project.milestones.map((ms: ProjectMilestoneRecord) => (
-                    <tr key={ms.id} className="hover:bg-[#FDFBF7]">
-                      <td className="px-4 py-3 font-bold text-[#0B132B]">{ms.title}</td>
-                      <td className="px-4 py-3 text-[#64748B]">{ms.description || '—'}</td>
-                      <td className="px-4 py-3 font-mono">{ms.dueDate || '—'}</td>
-                      <td className="px-4 py-3">
-                        <span className={`px-2 py-0.5 rounded-full font-mono text-[10px] font-bold ${
-                          ms.status === 'COMPLETED' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
-                        }`}>
-                          {ms.status}
-                        </span>
+                </thead>
+                <tbody className="divide-y divide-[#F8F5F0]">
+                  {(!project.milestones || project.milestones.length === 0) ? (
+                    <tr>
+                      <td colSpan={4} className="p-8 text-center text-[#94A3B8]">
+                        No milestones recorded yet. Click &quot;Add Milestone&quot; to create one.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    project.milestones.map((ms: ProjectMilestoneRecord) => (
+                      <tr key={ms.id} className="hover:bg-[#FDFBF7]">
+                        <td className="px-4 py-3 font-bold text-[#0B132B]">{ms.title}</td>
+                        <td className="px-4 py-3 text-[#64748B]">{ms.description || '—'}</td>
+                        <td className="px-4 py-3 font-mono">{ms.dueDate || '—'}</td>
+                        <td className="px-4 py-3">
+                          <span className={`px-2 py-0.5 rounded-full font-mono text-[10px] font-bold ${
+                            ms.status === 'COMPLETED' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
+                          }`}>
+                            {ms.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -719,50 +704,52 @@ export default function ProjectWorkspacePage({ params }: { params: { id: string 
           </div>
 
           <div className="bg-white rounded-xl border border-[#E8E4DC] overflow-hidden">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="border-b border-[#F1EDE4] bg-[#FDFBF7]">
-                  <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">File Name</th>
-                  <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Size</th>
-                  <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Upload Date</th>
-                  <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#F8F5F0]">
-                {(!project.files || project.files.length === 0) ? (
-                  <tr>
-                    <td colSpan={4} className="p-8 text-center text-[#94A3B8]">
-                      No files uploaded yet. Click &quot;Upload File to Drive&quot; to attach project specifications and assets.
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs min-w-[550px]">
+                <thead>
+                  <tr className="border-b border-[#F1EDE4] bg-[#FDFBF7]">
+                    <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">File Name</th>
+                    <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Size</th>
+                    <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Upload Date</th>
+                    <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase text-right">Action</th>
                   </tr>
-                ) : (
-                  project.files.map((file: ProjectFileRecord) => (
-                    <tr key={file.id} className="hover:bg-[#FDFBF7]">
-                      <td className="px-4 py-3 font-medium text-[#0B132B] flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-[#1463FF]" />
-                        <span>{file.name}</span>
-                      </td>
-                      <td className="px-4 py-3 font-mono text-[#64748B]">
-                        {(file.sizeBytes / 1024).toFixed(1)} KB
-                      </td>
-                      <td className="px-4 py-3 font-mono text-[#64748B]">
-                        {new Date(file.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        <a
-                          href={file.driveUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-xs font-mono font-bold text-[#1463FF] hover:underline"
-                        >
-                          Open Drive <ExternalLink className="w-3 h-3" />
-                        </a>
+                </thead>
+                <tbody className="divide-y divide-[#F8F5F0]">
+                  {(!project.files || project.files.length === 0) ? (
+                    <tr>
+                      <td colSpan={4} className="p-8 text-center text-[#94A3B8]">
+                        No files uploaded yet. Click &quot;Upload File to Drive&quot; to attach project specifications and assets.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    project.files.map((file: ProjectFileRecord) => (
+                      <tr key={file.id} className="hover:bg-[#FDFBF7]">
+                        <td className="px-4 py-3 font-medium text-[#0B132B] flex items-center gap-2">
+                          <FileText className="w-4 h-4 text-[#1463FF]" />
+                          <span>{file.name}</span>
+                        </td>
+                        <td className="px-4 py-3 font-mono text-[#64748B]">
+                          {(file.sizeBytes / 1024).toFixed(1)} KB
+                        </td>
+                        <td className="px-4 py-3 font-mono text-[#64748B]">
+                          {new Date(file.createdAt).toLocaleDateString()}
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <a
+                            href={file.driveUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-xs font-mono font-bold text-[#1463FF] hover:underline"
+                          >
+                            Open Drive <ExternalLink className="w-3 h-3" />
+                          </a>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -781,70 +768,72 @@ export default function ProjectWorkspacePage({ params }: { params: { id: string 
           </div>
 
           {/* Financial summary metrics */}
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-            <div className="bg-white rounded-xl border border-[#E8E4DC] p-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+            <div className="bg-white rounded-xl border border-[#E8E4DC] p-3 sm:p-4">
               <span className="font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Project Value</span>
-              <div className="font-black text-xl text-[#0B132B] mt-1 font-mono">₹{project.projectValue.toLocaleString('en-IN')}</div>
+              <div className="font-black text-lg sm:text-xl text-[#0B132B] mt-1 font-mono">₹{project.projectValue.toLocaleString('en-IN')}</div>
             </div>
-            <div className="bg-white rounded-xl border border-[#E8E4DC] p-4">
+            <div className="bg-white rounded-xl border border-[#E8E4DC] p-3 sm:p-4">
               <span className="font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Total Invoiced</span>
-              <div className="font-black text-xl text-[#1463FF] mt-1 font-mono">₹{(project.summary?.totalInvoiced || 130000).toLocaleString('en-IN')}</div>
+              <div className="font-black text-lg sm:text-xl text-[#1463FF] mt-1 font-mono">₹{(project.summary?.totalInvoiced || 130000).toLocaleString('en-IN')}</div>
             </div>
-            <div className="bg-white rounded-xl border border-[#E8E4DC] p-4">
+            <div className="bg-white rounded-xl border border-[#E8E4DC] p-3 sm:p-4">
               <span className="font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Total Paid</span>
-              <div className="font-black text-xl text-emerald-600 mt-1 font-mono">₹{(project.summary?.totalPaid || 0).toLocaleString('en-IN')}</div>
+              <div className="font-black text-lg sm:text-xl text-emerald-600 mt-1 font-mono">₹{(project.summary?.totalPaid || 0).toLocaleString('en-IN')}</div>
             </div>
-            <div className="bg-white rounded-xl border border-[#E8E4DC] p-4">
+            <div className="bg-white rounded-xl border border-[#E8E4DC] p-3 sm:p-4">
               <span className="font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Outstanding</span>
-              <div className="font-black text-xl text-amber-600 mt-1 font-mono">₹{(project.summary?.outstanding || 120000).toLocaleString('en-IN')}</div>
+              <div className="font-black text-lg sm:text-xl text-amber-600 mt-1 font-mono">₹{(project.summary?.outstanding || 120000).toLocaleString('en-IN')}</div>
             </div>
           </div>
 
           {/* Invoices List */}
           <div className="bg-white rounded-xl border border-[#E8E4DC] overflow-hidden">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="border-b border-[#F1EDE4] bg-[#FDFBF7]">
-                  <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Invoice #</th>
-                  <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Date</th>
-                  <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Status</th>
-                  <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Total (INR)</th>
-                  <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#F8F5F0]">
-                {(!project.invoices || project.invoices.length === 0) ? (
-                  <tr>
-                    <td colSpan={5} className="p-8 text-center text-[#94A3B8]">
-                      No invoices created yet for this project. Click &quot;Create Invoice&quot; to bill services.
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs min-w-[550px]">
+                <thead>
+                  <tr className="border-b border-[#F1EDE4] bg-[#FDFBF7]">
+                    <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Invoice #</th>
+                    <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Date</th>
+                    <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Status</th>
+                    <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Total (INR)</th>
+                    <th className="px-4 py-3 font-mono text-[9px] font-bold text-[#94A3B8] uppercase text-right">Actions</th>
                   </tr>
-                ) : (
-                  project.invoices.map((inv: InvoiceRecord) => (
-                    <tr key={inv.id} className="hover:bg-[#FDFBF7]">
-                      <td className="px-4 py-3 font-mono font-bold text-[#1463FF]">{inv.invoiceNumber}</td>
-                      <td className="px-4 py-3 font-mono text-[#64748B]">{inv.invoiceDate}</td>
-                      <td className="px-4 py-3">
-                        <span className="px-2 py-0.5 rounded-full font-mono text-[10px] font-bold bg-[#DBEAFE] text-[#1D4ED8]">
-                          {inv.status}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 font-mono font-bold text-[#0B132B]">₹{inv.total.toLocaleString('en-IN')}</td>
-                      <td className="px-4 py-3 text-right space-x-2">
-                        <a
-                          href={`/api/admin/invoices/${inv.id}/pdf`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs font-mono font-bold text-[#1463FF] hover:underline"
-                        >
-                          Download PDF
-                        </a>
+                </thead>
+                <tbody className="divide-y divide-[#F8F5F0]">
+                  {(!project.invoices || project.invoices.length === 0) ? (
+                    <tr>
+                      <td colSpan={5} className="p-8 text-center text-[#94A3B8]">
+                        No invoices created yet for this project. Click &quot;Create Invoice&quot; to bill services.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    project.invoices.map((inv: InvoiceRecord) => (
+                      <tr key={inv.id} className="hover:bg-[#FDFBF7]">
+                        <td className="px-4 py-3 font-mono font-bold text-[#1463FF]">{inv.invoiceNumber}</td>
+                        <td className="px-4 py-3 font-mono text-[#64748B]">{inv.invoiceDate}</td>
+                        <td className="px-4 py-3">
+                          <span className="px-2 py-0.5 rounded-full font-mono text-[10px] font-bold bg-[#DBEAFE] text-[#1D4ED8]">
+                            {inv.status}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 font-mono font-bold text-[#0B132B]">₹{inv.total.toLocaleString('en-IN')}</td>
+                        <td className="px-4 py-3 text-right space-x-2">
+                          <a
+                            href={`/api/admin/invoices/${inv.id}/pdf`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs font-mono font-bold text-[#1463FF] hover:underline"
+                          >
+                            Download PDF
+                          </a>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}

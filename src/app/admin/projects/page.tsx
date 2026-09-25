@@ -92,7 +92,7 @@ export default function ProjectsDirectoryPage() {
   });
 
   return (
-    <div className="p-6 max-w-[1280px] mx-auto space-y-6">
+    <div className="p-3.5 sm:p-6 max-w-[1280px] mx-auto space-y-4 sm:space-y-6">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -126,7 +126,7 @@ export default function ProjectsDirectoryPage() {
             className="w-full bg-[#FDFBF7] border border-[#E8E4DC] rounded-lg pl-9 pr-3 py-2 text-xs text-[#0B132B] focus:outline-none focus:border-[#1463FF]"
           />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
           {['ALL', 'ACTIVE', 'ON_HOLD', 'COMPLETED'].map((st) => (
             <button
               key={st}
@@ -282,7 +282,7 @@ export default function ProjectsDirectoryPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-mono text-[9px] font-bold text-[#64748B] uppercase block mb-1">Commercial Value (INR)</label>
                   <input
@@ -303,7 +303,7 @@ export default function ProjectsDirectoryPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="font-mono text-[9px] font-bold text-[#64748B] uppercase block mb-1">Start Date</label>
                   <input

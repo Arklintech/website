@@ -91,7 +91,7 @@ export default function BillingDirectoryPage() {
   });
 
   return (
-    <div className="p-6 max-w-[1280px] mx-auto space-y-6">
+    <div className="p-3.5 sm:p-6 max-w-[1280px] mx-auto space-y-5 sm:space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -100,10 +100,10 @@ export default function BillingDirectoryPage() {
             <span>/</span>
             <span className="text-[#1463FF] font-bold">BILLING</span>
           </div>
-          <h1 className="font-black text-2xl text-[#0B132B] tracking-tight" style={{ fontFamily: "'Syncopate', sans-serif" }}>
+          <h1 className="font-black text-xl sm:text-2xl text-[#0B132B] tracking-tight" style={{ fontFamily: "'Syncopate', sans-serif" }}>
             Invoices & Billing
           </h1>
-          <p className="text-sm text-[#64748B] mt-0.5">Manage commercial invoicing, itemized service billings, and generated PDF documents.</p>
+          <p className="text-xs sm:text-sm text-[#64748B] mt-0.5">Manage commercial invoicing, itemized service billings, and generated PDF documents.</p>
         </div>
 
         <Link
@@ -126,20 +126,20 @@ export default function BillingDirectoryPage() {
       )}
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl border border-[#E8E4DC] p-5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        <div className="bg-white rounded-xl border border-[#E8E4DC] p-4 sm:p-5">
           <span className="font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Total Invoiced</span>
-          <div className="font-black text-2xl text-[#0B132B] mt-1 font-mono">₹{totalInvoiced.toLocaleString('en-IN')}</div>
+          <div className="font-black text-xl sm:text-2xl text-[#0B132B] mt-1 font-mono">₹{totalInvoiced.toLocaleString('en-IN')}</div>
           <span className="text-[11px] font-medium text-[#64748B]">Across {invoices.length} billing records</span>
         </div>
-        <div className="bg-white rounded-xl border border-[#E8E4DC] p-5">
+        <div className="bg-white rounded-xl border border-[#E8E4DC] p-4 sm:p-5">
           <span className="font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Total Collected</span>
-          <div className="font-black text-2xl text-emerald-600 mt-1 font-mono">₹{totalPaid.toLocaleString('en-IN')}</div>
+          <div className="font-black text-xl sm:text-2xl text-emerald-600 mt-1 font-mono">₹{totalPaid.toLocaleString('en-IN')}</div>
           <span className="text-[11px] font-bold text-emerald-600">Paid invoices</span>
         </div>
-        <div className="bg-white rounded-xl border border-[#E8E4DC] p-5">
+        <div className="bg-white rounded-xl border border-[#E8E4DC] p-4 sm:p-5">
           <span className="font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Outstanding Amount</span>
-          <div className="font-black text-2xl text-amber-600 mt-1 font-mono">₹{totalOutstanding.toLocaleString('en-IN')}</div>
+          <div className="font-black text-xl sm:text-2xl text-amber-600 mt-1 font-mono">₹{totalOutstanding.toLocaleString('en-IN')}</div>
           <span className="text-[11px] font-medium text-[#64748B]">Sent & pending settlement</span>
         </div>
       </div>
@@ -156,7 +156,7 @@ export default function BillingDirectoryPage() {
             className="w-full bg-[#FDFBF7] border border-[#E8E4DC] rounded-lg pl-9 pr-3 py-2 text-xs text-[#0B132B] focus:outline-none focus:border-[#1463FF]"
           />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 flex-wrap">
           {['ALL', 'SENT', 'PAID', 'DRAFT'].map((st) => (
             <button
               key={st}
@@ -175,7 +175,8 @@ export default function BillingDirectoryPage() {
 
       {/* Invoices Table */}
       <div className="bg-white rounded-xl border border-[#E8E4DC] overflow-hidden">
-        <table className="w-full text-left text-xs">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs min-w-[700px]">
           <thead>
             <tr className="border-b border-[#F1EDE4] bg-[#FDFBF7]">
               <th className="px-4 py-3.5 font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Invoice #</th>
@@ -275,6 +276,7 @@ export default function BillingDirectoryPage() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Delete Confirmation Modal */}

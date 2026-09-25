@@ -29,8 +29,8 @@ export default function VisitsPage() {
   }, []);
 
   return (
-    <div className="p-6 max-w-[1200px] mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-3.5 sm:p-6 max-w-[1200px] mx-auto space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="font-black text-2xl text-[#0B132B] tracking-tight" style={{ fontFamily: "'Syncopate', sans-serif" }}>
             Visits Log
@@ -39,7 +39,7 @@ export default function VisitsPage() {
         </div>
         <button
           onClick={loadVisits}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#D8D4C9] bg-white text-[11px] font-bold font-mono text-[#475569] hover:border-[#1463FF] hover:text-[#1463FF] transition-all"
+          className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#D8D4C9] bg-white text-[11px] font-bold font-mono text-[#475569] hover:border-[#1463FF] hover:text-[#1463FF] transition-all self-start sm:self-auto"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           <span>REFRESH</span>

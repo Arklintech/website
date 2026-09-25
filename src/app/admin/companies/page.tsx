@@ -27,7 +27,7 @@ export default function CompaniesPage() {
 
 
   return (
-    <div className="p-6 max-w-[1200px] mx-auto">
+    <div className="p-3.5 sm:p-6 max-w-[1200px] mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="font-black text-2xl text-[#0B132B] tracking-tight" style={{ fontFamily: "'Syncopate', sans-serif" }}>Companies</h1>
@@ -63,22 +63,22 @@ export default function CompaniesPage() {
         ) : (
           <div className="divide-y divide-[#F1EDE4]">
             {filtered.map(c => (
-              <div key={c.id} className="flex items-center gap-4 px-5 py-4 hover:bg-[#FDFBF7] transition-colors">
+              <div key={c.id} className="flex items-center gap-4 px-4 sm:px-5 py-4 hover:bg-[#FDFBF7] transition-colors">
                 <div className="w-10 h-10 rounded-xl bg-[#EDF4FF] border border-[#1463FF]/15 flex items-center justify-center text-[#1463FF] font-bold text-sm shrink-0">
                   <Building2 className="w-5 h-5" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-sm text-[#0B132B]">{c.name}</h3>
-                  <div className="flex items-center gap-3 mt-1 text-xs text-[#64748B] font-mono">
+                  <h3 className="font-bold text-sm text-[#0B132B] truncate">{c.name}</h3>
+                  <div className="flex items-center gap-2 sm:gap-3 mt-1 text-xs text-[#64748B] font-mono flex-wrap">
                     {c.industry && <span>{c.industry}</span>}
                     {c.website && (
-                      <a href={c.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[#1463FF] hover:underline">
-                        <Globe className="w-3 h-3" /> {c.website}
+                      <a href={c.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[#1463FF] hover:underline truncate max-w-[180px] sm:max-w-none">
+                        <Globe className="w-3 h-3 shrink-0" /> {c.website}
                       </a>
                     )}
                   </div>
                 </div>
-                <div className="font-mono text-[10px] text-[#94A3B8]">
+                <div className="font-mono text-[10px] text-[#94A3B8] shrink-0">
                   {new Date(c.createdAt).toLocaleDateString()}
                 </div>
               </div>

@@ -53,6 +53,7 @@ export default function Navbar({ onOpenProjectModal }: NavbarProps) {
           ? `bg-[#F5F1E8]/95 backdrop-blur-md ${pathname === '/industries' ? '' : 'border-b border-[#D8D4C9]'} shadow-sm`
           : `bg-[#F5F1E8]/90 backdrop-blur-md ${pathname === '/industries' ? '' : 'border-b border-[#D8D4C9]/60'}`
       }`}
+      style={{ WebkitBackdropFilter: 'blur(12px)', transform: 'translate3d(0, 0, 0)' }}
       role="banner"
     >
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">

@@ -43,13 +43,13 @@ export default function ContactsPage() {
   });
 
   return (
-    <div className="p-6 max-w-[1200px] mx-auto">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-3.5 sm:p-6 max-w-[1200px] mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="font-black text-2xl text-[#0B132B] tracking-tight" style={{ fontFamily: "'Syncopate', sans-serif" }}>Contacts</h1>
           <p className="text-sm text-[#64748B] mt-0.5">{contacts.length} total contacts</p>
         </div>
-        <button className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#1463FF] hover:bg-[#004AD6] text-white text-[11px] font-bold font-mono transition-all shadow-md shadow-[#1463FF]/20">
+        <button className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#1463FF] hover:bg-[#004AD6] text-white text-[11px] font-bold font-mono transition-all shadow-md shadow-[#1463FF]/20 self-start sm:self-auto">
           <Plus className="w-3.5 h-3.5" /> ADD CONTACT
         </button>
       </div>
@@ -83,16 +83,16 @@ export default function ContactsPage() {
         ) : (
           <div className="divide-y divide-[#F1EDE4]">
             {filtered.map(c => (
-              <div key={c.id || Math.random()} className="flex items-center gap-4 px-5 py-4 hover:bg-[#FDFBF7] transition-colors">
+              <div key={c.id || Math.random()} className="flex items-center gap-4 px-4 sm:px-5 py-4 hover:bg-[#FDFBF7] transition-colors">
                 <div className="w-9 h-9 rounded-full bg-[#EDF4FF] border border-[#1463FF]/15 flex items-center justify-center text-[#1463FF] font-bold text-sm shrink-0">
                   {(c.name || 'C').charAt(0).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-[13px] text-[#0B132B]">{c.name || 'Unnamed Contact'}</p>
-                  <div className="flex items-center gap-3 mt-0.5">
-                    {c.email && <span className="flex items-center gap-1 text-[11px] text-[#64748B]"><Mail className="w-3 h-3" />{c.email}</span>}
-                    {c.phone && <span className="flex items-center gap-1 text-[11px] text-[#64748B]"><Phone className="w-3 h-3" />{c.phone}</span>}
-                    {c.company && <span className="flex items-center gap-1 text-[11px] text-[#64748B]"><Building2 className="w-3 h-3" />{c.company}</span>}
+                  <p className="font-semibold text-[13px] text-[#0B132B] truncate">{c.name || 'Unnamed Contact'}</p>
+                  <div className="flex items-center gap-2 sm:gap-3 mt-0.5 flex-wrap">
+                    {c.email && <span className="flex items-center gap-1 text-[11px] text-[#64748B] truncate max-w-[200px] sm:max-w-none"><Mail className="w-3 h-3 shrink-0" />{c.email}</span>}
+                    {c.phone && <span className="flex items-center gap-1 text-[11px] text-[#64748B] whitespace-nowrap"><Phone className="w-3 h-3 shrink-0" />{c.phone}</span>}
+                    {c.company && <span className="flex items-center gap-1 text-[11px] text-[#64748B] truncate max-w-[150px] sm:max-w-none"><Building2 className="w-3 h-3 shrink-0" />{c.company}</span>}
                   </div>
                 </div>
               </div>

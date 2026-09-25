@@ -71,7 +71,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="p-6 max-w-[1200px] mx-auto space-y-6">
+    <div className="p-3.5 sm:p-6 max-w-[1200px] mx-auto space-y-4 sm:space-y-6">
       <div>
         <h1 className="font-black text-2xl text-[#0B132B] tracking-tight" style={{ fontFamily: "'Syncopate', sans-serif" }}>
           Platform Settings
@@ -86,7 +86,7 @@ export default function SettingsPage() {
       )}
 
       {/* Tabs */}
-      <div className="flex border-b border-[#E8E4DC] gap-2">
+      <div className="flex border-b border-[#E8E4DC] gap-1 sm:gap-2 overflow-x-auto pb-px">
         {[
           { id: 'general', label: 'General', icon: <Settings className="w-3.5 h-3.5" /> },
           { id: 'architecture', label: 'System Architecture', icon: <Database className="w-3.5 h-3.5" /> },
@@ -95,7 +95,7 @@ export default function SettingsPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`flex items-center gap-2 px-4 py-2.5 text-xs font-mono font-bold border-b-2 transition-all ${
+            className={`flex items-center gap-2 px-3 sm:px-4 py-2.5 text-xs font-mono font-bold border-b-2 transition-all whitespace-nowrap shrink-0 ${
               activeTab === tab.id
                 ? 'border-[#1463FF] text-[#1463FF] bg-[#EDF4FF]/50'
                 : 'border-transparent text-[#64748B] hover:text-[#0B132B]'
@@ -114,7 +114,7 @@ export default function SettingsPage() {
           <span className="font-mono text-xs text-[#94A3B8]">Loading platform settings...</span>
         </div>
       ) : (
-        <form onSubmit={handleSave} className="bg-white rounded-xl border border-[#E8E4DC] p-6 space-y-6">
+        <form onSubmit={handleSave} className="bg-white rounded-xl border border-[#E8E4DC] p-4 sm:p-6 space-y-4 sm:space-y-6">
           {activeTab === 'general' && (
             <div className="space-y-4 max-w-lg">
               <div>
@@ -153,22 +153,22 @@ export default function SettingsPage() {
 
           {activeTab === 'architecture' && (
             <div className="space-y-4 max-w-xl text-xs">
-              <div className="p-4 bg-[#F7F4EC] rounded-xl border border-[#E8E4DC] space-y-3">
+              <div className="p-3.5 sm:p-4 bg-[#F7F4EC] rounded-xl border border-[#E8E4DC] space-y-3">
                 <span className="font-bold text-[#0B132B] text-sm block">Locked Operating Architecture</span>
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between border-b border-[#E8E4DC] pb-2">
+                  <div className="flex items-center justify-between border-b border-[#E8E4DC] pb-2 gap-2 flex-wrap sm:flex-nowrap">
                     <span className="text-[#64748B]">Primary Operational Store</span>
                     <strong className="text-[#0B132B] font-mono">Google Sheets (Multi-Tab)</strong>
                   </div>
-                  <div className="flex items-center justify-between border-b border-[#E8E4DC] pb-2">
+                  <div className="flex items-center justify-between border-b border-[#E8E4DC] pb-2 gap-2 flex-wrap sm:flex-nowrap">
                     <span className="text-[#64748B]">Document & Invoice PDF Storage</span>
                     <strong className="text-[#0B132B] font-mono">Google Drive (Documents Folder)</strong>
                   </div>
-                  <div className="flex items-center justify-between border-b border-[#E8E4DC] pb-2">
+                  <div className="flex items-center justify-between border-b border-[#E8E4DC] pb-2 gap-2 flex-wrap sm:flex-nowrap">
                     <span className="text-[#64748B]">Admin Authentication Authority</span>
                     <strong className="text-[#1463FF] font-mono">Firebase Authentication (Bearer Tokens)</strong>
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
                     <span className="text-[#64748B]">Offline / Fallback Cache</span>
                     <strong className="text-emerald-700 font-mono">Local Synchronized JSON Engine</strong>
                   </div>

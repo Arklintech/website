@@ -45,13 +45,13 @@ export default function FollowUpsPage() {
   const total = counts.overdue + counts.dueToday + counts.dueThisWeek + counts.upcoming;
 
   return (
-    <div className="p-6 max-w-[1200px] mx-auto">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-3.5 sm:p-6 max-w-[1200px] mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="font-black text-2xl text-[#0B132B] tracking-tight" style={{ fontFamily: "'Syncopate', sans-serif" }}>Follow-ups</h1>
           <p className="text-sm text-[#64748B] mt-0.5">{total} total tasks</p>
         </div>
-        <button className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#1463FF] hover:bg-[#004AD6] text-white text-[11px] font-bold font-mono transition-all shadow-md shadow-[#1463FF]/20">
+        <button className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#1463FF] hover:bg-[#004AD6] text-white text-[11px] font-bold font-mono transition-all shadow-md shadow-[#1463FF]/20 self-start sm:self-auto">
           <Plus className="w-3.5 h-3.5" /> ADD FOLLOW-UP
         </button>
       </div>
@@ -64,8 +64,8 @@ export default function FollowUpsPage() {
           { label: 'This Week', count: counts.dueThisWeek, icon: <CalendarCheck className="w-4 h-4 text-amber-500" />, color: 'border-amber-200 bg-amber-50' },
           { label: 'Upcoming', count: counts.upcoming, icon: <CheckCircle2 className="w-4 h-4 text-[#94A3B8]" />, color: 'border-[#D8D4C9] bg-[#F7F4EC]' },
         ].map(c => (
-          <div key={c.label} className={`rounded-xl border p-4 ${c.color}`}>
-            <div className="flex items-center justify-between mb-1">{c.icon}<span className="font-black text-2xl text-[#0B132B]" style={{ fontFamily: "'Syncopate', sans-serif" }}>{c.count}</span></div>
+          <div key={c.label} className={`rounded-xl border p-3.5 sm:p-4 ${c.color}`}>
+            <div className="flex items-center justify-between mb-1">{c.icon}<span className="font-black text-xl sm:text-2xl text-[#0B132B]" style={{ fontFamily: "'Syncopate', sans-serif" }}>{c.count}</span></div>
             <span className="font-mono text-[9px] font-bold text-[#64748B] uppercase tracking-wider">{c.label}</span>
           </div>
         ))}

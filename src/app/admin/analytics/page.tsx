@@ -63,16 +63,16 @@ export default function AnalyticsPage() {
   ];
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto space-y-6">
+    <div className="p-3.5 sm:p-6 max-w-[1400px] mx-auto space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="font-black text-2xl text-[#0B132B] tracking-tight" style={{ fontFamily: "'Syncopate', sans-serif" }}>
             Analytics
           </h1>
           <p className="text-sm text-[#64748B] mt-0.5">Comprehensive traffic, engagement, and conversion metrics.</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-start sm:self-auto">
           <div className="flex bg-white border border-[#E8E4DC] rounded-lg p-0.5">
             {(['7d', '30d', '90d'] as const).map((p) => (
               <button

@@ -53,8 +53,8 @@ export default function FunnelsPage() {
   const leadWinRate = leadsCount > 0 ? ((wonCount / leadsCount) * 100).toFixed(2) : '0.00';
 
   return (
-    <div className="p-6 max-w-[1200px] mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-3.5 sm:p-6 max-w-[1200px] mx-auto space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="font-black text-2xl text-[#0B132B] tracking-tight" style={{ fontFamily: "'Syncopate', sans-serif" }}>
             Conversion Funnels
@@ -63,7 +63,7 @@ export default function FunnelsPage() {
         </div>
         <button
           onClick={loadStats}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#D8D4C9] bg-white text-[11px] font-bold font-mono text-[#475569] hover:border-[#1463FF] hover:text-[#1463FF] transition-all"
+          className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#D8D4C9] bg-white text-[11px] font-bold font-mono text-[#475569] hover:border-[#1463FF] hover:text-[#1463FF] transition-all self-start sm:self-auto"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           <span>REFRESH</span>
@@ -71,26 +71,26 @@ export default function FunnelsPage() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl border border-[#E8E4DC] p-5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        <div className="bg-white rounded-xl border border-[#E8E4DC] p-4 sm:p-5">
           <span className="font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Overall Conversion</span>
-          <div className="font-black text-2xl text-[#0B132B] mt-1" style={{ fontFamily: "'Syncopate', sans-serif" }}>{overallConversion}%</div>
+          <div className="font-black text-xl sm:text-2xl text-[#0B132B] mt-1" style={{ fontFamily: "'Syncopate', sans-serif" }}>{overallConversion}%</div>
           <span className="text-[11px] font-bold text-emerald-600">Visitor → Lead</span>
         </div>
-        <div className="bg-white rounded-xl border border-[#E8E4DC] p-5">
+        <div className="bg-white rounded-xl border border-[#E8E4DC] p-4 sm:p-5">
           <span className="font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Lead Win Rate</span>
-          <div className="font-black text-2xl text-[#0B132B] mt-1" style={{ fontFamily: "'Syncopate', sans-serif" }}>{leadWinRate}%</div>
+          <div className="font-black text-xl sm:text-2xl text-[#0B132B] mt-1" style={{ fontFamily: "'Syncopate', sans-serif" }}>{leadWinRate}%</div>
           <span className="text-[11px] font-bold text-emerald-600">Lead → Won Contract</span>
         </div>
-        <div className="bg-white rounded-xl border border-[#E8E4DC] p-5">
+        <div className="bg-white rounded-xl border border-[#E8E4DC] p-4 sm:p-5">
           <span className="font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Total Active Leads</span>
-          <div className="font-black text-2xl text-[#0B132B] mt-1" style={{ fontFamily: "'Syncopate', sans-serif" }}>{leadsCount}</div>
+          <div className="font-black text-xl sm:text-2xl text-[#0B132B] mt-1" style={{ fontFamily: "'Syncopate', sans-serif" }}>{leadsCount}</div>
           <span className="text-[11px] font-bold text-[#64748B]">Operating Inbound Pipeline</span>
         </div>
       </div>
 
       {/* Visual Funnel Stack */}
-      <div className="bg-white rounded-xl border border-[#E8E4DC] p-6 space-y-6">
+      <div className="bg-white rounded-xl border border-[#E8E4DC] p-4 sm:p-6 space-y-4 sm:space-y-6">
         <div className="flex items-center gap-2 border-b border-[#E8E4DC] pb-4">
           <Filter className="w-4 h-4 text-[#1463FF]" />
           <h2 className="font-bold text-sm text-[#0B132B]">Primary System Acquisition Funnel</h2>

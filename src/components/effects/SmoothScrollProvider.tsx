@@ -22,13 +22,17 @@ export default function SmoothScrollProvider({
     let lenis: Lenis | null = null;
 
     try {
+      // On macOS and iOS Safari, the system trackpad provides native momentum scrolling.
+      // Intercepting with smoothWheel creates double-inertia lag and stuttering on MacBooks.
+      const isApple = typeof navigator !== 'undefined' && /Macintosh|Mac OS X|iPhone|iPad|iPod/.test(navigator.userAgent);
+
       lenis = new Lenis({
-        duration: 0.6, // Fast, snappy, responsive smoothness
+        duration: isApple ? 0.5 : 0.8,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         orientation: 'vertical',
         gestureOrientation: 'vertical',
-        smoothWheel: true,
-        wheelMultiplier: 1.1,
+        smoothWheel: !isApple, // Native hardware-accelerated momentum on macOS trackpads
+        wheelMultiplier: 1.0,
         touchMultiplier: 1.0,
         syncTouch: false,
         infinite: false,
@@ -43,7 +47,7 @@ export default function SmoothScrollProvider({
       };
 
       gsap.ticker.add(updateTicker);
-      gsap.ticker.lagSmoothing(0);
+      gsap.ticker.lagSmoothing(500, 33); // Safe lag smoothing prevents hitching on frame drops
 
       return () => {
         gsap.ticker.remove(updateTicker);

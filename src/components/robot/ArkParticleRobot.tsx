@@ -73,13 +73,17 @@ export default function ArkParticleRobot({
       return x - Math.floor(x);
     };
 
+    let lastFrameTime = 0;
+    const TARGET_FRAME_MS = 1000 / 60; // 60 FPS cap to prevent 120Hz ProMotion Macs from wasting CPU/GPU
+    let isTrackVisible = true;
+
     // ── Loop indirection object — breaks TDZ: startLoop never names tick directly ──
     // SWC/Babel cannot create a circular TDZ because `loop` is declared before both
     // `startLoop` and `tick`, and `loop.fn` is assigned later when tick is defined.
     const loop: { fn: ((t: number) => void) | null } = { fn: null };
 
     const startLoop = () => {
-      if (rafId === null && loop.fn) {
+      if (rafId === null && loop.fn && isTrackVisible) {
         rafId = requestAnimationFrame(loop.fn);
       }
     };
@@ -93,7 +97,7 @@ export default function ArkParticleRobot({
         targetDissolve = 0;
       }
       // Resume if paused and scroll comes back into robot zone
-      if (rafId === null && targetDissolve < 0.995) {
+      if (rafId === null && targetDissolve < 0.995 && isTrackVisible) {
         startLoop();
       }
     };
@@ -150,8 +154,11 @@ export default function ArkParticleRobot({
     const resize = () => {
       if (!canvas) return;
       const rect = canvas.getBoundingClientRect();
-      width = Math.max(1, Math.floor(rect.width || window.innerWidth));
-      height = Math.max(1, Math.floor(rect.height || window.innerHeight));
+      const cssW = Math.max(1, Math.floor(rect.width || window.innerWidth));
+      const cssH = Math.max(1, Math.floor(rect.height || window.innerHeight));
+      // Cap max dimension to 1600x1000 to keep memory under ~6.4MB even on 4K/Retina displays
+      width = Math.min(1600, cssW);
+      height = Math.min(1000, cssH);
       canvas.width = width;
       canvas.height = height;
       try {
@@ -188,7 +195,11 @@ export default function ArkParticleRobot({
           r: number; g: number; b: number;
         }[] = [];
 
-        const step = srcW > 1600 ? 2 : 1;
+        // Performance: Adaptive step size prevents 250,000+ particle explosion on Safari Mac
+        // Step 2 on desktop yields ~35,000 particles, identical visual density with 75% less CPU overhead
+        const isMobileScreen = typeof window !== 'undefined' && window.innerWidth < 768;
+        const step = isMobileScreen ? 3 : 2;
+
         for (let y = 0; y < srcH; y += step) {
           for (let x = 0; x < srcW; x += step) {
             const i = (y * srcW + x) * 4;
@@ -240,7 +251,7 @@ export default function ArkParticleRobot({
               dispX: Math.cos(angle) * dispRadius,
               dispY: Math.sin(angle) * dispRadius * 0.85,
               cohesion, depth, seed,
-              size: lum > 0.40 || isBlue ? 2 : 1,
+              size: lum > 0.40 || isBlue ? 2 : (step > 1 ? 2 : 1),
               r, g, b,
             });
           }
@@ -284,6 +295,25 @@ export default function ArkParticleRobot({
     resizeObserver.observe(canvas);
     window.addEventListener('resize', resize);
 
+    // ── Intersection Observer: Completely pause RAF when robot is off-screen ──
+    const intersectionObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          isTrackVisible = entry.isIntersecting;
+          if (isTrackVisible) {
+            startLoop();
+          } else {
+            if (rafId !== null) {
+              cancelAnimationFrame(rafId);
+              rafId = null;
+            }
+          }
+        }
+      },
+      { rootMargin: '100px 0px' }
+    );
+    intersectionObserver.observe(track);
+
     resize();
     initParticleModel();
 
@@ -292,6 +322,19 @@ export default function ArkParticleRobot({
     // No reference to `tick` exists before this declaration.
 
     const tick = (t: number) => {
+      // If off-screen, do not execute or schedule next frame
+      if (!isTrackVisible) {
+        rafId = null;
+        return;
+      }
+
+      // 60 FPS Throttle: Prevents 120Hz ProMotion screens from running at double rate
+      if (t - lastFrameTime < TARGET_FRAME_MS - 1.5) {
+        rafId = requestAnimationFrame(loop.fn!);
+        return;
+      }
+      lastFrameTime = t;
+
       const time = t * 0.001;
 
       const top = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
@@ -434,6 +477,7 @@ export default function ArkParticleRobot({
       window.removeEventListener('resize', resize);
       document.removeEventListener('mouseleave', onMouseLeave);
       resizeObserver.disconnect();
+      intersectionObserver.disconnect();
       if (rafId !== null) cancelAnimationFrame(rafId);
     };
   }, [source, onProgressChange]);
@@ -454,11 +498,16 @@ export default function ArkParticleRobot({
           overflow: 'hidden', display: 'flex',
           alignItems: 'center', justifyContent: 'center',
           pointerEvents: 'none', backgroundColor: '#000000',
+          transform: 'translate3d(0, 0, 0)',
+          willChange: 'transform',
         }}
       >
         <canvas
           ref={canvasRef}
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }}
+          style={{
+            position: 'absolute', inset: 0, width: '100%', height: '100%',
+            display: 'block', transform: 'translate3d(0, 0, 0)', willChange: 'transform',
+          }}
         />
 
         <div

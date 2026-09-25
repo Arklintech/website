@@ -7,19 +7,10 @@ import {
   LayoutDashboard, Users, Inbox, BookUser, Building2, CalendarCheck,
   Radio, Activity, GitBranch, BarChart3, TrendingUp, Filter,
   Globe, FileBarChart2, UserCog, ShieldCheck, Lock, Settings,
-  ChevronRight, Zap, Briefcase, Receipt
+  ChevronRight, Zap, Briefcase, Receipt, PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react';
 
 import KeystoneLogo from '@/components/brand/KeystoneLogo';
-function KeystoneMark({ size = 24 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
-      <path d="M4 28L10 8h12l6 20H4z" fill="#1463FF" opacity="0.15" />
-      <path d="M4 28L10 8h12l6 20" stroke="#1463FF" strokeWidth="2.5" strokeLinejoin="round" fill="none" />
-      <path d="M9 18h14" stroke="#1463FF" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 interface NavItem {
   href: string;
@@ -39,6 +30,7 @@ interface AdminSidebarProps {
   followupsOverdue?: number;
   leadsNew?: number;
   isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
   isMobileOpen?: boolean;
   onCloseMobile?: () => void;
 }
@@ -100,6 +92,8 @@ export default function AdminSidebar({
   inboxUnread = 0,
   followupsOverdue = 0,
   leadsNew = 0,
+  isCollapsed = false,
+  onToggleCollapse,
   isMobileOpen = false,
   onCloseMobile,
 }: AdminSidebarProps) {
@@ -114,13 +108,32 @@ export default function AdminSidebar({
 
   const isActive = (href: string) => pathname === href || (href !== '/admin' && pathname.startsWith(href));
 
-  const sidebarContent = (
+  const sidebarContent = (collapsed: boolean) => (
     <div className="flex flex-col h-full bg-white">
-      {/* Logo */}
-      <div className="px-3.5 py-3.5 border-b border-[#E8E4DC] flex items-center justify-between min-w-0">
-        <div className="min-w-0 flex-1 overflow-hidden">
-          <KeystoneLogo size="sm" href="/admin/command-center" />
-        </div>
+      {/* Logo / Collapse toggle header */}
+      <div className={`border-b border-[#E8E4DC] flex items-center min-w-0 ${collapsed ? 'justify-center px-0 py-3.5' : 'px-3.5 py-3.5 justify-between'}`}>
+        {!collapsed && (
+          <div className="min-w-0 flex-1 overflow-hidden">
+            <KeystoneLogo size="sm" href="/admin/command-center" />
+          </div>
+        )}
+
+        {/* Desktop collapse toggle */}
+        {onToggleCollapse && (
+          <button
+            onClick={onToggleCollapse}
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            className={`hidden md:flex items-center justify-center w-7 h-7 rounded-lg text-[#94A3B8] hover:bg-[#F5F1E8] hover:text-[#1463FF] transition-all shrink-0 ${collapsed ? '' : 'ml-1'}`}
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {collapsed
+              ? <PanelLeftOpen className="w-4 h-4" />
+              : <PanelLeftClose className="w-4 h-4" />
+            }
+          </button>
+        )}
+
+        {/* Mobile close button */}
         {onCloseMobile && (
           <button
             onClick={onCloseMobile}
@@ -133,44 +146,73 @@ export default function AdminSidebar({
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 overflow-y-auto py-3 px-3" style={{ scrollbarWidth: 'none' }}>
+      <nav className="flex-1 overflow-y-auto py-3 px-2" style={{ scrollbarWidth: 'none' }}>
         {NAV.map((section) => (
-          <div key={section.section} className="mb-4">
-            <div className="px-2 mb-1">
-              <span className="font-mono text-[9px] font-bold text-[#94A3B8] uppercase tracking-[0.12em]">
-                {section.section}
-              </span>
-            </div>
+          <div key={section.section} className={`mb-4`}>
+            {/* Section label — hidden when collapsed */}
+            {!collapsed && (
+              <div className="px-2 mb-1">
+                <span className="font-mono text-[9px] font-bold text-[#94A3B8] uppercase tracking-[0.12em]">
+                  {section.section}
+                </span>
+              </div>
+            )}
+            {/* Divider when collapsed */}
+            {collapsed && (
+              <div className="mx-auto w-5 border-t border-[#F1EDE4] mb-2" />
+            )}
+
             <div className="space-y-0.5">
               {section.items.map((item) => {
                 const active = isActive(item.href);
                 const badge = getBadge(item.href);
+
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
                     prefetch={true}
                     onClick={() => onCloseMobile?.()}
-                    className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium transition-all group ${
+                    title={collapsed ? item.label : undefined}
+                    className={`flex items-center gap-2.5 rounded-lg text-[13px] font-medium transition-all group ${
+                      collapsed ? 'justify-center px-0 py-2.5 mx-auto w-10 h-10' : 'px-2.5 py-2'
+                    } ${
                       active
                         ? 'bg-[#EDF4FF] text-[#1463FF]'
                         : 'text-[#475569] hover:bg-[#F5F1E8] hover:text-[#0B132B]'
                     }`}
                   >
-                    <span className={`shrink-0 ${active ? 'text-[#1463FF]' : 'text-[#94A3B8] group-hover:text-[#0B132B]'}`}>
+                    {/* Icon */}
+                    <span className={`shrink-0 relative ${active ? 'text-[#1463FF]' : 'text-[#94A3B8] group-hover:text-[#0B132B]'}`}>
                       {item.icon}
+                      {/* Badge dot on icon when collapsed */}
+                      {collapsed && badge !== null && badge > 0 && (
+                        <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-[#1463FF] text-white font-mono text-[7px] font-bold flex items-center justify-center">
+                          {badge > 9 ? '9+' : badge}
+                        </span>
+                      )}
+                      {/* Live dot on icon when collapsed */}
+                      {collapsed && item.isLive && (
+                        <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                      )}
                     </span>
-                    <span className="flex-1 truncate text-[12.5px]">{item.label}</span>
-                    {item.isLive && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                    )}
-                    {badge !== null && badge > 0 && (
-                      <span className="shrink-0 min-w-[18px] h-[18px] rounded-full bg-[#1463FF] text-white font-mono text-[9px] font-bold flex items-center justify-center px-1">
-                        {badge > 99 ? '99+' : badge}
-                      </span>
-                    )}
-                    {active && !badge && !item.isLive && (
-                      <ChevronRight className="w-3 h-3 shrink-0 text-[#1463FF]" />
+
+                    {/* Label + badges — only visible when expanded */}
+                    {!collapsed && (
+                      <>
+                        <span className="flex-1 truncate text-[12.5px]">{item.label}</span>
+                        {item.isLive && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                        )}
+                        {badge !== null && badge > 0 && (
+                          <span className="shrink-0 min-w-[18px] h-[18px] rounded-full bg-[#1463FF] text-white font-mono text-[9px] font-bold flex items-center justify-center px-1">
+                            {badge > 99 ? '99+' : badge}
+                          </span>
+                        )}
+                        {active && !badge && !item.isLive && (
+                          <ChevronRight className="w-3 h-3 shrink-0 text-[#1463FF]" />
+                        )}
+                      </>
                     )}
                   </Link>
                 );
@@ -181,28 +223,40 @@ export default function AdminSidebar({
       </nav>
 
       {/* Footer */}
-      <div className="p-3 border-t border-[#E8E4DC]">
-        <div className="flex items-center gap-2 px-2 py-1.5">
-          <div className="w-6 h-6 rounded-full bg-[#1463FF] text-white flex items-center justify-center text-[10px] font-bold shrink-0">
+      <div className={`p-3 border-t border-[#E8E4DC] ${collapsed ? 'flex justify-center' : ''}`}>
+        {collapsed ? (
+          <div
+            className="w-7 h-7 rounded-full bg-[#1463FF] text-white flex items-center justify-center text-[10px] font-bold shrink-0"
+            title="Super Admin — ARKLINTECH"
+          >
             A
           </div>
-          <div className="min-w-0">
-            <div className="text-[11px] font-bold text-[#0B132B] truncate">Super Admin</div>
-            <div className="font-mono text-[9px] text-[#94A3B8] truncate">ARKLINTECH</div>
+        ) : (
+          <div className="flex items-center gap-2 px-2 py-1.5">
+            <div className="w-6 h-6 rounded-full bg-[#1463FF] text-white flex items-center justify-center text-[10px] font-bold shrink-0">
+              A
+            </div>
+            <div className="min-w-0">
+              <div className="text-[11px] font-bold text-[#0B132B] truncate">Super Admin</div>
+              <div className="font-mono text-[9px] text-[#94A3B8] truncate">ARKLINTECH</div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
 
   return (
     <>
-      {/* Desktop Sidebar */}
-      <aside className="w-[235px] shrink-0 h-screen sticky top-0 hidden md:flex flex-col bg-white border-r border-[#E8E4DC] z-20 overflow-hidden">
-        {sidebarContent}
+      {/* Desktop Sidebar — animated width transition */}
+      <aside
+        className={`shrink-0 h-screen sticky top-0 hidden md:flex flex-col bg-white border-r border-[#E8E4DC] z-20 overflow-hidden transition-[width] duration-300 ease-in-out`}
+        style={{ width: isCollapsed ? '64px' : '235px' }}
+      >
+        {sidebarContent(isCollapsed)}
       </aside>
 
-      {/* Mobile Drawer Overlay */}
+      {/* Mobile Drawer Overlay — always expanded */}
       {isMobileOpen && (
         <div className="fixed inset-0 z-50 flex md:hidden">
           <div
@@ -210,7 +264,7 @@ export default function AdminSidebar({
             onClick={onCloseMobile}
           />
           <aside className="relative w-[260px] max-w-[80vw] h-full bg-white border-r border-[#E8E4DC] shadow-2xl flex flex-col z-10">
-            {sidebarContent}
+            {sidebarContent(false)}
           </aside>
         </div>
       )}

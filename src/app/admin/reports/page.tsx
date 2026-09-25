@@ -77,7 +77,7 @@ export default function ReportsPage() {
   };
 
   return (
-    <div className="p-6 max-w-[1200px] mx-auto space-y-6">
+    <div className="p-3.5 sm:p-6 max-w-[1200px] mx-auto space-y-4 sm:space-y-6">
       <div>
         <h1 className="font-black text-2xl text-[#0B132B] tracking-tight" style={{ fontFamily: "'Syncopate', sans-serif" }}>
           Reports Generator
@@ -87,13 +87,13 @@ export default function ReportsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {reports.map((rep) => (
-          <div key={rep.id} className="bg-white rounded-xl border border-[#E8E4DC] p-5 flex items-start justify-between gap-4">
+          <div key={rep.id} className="bg-white rounded-xl border border-[#E8E4DC] p-4 sm:p-5 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
             <div className="space-y-2">
               <div className="w-9 h-9 rounded-lg bg-[#EDF4FF] border border-[#1463FF]/20 flex items-center justify-center text-[#1463FF]">
                 <FileText className="w-4.5 h-4.5" />
               </div>
               <h2 className="font-bold text-sm text-[#0B132B] leading-snug">{rep.title}</h2>
-              <div className="flex items-center gap-3 text-xs text-[#64748B] font-mono">
+              <div className="flex items-center gap-3 text-xs text-[#64748B] font-mono flex-wrap">
                 <span>{rep.period}</span>
                 <span>•</span>
                 <span>{rep.format}</span>
@@ -104,7 +104,7 @@ export default function ReportsPage() {
             <button
               onClick={() => handleDownload(rep.id)}
               disabled={generating === rep.id}
-              className="px-3.5 py-2 rounded-lg bg-[#1463FF] hover:bg-[#004AD6] text-white text-xs font-mono font-bold transition-all disabled:opacity-50 flex items-center gap-1.5 shrink-0"
+              className="w-full sm:w-auto justify-center px-3.5 py-2.5 rounded-lg bg-[#1463FF] hover:bg-[#004AD6] text-white text-xs font-mono font-bold transition-all disabled:opacity-50 flex items-center gap-1.5 shrink-0"
             >
               {generating === rep.id ? (
                 <>

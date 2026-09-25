@@ -134,7 +134,7 @@ export default function CommandCenterPage() {
 
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto">
+    <div className="p-3.5 sm:p-6 max-w-[1400px] mx-auto">
       {errorMsg && (
         <div className="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-xl flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -154,14 +154,14 @@ export default function CommandCenterPage() {
       )}
 
       {/* Page Header */}
-      <div className="flex items-start justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4 mb-6">
         <div>
           <h1 className="font-black text-2xl text-[#0B132B] tracking-tight" style={{ fontFamily: "'Syncopate', sans-serif" }}>
             Command Center
           </h1>
           <p className="text-sm text-[#64748B] mt-0.5">Real-time operational dashboard connected to Google Sheets & Firebase.</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 self-start sm:self-auto">
           <div className="text-right hidden sm:block">
             <div className="font-mono text-[11px] font-bold text-[#0B132B]">
               {now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
@@ -205,8 +205,8 @@ export default function CommandCenterPage() {
                 View all <ArrowRight className="w-3 h-3" />
               </Link>
             </div>
-            <div className="p-5">
-              <div className="grid grid-cols-[auto_auto_auto] gap-x-6 gap-y-2">
+            <div className="p-4 sm:p-5 overflow-x-auto">
+              <div className="grid grid-cols-[auto_auto_auto] gap-x-3 sm:gap-x-6 gap-y-2 min-w-[260px]">
                 <span className="font-mono text-[9px] font-bold text-[#94A3B8] uppercase">Stage</span>
                 <span className="font-mono text-[9px] font-bold text-[#94A3B8] uppercase text-right">Count</span>
                 <span className="font-mono text-[9px] font-bold text-[#94A3B8] uppercase text-right">Share</span>
@@ -218,7 +218,7 @@ export default function CommandCenterPage() {
                     </div>
                     <span className="text-[13px] font-black text-[#0B132B] text-right self-center">{p.count}</span>
                     <div className="flex items-center gap-2 self-center">
-                      <div className="w-24 h-1.5 bg-[#F1EDE4] rounded-full overflow-hidden">
+                      <div className="w-14 xs:w-20 sm:w-24 h-1.5 bg-[#F1EDE4] rounded-full overflow-hidden">
                         <div
                           className={`h-full rounded-full ${STAGE_COLORS[p.stage] || 'bg-[#D8D4C9]'}`}
                           style={{ width: `${p.conversion}%` }}
@@ -428,9 +428,9 @@ export default function CommandCenterPage() {
               </div>
               <Link href="/admin/follow-ups" className="text-[10px] font-mono font-bold text-[#1463FF] hover:text-[#004AD6]">View all</Link>
             </div>
-            <div className="p-5">
-              <div className="flex items-center justify-center mb-4 gap-4">
-                <div className="relative w-20 h-20">
+            <div className="p-4 sm:p-5">
+              <div className="flex items-center justify-center mb-4 gap-3 sm:gap-4 flex-wrap xs:flex-nowrap">
+                <div className="relative w-20 h-20 shrink-0">
                   <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
                     <circle cx="18" cy="18" r="15.9" fill="none" stroke="#F1EDE4" strokeWidth="4" />
                     {totalFollowups > 0 && (
@@ -443,7 +443,7 @@ export default function CommandCenterPage() {
                     <span className="font-mono text-[7px] text-[#94A3B8] uppercase">Total</span>
                   </div>
                 </div>
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 min-w-[120px]">
                   {[
                     { label: 'Overdue', count: followupCounts.overdue, color: 'bg-rose-500' },
                     { label: 'Due Today', count: followupCounts.dueToday, color: 'bg-[#1463FF]' },
