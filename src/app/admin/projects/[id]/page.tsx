@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import {
   Briefcase, CheckCircle2, Clock, Calendar, ArrowRight, ArrowUpRight,
@@ -11,6 +12,10 @@ import {
 } from 'lucide-react';
 import { fetchAdmin } from '@/lib/admin-client';
 import type { ProjectRecord, ProjectMilestoneRecord, ProjectUpdateRecord, ProjectFileRecord, ProjectNoteRecord, InvoiceRecord } from '@/lib/admin-db';
+import BrandName from '@/components/brand/BrandName';
+import ProjectThumbnail from '@/components/admin/shared/ProjectThumbnail';
+import ProjectEditModal from '@/components/admin/projects/ProjectEditModal';
+import ProjectActionsMenu from '@/components/admin/projects/ProjectActionsMenu';
 
 const TABS = [
   { id: 'overview', label: 'Overview', icon: <Layers className="w-4 h-4" /> },
@@ -22,6 +27,7 @@ const TABS = [
 ];
 
 export default function ProjectWorkspacePage({ params }: { params: { id: string } }) {
+  const router = useRouter();
   const [project, setProject] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'milestones' | 'updates' | 'files' | 'billing' | 'notes'>('overview');
@@ -44,6 +50,7 @@ export default function ProjectWorkspacePage({ params }: { params: { id: string 
 
   // File upload state
   const [uploadingFile, setUploadingFile] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const loadProject = async () => {
     try {
@@ -218,17 +225,10 @@ export default function ProjectWorkspacePage({ params }: { params: { id: string 
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           {/* Left: Thumbnail & Project Meta */}
           <div className="flex flex-col sm:flex-row items-start gap-4 w-full lg:w-auto">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-[#0B132B] border border-[#E8E4DC] shrink-0 relative flex items-center justify-center shadow-inner">
-              <img
-                src="/visuals/work/cafe-digital.png"
-                alt="Project Thumbnail"
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  // Fallback to Keystone Logo
-                  (e.target as HTMLImageElement).src = '/brand/Arklintech_Keystone_logo.svg';
-                }}
-              />
-            </div>
+            <ProjectThumbnail
+              project={project}
+              className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl border border-[#E8E4DC] shrink-0 shadow-inner"
+            />
 
             <div className="space-y-1.5 flex-1 min-w-0">
               <div className="flex items-center gap-2">
@@ -273,14 +273,16 @@ export default function ProjectWorkspacePage({ params }: { params: { id: string 
           <div className="flex flex-col items-start lg:items-end gap-3 self-stretch lg:self-auto min-w-[240px]">
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setActiveTab('overview')}
+                onClick={() => setShowEditModal(true)}
                 className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-[#1463FF] text-[#1463FF] hover:bg-[#1463FF]/10 text-xs font-mono font-bold transition-all"
               >
                 <Edit3 className="w-3.5 h-3.5" /> Edit Project
               </button>
-              <button className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[#E8E4DC] text-[#64748B] hover:text-[#0B132B] text-xs font-mono font-bold">
-                More <ChevronDown className="w-3.5 h-3.5" />
-              </button>
+              <ProjectActionsMenu
+                project={project}
+                onStatusChanged={loadProject}
+                onDeleted={() => router.push('/admin/projects')}
+              />
             </div>
 
             <div className="w-full space-y-1.5 text-right">
@@ -301,6 +303,10 @@ export default function ProjectWorkspacePage({ params }: { params: { id: string 
           </div>
         </div>
       </div>
+
+      {showEditModal && (
+        <ProjectEditModal project={project} onClose={() => setShowEditModal(false)} onSaved={loadProject} />
+      )}
 
       {/* Navigation Tabs (Overview, Milestones, Updates, Files, Billing, Notes) */}
       <div className="flex border-b border-[#E8E4DC] gap-2 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
@@ -842,7 +848,7 @@ export default function ProjectWorkspacePage({ params }: { params: { id: string 
       {activeTab === 'notes' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="font-bold text-sm text-[#0B132B]">Private ARKLINTECH Project Notes</h2>
+            <h2 className="font-bold text-sm text-[#0B132B]">Private <BrandName /> Project Notes</h2>
             <button
               onClick={() => setShowNoteModal(true)}
               className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#1463FF] text-white text-xs font-mono font-bold hover:bg-[#004AD6]"

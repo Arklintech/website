@@ -4,6 +4,7 @@ import React from 'react';
 import PageShell from '@/components/layout/PageShell';
 import PageContainer from '@/components/layout/PageContainer';
 import { ArrowRight, Database, Network, Lock, Terminal } from 'lucide-react';
+import BrandName from '@/components/brand/BrandName';
 
 const ARCHITECTURE_PILLARS = [
   {
@@ -78,7 +79,7 @@ export default function TechnologyArchitectureView() {
                 TECHNOLOGY & ARCHITECTURE
               </h1>
               <p className="text-base sm:text-lg text-z-muted font-body leading-relaxed">
-                An exhaustive engineering overview of the architectural standards, protocols, data topologies, and security boundaries that underpin all <span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: '0.12em' }} className="font-extrabold uppercase">ARKLINTECH</span> systems.
+                An exhaustive engineering overview of the architectural standards, protocols, data topologies, and security boundaries that underpin all <BrandName /> systems.
               </p>
             </div>
 

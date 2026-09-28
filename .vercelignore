@@ -8,3 +8,4 @@ arklintech-particle-robot
 *.mov
 public/frames/
 public/cinematic/contact_sheet.jpg
+.data

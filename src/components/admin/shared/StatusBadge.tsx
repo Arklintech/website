@@ -47,14 +47,3 @@ export function StatusBadge({ status, size = 'sm' }: StatusBadgeProps) {
     </span>
   );
 }
-
-interface IntentDotProps { intent: 'LOW' | 'MEDIUM' | 'HIGH' }
-export function IntentDot({ intent }: IntentDotProps) {
-  const colors = { LOW: 'bg-[#94A3B8]', MEDIUM: 'bg-amber-400', HIGH: 'bg-rose-500' };
-  return (
-    <span className={`inline-flex items-center gap-1 font-mono text-[9px] font-bold uppercase`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${colors[intent]} ${intent === 'HIGH' ? 'animate-pulse' : ''}`} />
-      <span className={intent === 'HIGH' ? 'text-rose-600' : intent === 'MEDIUM' ? 'text-amber-600' : 'text-[#94A3B8]'}>{intent}</span>
-    </span>
-  );
-}

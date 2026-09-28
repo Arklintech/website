@@ -5,6 +5,7 @@ import Link from 'next/link';
 import PageShell from '@/components/layout/PageShell';
 import PageContainer from '@/components/layout/PageContainer';
 import { SYSTEMS_LIBRARY } from '@/content/systemsLibrary';
+import BrandName from '@/components/brand/BrandName';
 
 export default function SystemsLibraryView() {
   return (
@@ -28,7 +29,7 @@ export default function SystemsLibraryView() {
                 SYSTEMS LIBRARY
               </h1>
               <p className="text-base sm:text-lg text-z-muted font-body leading-relaxed">
-                A technical repository of reusable system concepts, architectural building blocks, and execution primitives that power <span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: '0.12em' }} className="font-extrabold uppercase">ARKLINTECH</span> implementations.
+                A technical repository of reusable system concepts, architectural building blocks, and execution primitives that power <BrandName /> implementations.
               </p>
             </div>
 

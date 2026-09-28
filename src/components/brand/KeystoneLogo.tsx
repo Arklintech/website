@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import ArklintechWordmark from './ArklintechWordmark';
 
 interface KeystoneLogoProps {
   className?: string;
@@ -38,27 +39,6 @@ export function KeystoneMark({ className = 'w-7 h-7' }: { className?: string }) 
       <path
         fill={`url(#${gradientId})`}
         d="M 309 17 C 298 17 288 23 281 37 L 25 822 L 404 821 L 444 357 L 336 268 L 572 271 L 572 652 L 676 822 L 979 822 L 741 39 C 735 25 726 17 714 17 Z"
-      />
-    </svg>
-  );
-}
-
-/**
- * Exact Vector Chevron "Λ" Glyph for ARKLINTECH Wordmark
- */
-export function ChevronA({ className = 'h-[0.85em] w-[0.9em]' }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 135 110"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={`${className} shrink-0 inline-block align-baseline`}
-      style={{ verticalAlign: '-0.04em' }}
-      aria-hidden="true"
-    >
-      <path
-        d="M 67.5 4 L 130 106 L 91 106 L 67.5 58 L 44 106 L 5 106 Z"
-        fill="currentColor"
       />
     </svg>
   );
@@ -109,29 +89,33 @@ export default function KeystoneLogo({
 
   const textSizes = {
     sm: {
-      title: 'text-[11px] sm:text-xs tracking-[0.16em] sm:tracking-[0.18em]',
-      glyphA: 'h-[9px] w-[10px] mr-[0.14em]',
+      title: 'text-[11px] sm:text-xs',
+      tracking: 0.18,
+      wordmarkGap: 0.14,
       sub: 'text-[6.5px] sm:text-[7px] tracking-[0.2em] sm:tracking-[0.22em]',
       wing: 'h-[1.5px] w-3 sm:w-4',
       gap: 'gap-1',
     },
     md: {
-      title: 'text-xs sm:text-sm tracking-[0.2em] sm:tracking-[0.22em]',
-      glyphA: 'h-[11px] w-[12px] mr-[0.16em]',
+      title: 'text-xs sm:text-sm',
+      tracking: 0.22,
+      wordmarkGap: 0.16,
       sub: 'text-[7.5px] sm:text-[8px] tracking-[0.24em] sm:tracking-[0.26em]',
       wing: 'h-[1.8px] w-4 sm:w-6',
       gap: 'gap-1.5',
     },
     lg: {
-      title: 'text-base sm:text-lg tracking-[0.24em]',
-      glyphA: 'h-[14px] w-[15px] mr-[0.18em]',
+      title: 'text-base sm:text-lg',
+      tracking: 0.24,
+      wordmarkGap: 0.18,
       sub: 'text-[8.5px] sm:text-[9px] tracking-[0.28em]',
       wing: 'h-[2px] w-6 sm:w-8',
       gap: 'gap-2',
     },
     xl: {
-      title: 'text-xl sm:text-2xl tracking-[0.26em]',
-      glyphA: 'h-[18px] w-[20px] mr-[0.2em]',
+      title: 'text-xl sm:text-2xl',
+      tracking: 0.26,
+      wordmarkGap: 0.2,
       sub: 'text-[10px] sm:text-xs tracking-[0.3em]',
       wing: 'h-[2.5px] w-8 sm:w-12',
       gap: 'gap-2.5',
@@ -151,15 +135,11 @@ export default function KeystoneLogo({
       {showText && variant === 'full' && (
         <div className="flex flex-col items-center justify-center text-center min-w-0 flex-1">
           
-          {/* Row 1: ΛRKLINTECH in Deep Navy */}
+          {/* Row 1: ARKLINTECH vector wordmark in Deep Navy */}
           <div
-            className={`font-black uppercase group-hover:text-[#1463FF] transition-colors leading-none flex items-center justify-center text-center w-full min-w-0 ${titleColor} ${textSizes[size].title}`}
-            style={{
-              fontFamily: "'Syncopate', sans-serif",
-            }}
+            className={`group-hover:text-[#1463FF] transition-colors leading-none flex items-center justify-center w-full min-w-0 ${titleColor} ${textSizes[size].title}`}
           >
-            <ChevronA className={textSizes[size].glyphA} />
-            <span className="truncate -mr-[0.16em]">RKLINTECH</span>
+            <ArklintechWordmark tracking={textSizes[size].tracking} gap={textSizes[size].wordmarkGap} />
           </div>
 
           {/* Row 2: Flanking Blue Wings + TECHNOLOGY SYSTEMS */}

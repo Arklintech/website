@@ -183,6 +183,7 @@ export default function SelectedProductionSystemsSection() {
                 >
                   <img
                     src={activeProject.layers[0].assetPath}
+                    decoding="async"
                     alt={`${activeProject.name} System Interface`}
                     style={{
                       width: '100%',

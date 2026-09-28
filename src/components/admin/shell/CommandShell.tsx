@@ -22,7 +22,7 @@ export default function CommandShell({ children }: CommandShellProps) {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [initializing, setInitializing] = useState(true);
-  const [sidebarData, setSidebarData] = useState({ inboxUnread: 0, followupsOverdue: 0, leadsNew: 0, unreadNotifications: 0 });
+  const [sidebarData, setSidebarData] = useState({ followupsOverdue: 0, leadsNew: 0, unreadNotifications: 0 });
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -58,7 +58,6 @@ export default function CommandShell({ children }: CommandShellProps) {
             setIsAuthenticated(true);
             const data = await res.json();
             setSidebarData({
-              inboxUnread: data.kpis?.conversations ?? 0,
               followupsOverdue: data.followups?.counts?.overdue ?? 0,
               leadsNew: data.kpis?.leads ?? 0,
               unreadNotifications: data.kpis?.unreadNotifications ?? 0,
@@ -129,7 +128,6 @@ export default function CommandShell({ children }: CommandShellProps) {
       setIsAuthenticated(true);
       const data = await verifyRes.json();
       setSidebarData({
-        inboxUnread: data.kpis?.conversations ?? 0,
         followupsOverdue: data.followups?.counts?.overdue ?? 0,
         leadsNew: data.kpis?.leads ?? 0,
         unreadNotifications: data.kpis?.unreadNotifications ?? 0,
@@ -294,7 +292,6 @@ export default function CommandShell({ children }: CommandShellProps) {
   return (
     <div className="h-[100dvh] min-h-[100dvh] w-full bg-[#F7F4EC] flex overflow-hidden">
       <AdminSidebar
-        inboxUnread={sidebarData.inboxUnread}
         followupsOverdue={sidebarData.followupsOverdue}
         leadsNew={sidebarData.leadsNew}
         isCollapsed={isSidebarCollapsed}

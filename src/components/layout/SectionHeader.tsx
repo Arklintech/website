@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { withBrandName } from '@/components/brand/BrandName';
 
 interface SectionHeaderProps {
   number?: string;
@@ -42,11 +43,11 @@ export default function SectionHeader({
             </div>
           )}
           <h2 className="font-mono text-xs md:text-sm uppercase tracking-[0.2em] text-[#111827] font-semibold flex items-center gap-2">
-            {title}
+            <span>{withBrandName(title)}</span>
           </h2>
           {sub && (
             <p className="mt-1 text-sm text-[#536070] max-w-xl font-body">
-              {sub}
+              {withBrandName(sub)}
             </p>
           )}
         </div>

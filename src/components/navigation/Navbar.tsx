@@ -16,6 +16,11 @@ export default function Navbar({ onOpenProjectModal }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [showNavbar, setShowNavbar] = useState(pathname !== '/');
 
+  // The header persists across navigations, so close the mobile menu whenever the route changes.
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
@@ -50,10 +55,9 @@ export default function Navbar({ onOpenProjectModal }: NavbarProps) {
           : 'opacity-0 -translate-y-4 pointer-events-none'
       } ${
         scrolled
-          ? `bg-[#F5F1E8]/95 backdrop-blur-md ${pathname === '/industries' ? '' : 'border-b border-[#D8D4C9]'} shadow-sm`
-          : `bg-[#F5F1E8]/90 backdrop-blur-md ${pathname === '/industries' ? '' : 'border-b border-[#D8D4C9]/60'}`
+          ? `bg-[#F5F1E8]/[0.97] ${pathname === '/industries' ? '' : 'border-b border-[#D8D4C9]'} shadow-sm`
+          : `bg-[#F5F1E8]/95 ${pathname === '/industries' ? '' : 'border-b border-[#D8D4C9]/60'}`
       }`}
-      style={{ WebkitBackdropFilter: 'blur(12px)', transform: 'translate3d(0, 0, 0)' }}
       role="banner"
     >
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">

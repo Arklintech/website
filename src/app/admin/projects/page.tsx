@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { fetchAdmin } from '@/lib/admin-client';
 import type { ProjectRecord } from '@/lib/admin-db';
+import ProjectThumbnail from '@/components/admin/shared/ProjectThumbnail';
+import ProjectActionsMenu from '@/components/admin/projects/ProjectActionsMenu';
 
 export default function ProjectsDirectoryPage() {
   const [projects, setProjects] = useState<ProjectRecord[]>([]);
@@ -168,19 +170,22 @@ export default function ProjectsDirectoryPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {filtered.map((proj) => (
-            <Link
+            <div
               key={proj.id}
-              href={`/admin/projects/${proj.id}`}
-              className="bg-white rounded-xl border border-[#E8E4DC] hover:border-[#1463FF]/50 p-5 flex flex-col justify-between transition-all hover:shadow-md group"
+              className="relative bg-white rounded-xl border border-[#E8E4DC] hover:border-[#1463FF]/50 p-5 flex flex-col justify-between transition-all hover:shadow-md group focus-within:border-[#1463FF]/50"
             >
               <div className="space-y-3">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-0.5">
+                <div className="flex items-start justify-between gap-3">
+                  <ProjectThumbnail project={proj} className="w-11 h-11 rounded-lg border border-[#E8E4DC] shrink-0" />
+                  <div className="space-y-0.5 flex-1 min-w-0">
                     <span className="font-mono text-[10px] font-bold text-[#1463FF] uppercase tracking-wider">
                       {proj.projectRef || 'PROJECT'}
                     </span>
                     <h2 className="font-bold text-base text-[#0B132B] group-hover:text-[#1463FF] transition-colors line-clamp-1">
-                      {proj.name}
+                      {/* Stretched link: the whole card opens the project; the actions menu sits above it */}
+                      <Link href={`/admin/projects/${proj.id}`} className="after:absolute after:inset-0 after:rounded-xl focus-visible:outline-none">
+                        {proj.name}
+                      </Link>
                     </h2>
                     <p className="text-xs text-[#64748B] font-medium">{proj.clientName}</p>
                   </div>
@@ -193,6 +198,9 @@ export default function ProjectsDirectoryPage() {
                   }`}>
                     {proj.status}
                   </span>
+                  <div className="relative z-10 -mr-2 -mt-1.5">
+                    <ProjectActionsMenu project={proj} variant="icon" onStatusChanged={loadProjects} onDeleted={loadProjects} />
+                  </div>
                 </div>
 
                 <p className="text-xs text-[#64748B] line-clamp-2 leading-relaxed">
@@ -225,7 +233,7 @@ export default function ProjectsDirectoryPage() {
                   <span className="font-medium text-[#0B132B]">{proj.targetDate || 'TBD'}</span>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       )}

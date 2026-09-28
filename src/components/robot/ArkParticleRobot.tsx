@@ -9,7 +9,7 @@ interface ArkParticleRobotProps {
 }
 
 export default function ArkParticleRobot({
-  source = '/assets/arklintech-robot-particle-source.png',
+  source = '/assets/arklintech-robot-particle-source.webp',
   className = '',
   onProgressChange,
 }: ArkParticleRobotProps) {

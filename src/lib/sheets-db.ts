@@ -142,8 +142,9 @@ export const sheetsDb = {
     }
   },
 
-  // Read all rows from a tab
-  readTab: async (tabName: string): Promise<Record<string, any>[]> => {
+  // Read all rows from a tab. By default a failed read yields [] (legacy behaviour); pass
+  // { strict: true } where stale or missing data must surface as an error instead.
+  readTab: async (tabName: string, opts?: { strict?: boolean }): Promise<Record<string, any>[]> => {
     try {
       const rows = await executeWithRetry(async () => {
         const sheets = await getSheetsClient();
@@ -156,6 +157,7 @@ export const sheetsDb = {
 
       return rows.map(r => rowToObject(tabName, r));
     } catch (err: any) {
+      if (opts?.strict) throw err;
       try {
         await sheetsDb.ensureTab(tabName);
       } catch {}
@@ -499,58 +501,6 @@ export const sheetsDb = {
         status: 'READ',
         read_at: now,
       });
-    },
-  },
-
-  // Specialized Visitors & Sessions tracking
-  visitors: {
-    upsertVisitor: async (data: { visitor_id?: string; contact_id?: string; landing_page?: string; device?: string; browser?: string; location?: string; intent_level?: string }): Promise<Record<string, any>> => {
-      const now = new Date().toISOString();
-      const visitors = await sheetsDb.readTab('Visitors');
-      let existing = data.visitor_id ? visitors.find(v => v.visitor_id === data.visitor_id) : null;
-
-      if (existing) {
-        await sheetsDb.updateRowById('Visitors', 'visitor_id', existing.visitor_id, {
-          last_seen_at: now,
-          intent_level: data.intent_level || existing.intent_level || 'LOW',
-        });
-        return { ...existing, last_seen_at: now };
-      }
-
-      const newVisitor = {
-        visitor_id: data.visitor_id || uid('vis'),
-        contact_id: data.contact_id || '',
-        first_seen_at: now,
-        last_seen_at: now,
-        source_id: 'Direct',
-        landing_page: data.landing_page || '/',
-        device: data.device || 'Desktop',
-        browser: data.browser || 'Chrome',
-        location: data.location || 'India',
-        intent_level: data.intent_level || 'LOW',
-      };
-      await sheetsDb.appendRow('Visitors', newVisitor);
-      return newVisitor;
-    },
-  },
-
-  sessions: {
-    createSession: async (data: { session_id?: string; visitor_id: string; landing_page?: string; device?: string }): Promise<Record<string, any>> => {
-      const now = new Date().toISOString();
-      const newSession = {
-        session_id: data.session_id || uid('sess'),
-        visitor_id: data.visitor_id,
-        started_at: now,
-        ended_at: '',
-        landing_page: data.landing_page || '/',
-        exit_page: data.landing_page || '/',
-        pages_viewed: '1',
-        duration_seconds: '0',
-        source_id: 'Direct',
-        device: data.device || 'Desktop',
-      };
-      await sheetsDb.appendRow('Sessions', newSession);
-      return newSession;
     },
   },
 };

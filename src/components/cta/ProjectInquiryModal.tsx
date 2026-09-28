@@ -1,9 +1,8 @@
-import KeystoneLogo from '@/components/brand/KeystoneLogo';
-import ArklintechWordmark from '@/components/brand/ArklintechWordmark';
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import { X, CheckCircle2, Send, ShieldCheck, Sparkles, AlertCircle } from 'lucide-react';
+import BrandName from '@/components/brand/BrandName';
 
 interface ProjectInquiryModalProps {
   isOpen: boolean;
@@ -96,7 +95,7 @@ export default function ProjectInquiryModal({ isOpen, onClose }: ProjectInquiryM
             </div>
 
             <h2 id="inquiry-modal-title" className="text-xl sm:text-2xl font-bold uppercase tracking-tight text-white" style={{ fontFamily: "'Syncopate', sans-serif" }}>
-              START A SYSTEM WITH <span className="text-[#1463FF]">ARKLINTECH</span>
+              START A SYSTEM WITH <BrandName className="text-[#1463FF]" />
             </h2>
 
             <p className="text-xs text-white/60 font-mono mt-1 mb-6">
@@ -253,7 +252,7 @@ export default function ProjectInquiryModal({ isOpen, onClose }: ProjectInquiryM
                 WE&apos;VE RECEIVED YOUR REQUIREMENT.
               </h2>
               <p className="text-xs sm:text-sm text-white/60 font-mono mt-1">
-                AN ARKLINTECH SYSTEMS ARCHITECT WILL CONTACT YOU WITHIN 24 HOURS.
+                AN <BrandName /> SYSTEMS ARCHITECT WILL CONTACT YOU WITHIN 24 HOURS.
               </p>
             </div>
 

@@ -4,7 +4,9 @@ import React from 'react';
 import Link from 'next/link';
 import GlobalPresenceMap from './GlobalPresenceMap';
 import KeystoneLogo from '@/components/brand/KeystoneLogo';
+import ArklintechWordmark from '@/components/brand/ArklintechWordmark';
 import { ArrowRight, Mail } from 'lucide-react';
+import BrandName from '@/components/brand/BrandName';
 
 export default function Footer() {
   return (
@@ -18,28 +20,13 @@ export default function Footer() {
           className="absolute inset-x-4 sm:inset-x-6 lg:inset-x-12 bottom-2 sm:bottom-4 md:bottom-6 pointer-events-none select-none z-0 overflow-hidden flex items-end justify-center"
           aria-hidden="true"
         >
-          <svg
-            viewBox="0 0 1380 180"
-            className="w-full h-auto max-h-[160px] sm:max-h-[200px] md:max-h-[240px]"
-            preserveAspectRatio="xMidYMid meet"
-          >
-            <g fill="rgba(17, 24, 39, 0.11)">
-              {/* Custom Vector Chevron "Λ" Glyph matching brand logo */}
-              <path d="M 67.3,15 L 134.6,140 L 93.7,140 L 67.3,86.1 L 40.9,140 L 0,140 Z" />
-              <text
-                x="150"
-                y="136"
-                textLength="1230"
-                lengthAdjust="spacing"
-                fontFamily="'Syncopate', var(--font-syncopate), sans-serif"
-                fontSize="145"
-                fontWeight="700"
-                letterSpacing="0.05em"
-              >
-                RKLINTECH
-              </text>
-            </g>
-          </svg>
+          <ArklintechWordmark
+            fluid
+            decorative
+            tracking={0.1}
+            gap={0.1}
+            className="text-[rgba(17,24,39,0.11)] max-h-[160px] sm:max-h-[200px] md:max-h-[240px]"
+          />
         </div>
 
         {/* ========================================================================= */}
@@ -89,7 +76,7 @@ export default function Footer() {
                 <li><Link href="/what-we-do/software-platforms" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Software & Platforms</Link></li>
                 <li><Link href="/what-we-do/automation-orchestration" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Automation & Orchestration</Link></li>
                 <li><Link href="/what-we-do/business-systems" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Business Systems</Link></li>
-                <li className="pt-1 border-t border-[#D8D4C9]/50"><Link href="/about" className="text-[#0050E6] hover:text-[#0B2E73] transition-colors font-semibold">About ARKLINTECH →</Link></li>
+                <li className="pt-1 border-t border-[#D8D4C9]/50"><Link href="/about" className="text-[#0050E6] hover:text-[#0B2E73] transition-colors font-semibold">About <BrandName fit /> →</Link></li>
               </ul>
             </div>
 
@@ -137,7 +124,7 @@ export default function Footer() {
                 <li><Link href="/technology-architecture" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Technology Architecture</Link></li>
                 <li><Link href="/systems-library" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Systems Library</Link></li>
                 <li><Link href="/insights" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">Insights & Notes</Link></li>
-                <li><Link href="/lab" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded">ARKLINTECH Lab</Link></li>
+                <li><Link href="/lab" className="hover:text-[#111827] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#1677FF] rounded"><BrandName fit /> Lab</Link></li>
               </ul>
             </div>
 
@@ -152,7 +139,7 @@ export default function Footer() {
           {/* ========================================================================= */}
           <div className="pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-mono text-xs text-[#475569]">
             <div>
-              © 2026 <span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: "0.1em" }} className="font-bold"><span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: '0.12em' }} className="font-extrabold uppercase">ARKLINTECH</span></span> Technology Systems. All rights reserved.
+              © 2026 <BrandName /> Technology Systems. All rights reserved.
             </div>
 
             <div className="flex items-center gap-4 text-[#475569]">

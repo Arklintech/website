@@ -13,6 +13,7 @@ import { fetchAdmin, fetchAdminJSON, invalidateAdminCache } from '@/lib/admin-cl
 import type { ServiceRecord, ProjectRecord, InvoiceRecord, InvoiceItemRecord } from '@/lib/admin-db';
 import { amountToWordsIndian } from '@/lib/currency-words';
 import KeystoneLogo from '@/components/brand/KeystoneLogo';
+import BrandName from '@/components/brand/BrandName';
 
 export default function CreateOrEditInvoicePage() {
   const searchParams = useSearchParams();
@@ -1167,7 +1168,7 @@ export default function CreateOrEditInvoicePage() {
                 </div>
                 <p className="font-bold text-xs text-[#0B132B] leading-none">Anas Ahmed Khan</p>
                 <p className="text-[10px] text-[#64748B]">Founder</p>
-                <p className="text-[10px] font-bold text-[#0B132B]">ARKLINTECH TECHNOLOGY SYSTEMS</p>
+                <p className="text-[10px] font-bold text-[#0B132B]"><BrandName /> TECHNOLOGY SYSTEMS</p>
               </div>
 
               <div className="flex items-center gap-3 text-left sm:text-right self-start sm:self-auto">

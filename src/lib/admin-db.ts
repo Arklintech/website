@@ -6,6 +6,7 @@ import fs from 'fs';
 import path from 'path';
 import { sheetsDb } from './sheets-db';
 import { deleteFileFromDrive } from './google-drive';
+import { getActiveProjectImages, retireProjectImages } from './project-image-store';
 
 const DATA_DIR = path.join(process.cwd(), '.data');
 if (!fs.existsSync(DATA_DIR)) {
@@ -39,7 +40,6 @@ export type MessageDirection = 'INBOUND' | 'OUTBOUND' | 'INTERNAL';
 export type EmailDeliveryStatus = 'QUEUED' | 'SENDING' | 'SENT' | 'DELIVERED' | 'FAILED' | 'BOUNCED';
 export type FollowUpStatus = 'OPEN' | 'SNOOZED' | 'COMPLETED';
 export type NotificationType = 'NEW_LEAD' | 'NEW_REPLY' | 'FOLLOW_UP_DUE' | 'FOLLOW_UP_OVERDUE' | 'HIGH_INTENT_VISITOR' | 'EMAIL_FAILED' | 'LEADS_WAITING' | 'UNASSIGNED_CONV' | 'SYSTEM';
-export type IntentLevel = 'LOW' | 'MEDIUM' | 'HIGH';
 
 export interface LeadRecord {
   id: string;
@@ -132,25 +132,6 @@ export interface FollowUpRecord {
   notes?: string | null;
   createdAt: string;
   updatedAt: string;
-}
-
-export interface VisitorRecord {
-  id: string;
-  sessionId: string;
-  contactId?: string | null;
-  firstSeen: string;
-  lastSeen: string;
-  device?: string | null;
-  browser?: string | null;
-  location?: string | null;
-  country?: string | null;
-  source?: string | null;
-  landingPage?: string | null;
-  currentPage?: string | null;
-  pagesVisited: string[];
-  durationSeconds: number;
-  intent: IntentLevel;
-  isActive: boolean;
 }
 
 export interface NotificationRecord {
@@ -311,7 +292,6 @@ const FILES = {
   conversations: path.join(DATA_DIR, 'conversations.json'),
   messages: path.join(DATA_DIR, 'messages.json'),
   followups: path.join(DATA_DIR, 'followups.json'),
-  visitors: path.join(DATA_DIR, 'visitors.json'),
   notifications: path.join(DATA_DIR, 'notifications.json'),
   reviews: path.join(DATA_DIR, 'reviews.json'),
   projects: path.join(DATA_DIR, 'projects.json'),
@@ -562,6 +542,60 @@ async function getMergedNotifications(): Promise<NotificationRecord[]> {
   const result = Array.from(mergedMap.values()).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   notificationsCache = { data: result, timestamp: now };
   return result;
+}
+
+// ─── Project <-> Sheets row mapping ──────────────────────────────────────────
+
+// A Sheets-backed project is read from its row alone: blank cells mean blank values, so a stale
+// local copy can never resurface. Only `stages` (not stored in Sheets) comes from the local record;
+// the image is resolved from Google Drive (see project-image-store.ts).
+function projectFromSheetRow(r: Record<string, any>, local?: ProjectRecord): ProjectRecord {
+  const text = (v: unknown) => (v === null || v === undefined ? '' : String(v));
+  const now = new Date().toISOString();
+  return {
+    id: r.project_id,
+    name: text(r.name) || 'Project',
+    clientName: text(r.client_name) || 'Client',
+    companyId: text(r.company_id) || null,
+    description: text(r.description),
+    industry: text(r.industry) || null,
+    projectType: text(r.project_type) || null,
+    technologies: text(r.technologies) || null,
+    team: text(r.team) || null,
+    priority: (text(r.priority) || 'MEDIUM') as ProjectRecord['priority'],
+    status: (text(r.status) || 'ACTIVE') as ProjectRecord['status'],
+    startDate: text(r.start_date),
+    targetDate: text(r.target_date),
+    projectRef: text(r.project_ref),
+    projectValue: parseFloat(text(r.project_value)) || 0,
+    progress: parseInt(text(r.progress), 10) || 0,
+    currentStage: text(r.current_stage),
+    stages: local?.stages,
+    thumbnailUrl: null,
+    createdAt: text(r.created_at) || now,
+    updatedAt: text(r.updated_at) || text(r.created_at) || now,
+  };
+}
+
+function projectToSheetFields(p: ProjectRecord): Record<string, string> {
+  return {
+    name: p.name,
+    client_name: p.clientName,
+    company_id: p.companyId || '',
+    description: p.description || '',
+    industry: p.industry || '',
+    project_type: p.projectType || '',
+    technologies: p.technologies || '',
+    team: p.team || '',
+    priority: p.priority,
+    status: p.status,
+    start_date: p.startDate || '',
+    target_date: p.targetDate || '',
+    project_ref: p.projectRef || '',
+    project_value: String(p.projectValue ?? 0),
+    progress: String(p.progress ?? 0),
+    current_stage: p.currentStage || '',
+  };
 }
 
 // ─── Admin DB ─────────────────────────────────────────────────────────────────
@@ -885,65 +919,6 @@ export const adminDb = {
     },
   },
 
-  visitors: {
-    findActive: async (): Promise<VisitorRecord[]> =>
-      readJSON<VisitorRecord>(FILES.visitors, []).filter(r => r.isActive),
-    findRecent: async (limit = 50): Promise<VisitorRecord[]> =>
-      readJSON<VisitorRecord>(FILES.visitors, [])
-        .sort((a, b) => new Date(b.lastSeen).getTime() - new Date(a.lastSeen).getTime())
-        .slice(0, limit),
-    countActive: async (): Promise<number> =>
-      readJSON<VisitorRecord>(FILES.visitors, []).filter(r => r.isActive).length,
-    upsertSession: async (sessionId: string, updates: Partial<VisitorRecord>): Promise<VisitorRecord> => {
-      const records = readJSON<VisitorRecord>(FILES.visitors, []);
-      const idx = records.findIndex(r => r.sessionId === sessionId);
-      const now = new Date().toISOString();
-      let record: VisitorRecord;
-
-      if (idx !== -1) {
-        records[idx] = { ...records[idx], ...updates, lastSeen: now };
-        record = records[idx];
-      } else {
-        record = {
-          id: uid('vis'),
-          sessionId,
-          firstSeen: now,
-          lastSeen: now,
-          pagesVisited: [],
-          durationSeconds: 0,
-          intent: 'LOW',
-          isActive: true,
-          ...updates,
-        };
-        records.unshift(record);
-      }
-
-      if (records.length > 5000) records.length = 5000;
-      writeJSON(FILES.visitors, records);
-
-      try {
-        await sheetsDb.visitors.upsertVisitor({
-          visitor_id: record.id,
-          landing_page: updates.landingPage || '/',
-          device: updates.device || 'Desktop',
-          browser: updates.browser || 'Chrome',
-          location: updates.location || 'India',
-          intent_level: updates.intent || 'LOW',
-        });
-        await sheetsDb.sessions.createSession({
-          session_id: sessionId,
-          visitor_id: record.id,
-          landing_page: updates.landingPage || '/',
-          device: updates.device || 'Desktop',
-        });
-      } catch (err) {
-        console.error('Error persisting visitor session to Sheets:', err);
-      }
-
-      return record;
-    },
-  },
-
   notifications: {
     findAll: async (limit = 100): Promise<NotificationRecord[]> => {
       const records = await getMergedNotifications();
@@ -1010,45 +985,27 @@ export const adminDb = {
   },
 
   projects: {
+    // Google Sheets is authoritative. The local JSON file is only a dev cache and the home of
+    // records that were never synced to Sheets (e.g. seed data); it never overrides Sheets values.
     findRecent: async (limit = 100): Promise<ProjectRecord[]> => {
-      let localProjects = readJSON<ProjectRecord>(FILES.projects, []);
-      try {
-        const rows = await sheetsDb.readTab('Projects');
-        if (rows.length) {
-          const map = new Map<string, ProjectRecord>();
-          localProjects.forEach(p => map.set(p.id, p));
-          rows.forEach(r => {
-            if (r.project_id) {
-              const existing = map.get(r.project_id);
-              map.set(r.project_id, {
-                id: r.project_id,
-                name: r.name || existing?.name || 'Project',
-                clientName: r.client_name || existing?.clientName || 'Client',
-                companyId: r.company_id || existing?.companyId || null,
-                description: r.description || existing?.description || '',
-                industry: r.industry || existing?.industry || null,
-                projectType: r.project_type || existing?.projectType || null,
-                technologies: r.technologies || existing?.technologies || null,
-                team: r.team || existing?.team || null,
-                priority: (r.priority as any) || existing?.priority || 'MEDIUM',
-                status: (r.status as any) || existing?.status || 'ACTIVE',
-                startDate: r.start_date || existing?.startDate || '',
-                targetDate: r.target_date || existing?.targetDate || '',
-                projectRef: r.project_ref || existing?.projectRef || '',
-                projectValue: parseFloat(r.project_value || existing?.projectValue || '0') || 0,
-                progress: parseInt(r.progress || existing?.progress || '0', 10) || 0,
-                currentStage: r.current_stage || existing?.currentStage || '',
-                stages: existing?.stages,
-                thumbnailUrl: existing?.thumbnailUrl || null,
-                createdAt: r.created_at || existing?.createdAt || new Date().toISOString(),
-                updatedAt: r.updated_at || existing?.updatedAt || new Date().toISOString(),
-              });
-            }
-          });
-          localProjects = Array.from(map.values());
-        }
-      } catch {}
-      return localProjects.slice(0, limit);
+      const localProjects = readJSON<ProjectRecord>(FILES.projects, []);
+      const merged = new Map<string, ProjectRecord>();
+      localProjects.forEach(p => merged.set(p.id, p));
+
+      const [rows, images] = await Promise.all([
+        sheetsDb.readTab('Projects', { strict: true }),
+        getActiveProjectImages(),
+      ]);
+      rows.forEach(r => {
+        if (!r.project_id) return;
+        merged.set(r.project_id, projectFromSheetRow(r, merged.get(r.project_id)));
+      });
+
+      // An uploaded Drive image wins; otherwise a local-only record keeps its own (seed) image.
+      return Array.from(merged.values()).slice(0, limit).map(p => {
+        const fileId = images.get(p.id);
+        return fileId ? { ...p, thumbnailUrl: `drive:${fileId}` } : p;
+      });
     },
 
     findById: async (id: string): Promise<ProjectRecord | null> => {
@@ -1069,73 +1026,77 @@ export const adminDb = {
       writeJSON(FILES.projects, records);
 
       try {
-        await sheetsDb.appendRow('Projects', {
-          project_id: record.id,
-          name: record.name,
-          client_name: record.clientName,
-          company_id: record.companyId || '',
-          description: record.description,
-          industry: record.industry || '',
-          project_type: record.projectType || '',
-          technologies: record.technologies || '',
-          team: record.team || '',
-          priority: record.priority,
-          status: record.status,
-          start_date: record.startDate,
-          target_date: record.targetDate,
-          project_ref: record.projectRef,
-          project_value: record.projectValue.toString(),
-          progress: record.progress.toString(),
-          current_stage: record.currentStage,
-          created_at: now,
-          updated_at: now,
-        });
+        await sheetsDb.appendRow('Projects', { project_id: record.id, ...projectToSheetFields(record), created_at: now, updated_at: now });
       } catch (err) {
         console.error('Error saving project to Sheets:', err);
       }
       return record;
     },
 
+    /**
+     * Persists changes to the authoritative record and returns the record as re-read from the
+     * source, so callers never hold an optimistic copy that differs from what a reload shows.
+     * Throws if the Sheets write fails for a Sheets-backed project.
+     */
     update: async (id: string, data: Partial<ProjectRecord>): Promise<ProjectRecord | null> => {
-      const records = readJSON<ProjectRecord>(FILES.projects, []);
-      const idx = records.findIndex(p => p.id === id || p.projectRef === id);
-      if (idx === -1) return null;
+      const current = await adminDb.projects.findById(id);
+      if (!current) return null;
 
+      // Images are managed through saveProjectImage/removeImage, never through field updates.
+      const { thumbnailUrl: _ignored, ...fields } = data;
       const now = new Date().toISOString();
-      const updated: ProjectRecord = {
-        ...records[idx],
-        ...data,
-        updatedAt: now,
-      };
-      records[idx] = updated;
+      const next: ProjectRecord = { ...current, ...fields, id: current.id, updatedAt: now };
+
+      const inSheets = await sheetsDb.updateRowById('Projects', 'project_id', current.id, {
+        ...projectToSheetFields(next),
+        updated_at: now,
+      });
+
+      // Keep the local cache in step (it is the only store for records not in Sheets). The cached
+      // image stays the record's own, never the Drive reference resolved at read time.
+      const records = readJSON<ProjectRecord>(FILES.projects, []);
+      const idx = records.findIndex(p => p.id === current.id);
+      if (idx !== -1) records[idx] = { ...next, thumbnailUrl: records[idx].thumbnailUrl ?? null };
+      else if (!inSheets) records.unshift({ ...next, thumbnailUrl: null });
       writeJSON(FILES.projects, records);
 
-      try {
-        const sheetUpdates: Record<string, any> = { updated_at: now };
-        if (data.name !== undefined) sheetUpdates.name = data.name;
-        if (data.clientName !== undefined) sheetUpdates.client_name = data.clientName;
-        if (data.description !== undefined) sheetUpdates.description = data.description;
-        if (data.status !== undefined) sheetUpdates.status = data.status;
-        if (data.startDate !== undefined) sheetUpdates.start_date = data.startDate;
-        if (data.targetDate !== undefined) sheetUpdates.target_date = data.targetDate;
-        if (data.projectValue !== undefined) sheetUpdates.project_value = data.projectValue.toString();
-        if (data.progress !== undefined) sheetUpdates.progress = data.progress.toString();
-        if (data.currentStage !== undefined) sheetUpdates.current_stage = data.currentStage;
-        await sheetsDb.updateRowById('Projects', 'project_id', updated.id, sheetUpdates);
-      } catch (err) {
-        console.error('Error updating project in Sheets:', err);
-      }
-      return updated;
+      return adminDb.projects.findById(current.id);
     },
 
+    /**
+     * Removes the project's current image: retires its uploaded Drive image (the previous image,
+     * e.g. a seed image, shows again). If there was no uploaded image, clears the record's own image.
+     */
+    removeImage: async (id: string): Promise<ProjectRecord | null> => {
+      const current = await adminDb.projects.findById(id);
+      if (!current) return null;
+
+      const retired = await retireProjectImages(current.id);
+      if (retired === 0) {
+        const records = readJSON<ProjectRecord>(FILES.projects, []);
+        const idx = records.findIndex(p => p.id === current.id);
+        if (idx !== -1) {
+          records[idx] = { ...records[idx], thumbnailUrl: null, updatedAt: new Date().toISOString() };
+          writeJSON(FILES.projects, records);
+        }
+      }
+      return adminDb.projects.findById(current.id);
+    },
+
+    /**
+     * Deletes the project record from Sheets (and the local cache). Throws if the Sheets delete
+     * fails, so a project never disappears locally only to come back on the next load.
+     * Linked milestones, updates, files, notes, and invoices are kept.
+     */
     delete: async (id: string): Promise<boolean> => {
+      const current = await adminDb.projects.findById(id);
+      if (!current) return false;
+
+      await sheetsDb.deleteRowById('Projects', 'project_id', current.id);
+
       const records = readJSON<ProjectRecord>(FILES.projects, []);
-      const filtered = records.filter(p => p.id !== id && p.projectRef !== id);
-      if (filtered.length === records.length) return false;
-      writeJSON(FILES.projects, filtered);
-      try {
-        await sheetsDb.deleteRowById('Projects', 'project_id', id);
-      } catch {}
+      const filtered = records.filter(p => p.id !== current.id);
+      if (filtered.length !== records.length) writeJSON(FILES.projects, filtered);
       return true;
     },
   },

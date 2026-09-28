@@ -23,7 +23,8 @@ export async function uploadFileToDrive(
   buffer: Buffer,
   filename: string,
   mimeType: string,
-  subfolder: 'Assets' | 'Images' | 'Attachments' | 'Documents' | 'Avatars' = 'Documents'
+  subfolder: 'Assets' | 'Images' | 'Attachments' | 'Documents' | 'Avatars' = 'Documents',
+  appProperties?: Record<string, string>
 ): Promise<DriveFileMetadata> {
   const drive = await getDriveClient();
   let parentFolderId = SUBFOLDER_MAP[subfolder] || DRIVE_FOLDER_ID;
@@ -38,6 +39,7 @@ export async function uploadFileToDrive(
       requestBody: {
         name: filename,
         parents: [parentFolderId],
+        appProperties,
       },
       media: {
         mimeType,
@@ -58,6 +60,7 @@ export async function uploadFileToDrive(
           requestBody: {
             name: filename,
             parents: [DRIVE_FOLDER_ID],
+            appProperties,
           },
           media: {
             mimeType,
@@ -109,6 +112,16 @@ export async function getDriveFileMetadata(fileId: string): Promise<Partial<Driv
     console.error(`Error fetching metadata for Drive file ${fileId}:`, err);
     return null;
   }
+}
+
+export async function downloadDriveFile(fileId: string): Promise<{ data: Buffer; mimeType: string }> {
+  const drive = await getDriveClient();
+  const meta = await drive.files.get({ fileId, fields: 'mimeType', supportsAllDrives: true });
+  const res = await drive.files.get(
+    { fileId, alt: 'media', supportsAllDrives: true },
+    { responseType: 'arraybuffer' },
+  );
+  return { data: Buffer.from(res.data as ArrayBuffer), mimeType: meta.data.mimeType || 'application/octet-stream' };
 }
 
 export async function deleteFileFromDrive(fileIdOrUrl: string): Promise<boolean> {

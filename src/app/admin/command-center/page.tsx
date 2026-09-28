@@ -3,14 +3,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import {
-  Users, MessageSquare, FileText, TrendingUp, Activity, Zap,
-  ArrowRight, ArrowUpRight, ChevronRight, RefreshCw, Calendar,
-  Radio, GitBranch, BarChart2, AlertCircle, Eye, AlertTriangle,
-  CheckCircle2, Clock, Globe, ShieldCheck
+  Users, FileText, TrendingUp, Zap,
+  ArrowRight, ChevronRight, RefreshCw, Calendar,
+  BarChart2, AlertCircle, AlertTriangle,
+  CheckCircle2, Globe, ShieldCheck
 } from 'lucide-react';
 
 import MetricSparkline from '@/components/admin/shared/MetricSparkline';
-import { StatusBadge, IntentDot } from '@/components/admin/shared/StatusBadge';
+import { StatusBadge } from '@/components/admin/shared/StatusBadge';
 import { fetchAdmin } from '@/lib/admin-client';
 
 function timeAgo(ts: string): string {
@@ -21,12 +21,6 @@ function timeAgo(ts: string): string {
   const h = Math.floor(m / 60);
   if (h < 24) return `${h}h ago`;
   return `${Math.floor(h / 24)}d ago`;
-}
-
-function formatDuration(secs: number): string {
-  const m = Math.floor(secs / 60);
-  const s = secs % 60;
-  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 }
 
 const PIPELINE_STAGES = ['NEW', 'CONTACTED', 'QUALIFIED', 'DISCOVERY', 'PROPOSAL', 'ACTIVE', 'WON', 'LOST'];
@@ -74,16 +68,12 @@ function KPICard({ label, value, delta, trend, icon, color = '#1463FF', isLive }
 
 const ATTENTION_ICONS: Record<string, React.ReactNode> = {
   OVERDUE_FOLLOWUP: <AlertCircle className="w-4 h-4 text-rose-500" />,
-  UNASSIGNED_CONV: <MessageSquare className="w-4 h-4 text-amber-500" />,
-  HIGH_INTENT: <Eye className="w-4 h-4 text-purple-500" />,
   LEADS_WAITING: <Zap className="w-4 h-4 text-[#1463FF]" />,
   EMAIL_FAILED: <AlertTriangle className="w-4 h-4 text-rose-500" />,
 };
 
 const ATTENTION_BG: Record<string, string> = {
   OVERDUE_FOLLOWUP: 'bg-rose-50 border-rose-200',
-  UNASSIGNED_CONV: 'bg-amber-50 border-amber-200',
-  HIGH_INTENT: 'bg-purple-50 border-purple-200',
   LEADS_WAITING: 'bg-[#EDF4FF] border-[#1463FF]/25',
   EMAIL_FAILED: 'bg-rose-50 border-rose-200',
 };
@@ -123,9 +113,6 @@ export default function CommandCenterPage() {
   const kpis = data?.kpis || {};
   const pipeline = data?.pipeline || PIPELINE_STAGES.map(s => ({ stage: s, count: 0, conversion: 0 }));
   const recentLeads = data?.recentLeads || [];
-  const topSources = data?.topSources || [];
-  const liveVisitors = data?.liveVisitors || [];
-  const journeys = data?.journeys || [];
   const followupCounts = data?.followups?.counts || { overdue: 0, dueToday: 0, dueThisWeek: 0, upcoming: 0 };
   const needsAttention = data?.needsAttention || [];
 
@@ -179,19 +166,16 @@ export default function CommandCenterPage() {
       </div>
 
       {/* ─── KPI STRIP (Derived from real operational data) ──────────────────── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
-        <KPICard label="Visitors Today" value={kpis.visitorsToday ?? 0} icon={<Activity className="w-4 h-4" />} />
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
         <KPICard label="Leads" value={kpis.leads ?? 0} icon={<Zap className="w-4 h-4" />} color="#1463FF" />
-        <KPICard label="Conversations" value={kpis.conversations ?? 0} icon={<MessageSquare className="w-4 h-4" />} color="#8B5CF6" />
         <KPICard label="Inquiries" value={kpis.inquiries ?? 0} icon={<FileText className="w-4 h-4" />} color="#F59E0B" />
         <KPICard label="Conversion Rate" value={`${kpis.conversionRate ?? 0}%`} icon={<TrendingUp className="w-4 h-4" />} color="#10B981" />
-        <KPICard label="Active Now" value={kpis.activeNow ?? 0} icon={<Radio className="w-4 h-4" />} color="#10B981" isLive />
       </div>
 
-      {/* ─── THREE-COLUMN MAIN LAYOUT ─────────────────────────────────────── */}
+      {/* ─── TWO-COLUMN MAIN LAYOUT ───────────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
 
-        {/* ── LEFT: Pipeline + Recent Leads + Live Visitors (7 cols) ── */}
+        {/* ── LEFT: Pipeline + Recent Leads (7 cols) ── */}
         <div className="lg:col-span-7 flex flex-col gap-5">
 
           {/* Lead Pipeline */}
@@ -278,146 +262,10 @@ export default function CommandCenterPage() {
             )}
           </div>
 
-          {/* Live Visitors */}
-          <div className="bg-white rounded-xl border border-[#E8E4DC] overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E4DC]">
-              <div className="flex items-center gap-2">
-                <Radio className="w-4 h-4 text-emerald-500" />
-                <h2 className="font-bold text-sm text-[#0B132B]">Live Visitors</h2>
-                <span className="flex items-center gap-1 font-mono text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-full">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  {kpis.activeNow ?? 0} online
-                </span>
-              </div>
-              <Link href="/admin/live-visitors" className="text-[10px] font-mono font-bold text-[#1463FF] hover:text-[#004AD6] flex items-center gap-1">
-                View all <ArrowRight className="w-3 h-3" />
-              </Link>
-            </div>
-            {liveVisitors.length === 0 ? (
-              <div className="p-8 text-center">
-                <Radio className="w-8 h-8 text-[#D8D4C9] mx-auto mb-2" />
-                <p className="font-bold text-xs text-[#0B132B]">No active visitors right now</p>
-                <p className="text-[11px] text-[#94A3B8] mt-1">Live website sessions will appear in real time.</p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left">
-                  <thead>
-                    <tr className="border-b border-[#F1EDE4]">
-                      {['Visitor', 'Location', 'Page', 'Duration', 'Intent'].map(h => (
-                        <th key={h} className="px-4 py-2.5 font-mono text-[9px] font-bold text-[#94A3B8] uppercase tracking-wider whitespace-nowrap">
-                          {h}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#F1EDE4]">
-                    {liveVisitors.slice(0, 5).map((v: any, i: number) => (
-                      <tr key={v.id || i} className="hover:bg-[#FDFBF7] transition-colors">
-                        <td className="px-4 py-2.5 font-mono text-[11px] font-bold text-[#0B132B]">
-                          {String(i + 1).padStart(2, '0')}
-                        </td>
-                        <td className="px-4 py-2.5">
-                          <span className="text-[12px] text-[#475569] flex items-center gap-1.5">
-                            <span>{v.country || '🌍'}</span>
-                            <span>{v.location || 'Unknown'}</span>
-                          </span>
-                        </td>
-                        <td className="px-4 py-2.5 font-mono text-[10px] text-[#1463FF] truncate max-w-[140px]">
-                          {v.currentPage || v.landingPage || '/'}
-                        </td>
-                        <td className="px-4 py-2.5 font-mono text-[11px] text-[#475569]">
-                          {formatDuration(v.durationSeconds || 0)}
-                        </td>
-                        <td className="px-4 py-2.5">
-                          <IntentDot intent={v.intent || 'LOW'} />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-            <div className="px-5 py-3 border-t border-[#F1EDE4]">
-              <Link href="/admin/live-visitors" className="text-[11px] font-mono font-bold text-[#1463FF] hover:text-[#004AD6] flex items-center gap-1">
-                View all live visitors <ArrowRight className="w-3 h-3" />
-              </Link>
-            </div>
-          </div>
         </div>
 
-        {/* ── MIDDLE: Sources + Visitor Journeys + Follow-ups (3 cols) ── */}
-        <div className="lg:col-span-3 flex flex-col gap-5">
-
-          {/* Top Sources */}
-          <div className="bg-white rounded-xl border border-[#E8E4DC] overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E4DC]">
-              <div className="flex items-center gap-2">
-                <Globe className="w-4 h-4 text-[#1463FF]" />
-                <h2 className="font-bold text-sm text-[#0B132B]">Top Sources</h2>
-              </div>
-              <Link href="/admin/sources" className="text-[10px] font-mono font-bold text-[#1463FF] hover:text-[#004AD6]">View all</Link>
-            </div>
-            <div className="p-5">
-              {topSources.length === 0 ? (
-                <div className="py-6 text-center">
-                  <Globe className="w-7 h-7 text-[#D8D4C9] mx-auto mb-2" />
-                  <p className="text-[11px] font-bold text-[#64748B]">No telemetry sources yet</p>
-                  <p className="text-[10px] text-[#94A3B8] mt-0.5">Visits will aggregate by traffic channel.</p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {topSources.map((s: any, i: number) => (
-                    <div key={s.source} className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-sm shrink-0 ${i === 0 ? 'bg-[#1463FF]' : i === 1 ? 'bg-[#64748B]' : i === 2 ? 'bg-violet-500' : 'bg-amber-400'}`} />
-                      <span className="text-[12px] text-[#475569] flex-1 truncate">{s.source}</span>
-                      <span className="font-mono text-[10px] font-bold text-[#0B132B]">{s.pct}%</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Visitor Journeys */}
-          <div className="bg-white rounded-xl border border-[#E8E4DC] overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E4DC]">
-              <div className="flex items-center gap-2">
-                <GitBranch className="w-4 h-4 text-[#1463FF]" />
-                <h2 className="font-bold text-sm text-[#0B132B]">Visitor Journeys</h2>
-              </div>
-              <Link href="/admin/visitor-journeys" className="text-[10px] font-mono font-bold text-[#1463FF] hover:text-[#004AD6]">View all</Link>
-            </div>
-            {journeys.length === 0 ? (
-              <div className="p-6 text-center">
-                <GitBranch className="w-7 h-7 text-[#D8D4C9] mx-auto mb-2" />
-                <p className="text-[11px] font-bold text-[#64748B]">No journeys recorded yet</p>
-                <p className="text-[10px] text-[#94A3B8] mt-0.5">Multi-page visitor journeys will be logged here.</p>
-              </div>
-            ) : (
-              <div className="divide-y divide-[#F1EDE4]">
-                {journeys.map((j: any, i: number) => (
-                  <div key={i} className="px-5 py-3">
-                    <div className="flex items-center gap-1 flex-wrap">
-                      {(j.pages || []).map((page: string, pi: number) => (
-                        <React.Fragment key={pi}>
-                          <span className="font-mono text-[9px] font-bold text-[#1463FF] bg-[#EDF4FF] px-1.5 py-0.5 rounded truncate max-w-[80px]" title={page}>
-                            {page.split('/').pop() || 'home'}
-                          </span>
-                          {pi < (j.pages?.length || 0) - 1 && <ArrowRight className="w-2.5 h-2.5 text-[#D8D4C9] shrink-0" />}
-                        </React.Fragment>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-            <div className="px-5 py-3 border-t border-[#F1EDE4]">
-              <Link href="/admin/visitor-journeys" className="text-[11px] font-mono font-bold text-[#1463FF] hover:text-[#004AD6] flex items-center gap-1">
-                View full journeys <ArrowRight className="w-3 h-3" />
-              </Link>
-            </div>
-          </div>
+        {/* ── RIGHT: Follow-ups + Needs Attention + Quick Stats (5 cols) ── */}
+        <div className="lg:col-span-5 flex flex-col gap-5">
 
           {/* Follow-ups */}
           <div className="bg-white rounded-xl border border-[#E8E4DC] overflow-hidden">
@@ -460,10 +308,6 @@ export default function CommandCenterPage() {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* ── RIGHT: Notifications + Needs Attention (2 cols) ── */}
-        <div className="lg:col-span-2 flex flex-col gap-5">
 
           {/* Needs Attention */}
           <div className="bg-white rounded-xl border border-[#E8E4DC] overflow-hidden">

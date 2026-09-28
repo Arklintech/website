@@ -6,6 +6,7 @@ import PageContainer from '@/components/layout/PageContainer';
 import { PROCESS_STEPS } from '@/content/process';
 import { ABOUT_CONTENT } from '@/content/about';
 import { ArrowRight, Terminal } from 'lucide-react';
+import BrandName from '@/components/brand/BrandName';
 
 export default function EngineeringView() {
   return (
@@ -26,7 +27,7 @@ export default function EngineeringView() {
                 </span>
               </div>
               <h1 className="text-display-l font-display font-bold text-z-white uppercase tracking-tight">
-                ENGINEERING AT <span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: '0.12em' }} className="font-extrabold uppercase">ARKLINTECH</span>
+                ENGINEERING AT <BrandName />
               </h1>
               <p className="text-base sm:text-lg text-z-muted font-body leading-relaxed">
                 We believe in deterministic architecture, strict boundary enforcement, and mathematical verification. Our 6-stage engineering process ensures every system is built to scale reliably without operational disruption.

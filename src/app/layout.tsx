@@ -58,8 +58,8 @@ export const metadata: Metadata = {
   },
 };
 
-import VisitorTracker from '@/components/VisitorTracker';
 import JsonLd from '@/components/seo/JsonLd';
+import OffscreenAnimationPauser from '@/components/effects/OffscreenAnimationPauser';
 import { getOrganizationSchema, getWebSiteSchema } from '@/lib/seo-schema';
 
 export const viewport: Viewport = {
@@ -79,15 +79,16 @@ export default function RootLayout({
   return (
     <html lang="en" className="light" style={{ backgroundColor: '#F5F1E8', color: '#111827' }}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Self-hosted fonts used above the fold (see src/styles/fonts.css) */}
+        <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/fonts/syncopate-latin-700.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <JsonLd schema={globalSchemas} />
       </head>
       <body
         className="bg-[#F5F1E8] text-[#111827] font-body antialiased min-h-screen"
         style={{ backgroundColor: '#F5F1E8', color: '#111827', margin: 0 }}
       >
-        <VisitorTracker />
+        <OffscreenAnimationPauser />
         {children}
       </body>
     </html>

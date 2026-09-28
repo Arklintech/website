@@ -18,6 +18,7 @@ import {
   Zap,
   Target,
 } from 'lucide-react';
+import BrandName from '@/components/brand/BrandName';
 
 interface EngineeringDiscipline {
   id: string;
@@ -640,7 +641,7 @@ export default function EngineeringConvergenceSection() {
                   className="font-logo font-bold text-[#111827] uppercase text-[10px] sm:text-xs lg:text-sm tracking-[0.16em] sm:tracking-[0.2em] leading-none"
                   style={{ fontFamily: 'var(--font-syncopate), sans-serif' }}
                 >
-                  <span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: '0.12em' }} className="font-extrabold uppercase">ARKLINTECH</span>
+                  <BrandName />
                 </div>
               </div>
 

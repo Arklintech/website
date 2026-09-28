@@ -5,6 +5,7 @@ import Link from 'next/link';
 import {
   ArrowRight,
 } from 'lucide-react';
+import BrandName from '@/components/brand/BrandName';
 
 const PROCESS_STAGES = [
   {
@@ -13,7 +14,7 @@ const PROCESS_STAGES = [
     title: 'UNDERSTAND',
     tagline: "First, we understand what's really happening.",
     copy: "We dig into your business, your challenges, your systems, and the gaps you feel every day.",
-    svgPath: '/How%20we%20help%20images/01-understand.svg',
+    svgPath: '/How%20we%20help%20images/01-understand.webp',
   },
   {
     id: 'stage-02',
@@ -21,7 +22,7 @@ const PROCESS_STAGES = [
     title: 'ARCHITECT',
     tagline: "Then we design the right system for the right outcomes.",
     copy: "We map the structure, the flow, the connections, and the intelligence that will drive it.",
-    svgPath: '/How%20we%20help%20images/02-architect.svg',
+    svgPath: '/How%20we%20help%20images/02-architect.webp',
   },
   {
     id: 'stage-03',
@@ -29,7 +30,7 @@ const PROCESS_STAGES = [
     title: 'ENGINEER',
     tagline: "Then we build it. Clean. Reliable. Scalable.",
     copy: "We develop the software, the automation, the interfaces, and the intelligence that power the system.",
-    svgPath: '/How%20we%20help%20images/03-engineer.svg',
+    svgPath: '/How%20we%20help%20images/03-engineer.webp',
   },
   {
     id: 'stage-04',
@@ -37,7 +38,7 @@ const PROCESS_STAGES = [
     title: 'INTEGRATE',
     tagline: "Then we connect everything that needs to work together.",
     copy: "Your tools, your data, your people, your processes — all working as one seamless system.",
-    svgPath: '/How%20we%20help%20images/04-integrate.svg',
+    svgPath: '/How%20we%20help%20images/04-integrate.webp',
   },
   {
     id: 'stage-05',
@@ -45,7 +46,7 @@ const PROCESS_STAGES = [
     title: 'DEPLOY',
     tagline: "Then we launch it where it matters.",
     copy: "We deploy with precision, test with real scenarios, and make sure it performs in the real world.",
-    svgPath: '/How%20we%20help%20images/05-deploy.svg',
+    svgPath: '/How%20we%20help%20images/05-deploy.webp',
   },
   {
     id: 'stage-06',
@@ -53,7 +54,7 @@ const PROCESS_STAGES = [
     title: 'EVOLVE',
     tagline: "And once it's live, we keep making it better.",
     copy: "We monitor, learn, adapt, and evolve the system as your business grows.",
-    svgPath: '/How%20we%20help%20images/06-evolve.svg',
+    svgPath: '/How%20we%20help%20images/06-evolve.webp',
   },
 ];
 
@@ -63,7 +64,10 @@ export default function ProcessSection() {
 
   // Reversible active stage detection via card viewport positioning
   useEffect(() => {
-    const handleScroll = () => {
+    // Measure at most once per frame; scroll events can fire several times between frames.
+    let frame: number | null = null;
+    const measure = () => {
+      frame = null;
       const windowHeight = window.innerHeight;
       const targetMid = windowHeight * 0.45;
 
@@ -83,11 +87,17 @@ export default function ProcessSection() {
 
       setActiveStageIndex(closestIdx);
     };
+    const handleScroll = () => {
+      if (frame === null) frame = requestAnimationFrame(measure);
+    };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
+    measure();
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (frame !== null) cancelAnimationFrame(frame);
+    };
   }, []);
 
   return (
@@ -109,12 +119,7 @@ export default function ProcessSection() {
             >
               <span className="block">
                 HOW{' '}
-                <span
-                  style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: "0.08em" }}
-                  className="font-extrabold text-[#0050E6]"
-                >
-                  ARKLINTECH
-                </span>
+                <BrandName className="text-[#0050E6]" />
               </span>
               <span className="text-[#0F172A] relative inline-block mt-1">
                 ACTUALLY WORKS
@@ -209,7 +214,8 @@ export default function ProcessSection() {
                 </div>
                 <div className="md:col-span-6 flex items-center justify-center p-2">
                   <img
-                    src="/How%20we%20help%20images/01-understand.svg"
+                    src="/How%20we%20help%20images/01-understand.webp"
+                    decoding="async"
                     alt="01 Understand: Diagnostic operational analysis and systems discovery diagram"
                     className="w-full h-auto max-h-[340px] object-contain select-none pointer-events-none"
                   />
@@ -252,7 +258,9 @@ export default function ProcessSection() {
                 </div>
                 <div className="md:col-span-6 flex items-center justify-center p-2">
                   <img
-                    src="/How%20we%20help%20images/02-architect.svg"
+                    src="/How%20we%20help%20images/02-architect.webp"
+                    loading="lazy"
+                    decoding="async"
                     alt="02 Architect: System topology, workflow blueprints, and data connections diagram"
                     className="w-full h-auto max-h-[340px] object-contain select-none pointer-events-none"
                   />
@@ -295,7 +303,9 @@ export default function ProcessSection() {
                 </div>
                 <div className="md:col-span-6 flex items-center justify-center p-2">
                   <img
-                    src="/How%20we%20help%20images/03-engineer.svg"
+                    src="/How%20we%20help%20images/03-engineer.webp"
+                    loading="lazy"
+                    decoding="async"
                     alt="03 Engineer: Software development and automation engineering diagram"
                     className="w-full h-auto max-h-[340px] object-contain select-none pointer-events-none"
                   />
@@ -338,7 +348,9 @@ export default function ProcessSection() {
                 </div>
                 <div className="md:col-span-6 flex items-center justify-center p-2">
                   <img
-                    src="/How%20we%20help%20images/04-integrate.svg"
+                    src="/How%20we%20help%20images/04-integrate.webp"
+                    loading="lazy"
+                    decoding="async"
                     alt="04 Integrate: Unified data flow and ecosystem connectivity diagram"
                     className="w-full h-auto max-h-[340px] object-contain select-none pointer-events-none"
                   />
@@ -381,7 +393,9 @@ export default function ProcessSection() {
                 </div>
                 <div className="md:col-span-6 flex items-center justify-center p-2">
                   <img
-                    src="/How%20we%20help%20images/05-deploy.svg"
+                    src="/How%20we%20help%20images/05-deploy.webp"
+                    loading="lazy"
+                    decoding="async"
                     alt="05 Deploy: Production staging, real-world testing, and precision rollout diagram"
                     className="w-full h-auto max-h-[340px] object-contain select-none pointer-events-none"
                   />
@@ -424,7 +438,9 @@ export default function ProcessSection() {
                 </div>
                 <div className="md:col-span-6 flex items-center justify-center p-2 relative z-10">
                   <img
-                    src="/How%20we%20help%20images/06-evolve.svg"
+                    src="/How%20we%20help%20images/06-evolve.webp"
+                    loading="lazy"
+                    decoding="async"
                     alt="06 Evolve: Continuous telemetry monitoring, feedback loops, and architectural iteration diagram"
                     className="w-full h-auto max-h-[340px] object-contain select-none pointer-events-none"
                   />

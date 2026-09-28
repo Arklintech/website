@@ -4,6 +4,7 @@ import React from 'react';
 import PageShell from '@/components/layout/PageShell';
 import PageContainer from '@/components/layout/PageContainer';
 import { LAB_EXPERIMENTS, LabStatus } from '@/content/lab';
+import BrandName from '@/components/brand/BrandName';
 
 export default function LabView() {
   const getStatusBadge = (status: LabStatus) => {
@@ -39,7 +40,7 @@ export default function LabView() {
                 </span>
               </div>
               <h1 className="text-display-l font-display font-bold text-z-white uppercase tracking-tight">
-                <span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: '0.12em' }} className="font-extrabold uppercase">ARKLINTECH</span> LAB
+                <BrandName /> LAB
               </h1>
               <p className="text-base sm:text-lg text-z-muted font-body leading-relaxed">
                 The future-facing engineering layer. We explore emerging protocols, autonomous agents, and hardware-accelerated edge inference with honest, clear state labels.

@@ -68,8 +68,8 @@ export const WORK_REVEAL_PROJECTS: WorkRevealProject[] = [
       { title: 'Accountability', desc: 'Complete transparency across every layer of the organization.', icon: 'ShieldCheck' }
     ],
     layers: [
-      { number: '01', name: 'INTERFACE', description: 'What users see and interact with.', assetPath: '/Layers/Daarayn layers/DAARAYN_LAYER_01_INTERFACE(1).svg' },
-      { number: '02', name: 'WORKFLOWS', description: 'How processes move and connect.', assetPath: '/Layers/Daarayn layers/DAARAYN_LAYER_02_WORKFLOW.svg' },
+      { number: '01', name: 'INTERFACE', description: 'What users see and interact with.', assetPath: '/Layers/Daarayn layers/DAARAYN_LAYER_01_INTERFACE(1).webp' },
+      { number: '02', name: 'WORKFLOWS', description: 'How processes move and connect.', assetPath: '/Layers/Daarayn layers/DAARAYN_LAYER_02_WORKFLOW.webp' },
       { number: '03', name: 'DATA', description: 'Structured, validated, and connected.', assetPath: '/Layers/Daarayn layers/DAARAYN_LAYER_03_DATA.svg' },
       { number: '04', name: 'OPERATIONS', description: 'Field execution and live tracking.', assetPath: '/Layers/Daarayn layers/DAARAYN_LAYER_04_OPERATIONS.svg' },
       { number: '05', name: 'REPORTING', description: 'Real-time reporting and audit lineage.', assetPath: '/Layers/Daarayn layers/DAARAYN_LAYER_05_REPORTING.svg' },
@@ -109,11 +109,11 @@ export const WORK_REVEAL_PROJECTS: WorkRevealProject[] = [
       { title: 'Institutional Clarity', desc: 'Real-time visibility into intake volumes and capacity.', icon: 'BarChart3' }
     ],
     layers: [
-      { number: '01', name: 'INTERFACE', description: 'Student portals and counseling review queues.', assetPath: '/Layers/Neominds layers/NEOMINDS_LAYER_01_INTERFACE.svg' },
-      { number: '02', name: 'WORKFLOW', description: 'Stages, counselor reviews, and status transitions.', assetPath: '/Layers/Neominds layers/NEOMINDS_LAYER_02_WORKFLOW.svg' },
-      { number: '03', name: 'DATA', description: 'Student records, academic history, and credential stores.', assetPath: '/Layers/Neominds layers/NEOMINDS_LAYER_03_DATA.svg' },
-      { number: '04', name: 'COMMUNICATION', description: 'Notification gateways and status updates.', assetPath: '/Layers/Neominds layers/NEOMINDS_LAYER_04_COMMUNICATION_COORDINATION.svg' },
-      { number: '05', name: 'REPORTING', description: 'Intake volumes and admissions metrics dashboard.', assetPath: '/Layers/Neominds layers/NEOMINDS_LAYER_05_REPORTING_DECISION_SUPPORT.svg' }
+      { number: '01', name: 'INTERFACE', description: 'Student portals and counseling review queues.', assetPath: '/Layers/Neominds layers/NEOMINDS_LAYER_01_INTERFACE.webp' },
+      { number: '02', name: 'WORKFLOW', description: 'Stages, counselor reviews, and status transitions.', assetPath: '/Layers/Neominds layers/NEOMINDS_LAYER_02_WORKFLOW.webp' },
+      { number: '03', name: 'DATA', description: 'Student records, academic history, and credential stores.', assetPath: '/Layers/Neominds layers/NEOMINDS_LAYER_03_DATA.webp' },
+      { number: '04', name: 'COMMUNICATION', description: 'Notification gateways and status updates.', assetPath: '/Layers/Neominds layers/NEOMINDS_LAYER_04_COMMUNICATION_COORDINATION.webp' },
+      { number: '05', name: 'REPORTING', description: 'Intake volumes and admissions metrics dashboard.', assetPath: '/Layers/Neominds layers/NEOMINDS_LAYER_05_REPORTING_DECISION_SUPPORT.webp' }
     ]
   },
   {
@@ -148,10 +148,10 @@ export const WORK_REVEAL_PROJECTS: WorkRevealProject[] = [
       { title: 'Franchise Metrics', desc: 'Live table turnarounds and revenue telemetry.', icon: 'BarChart3' }
     ],
     layers: [
-      { number: '01', name: 'INTERFACE', description: 'Table terminals and order displays.', assetPath: '/Layers/parivar layers/PARIVAR_LAYER_01_INTERFACE.svg' },
-      { number: '02', name: 'ORDER FLOW', description: 'Active ticket pipelines and route controls.', assetPath: '/Layers/parivar layers/PARIVAR_LAYER_02_ORDER_FLOW.svg' },
-      { number: '03', name: 'OPERATIONS', description: 'Kitchen preparation timers and queue logic.', assetPath: '/Layers/parivar layers/PARIVAR_LAYER_03_RESTAURANT_OPERATIONS.svg' },
-      { number: '04', name: 'INSIGHTS', description: 'Daily sales, recipe margins, and stock levels.', assetPath: '/Layers/parivar layers/PARIVAR_LAYER_04_BUSINESS_INSIGHT.svg' }
+      { number: '01', name: 'INTERFACE', description: 'Table terminals and order displays.', assetPath: '/Layers/parivar layers/PARIVAR_LAYER_01_INTERFACE.webp' },
+      { number: '02', name: 'ORDER FLOW', description: 'Active ticket pipelines and route controls.', assetPath: '/Layers/parivar layers/PARIVAR_LAYER_02_ORDER_FLOW.webp' },
+      { number: '03', name: 'OPERATIONS', description: 'Kitchen preparation timers and queue logic.', assetPath: '/Layers/parivar layers/PARIVAR_LAYER_03_RESTAURANT_OPERATIONS.webp' },
+      { number: '04', name: 'INSIGHTS', description: 'Daily sales, recipe margins, and stock levels.', assetPath: '/Layers/parivar layers/PARIVAR_LAYER_04_BUSINESS_INSIGHT.webp' }
     ]
   },
   {
@@ -186,10 +186,10 @@ export const WORK_REVEAL_PROJECTS: WorkRevealProject[] = [
       { title: 'Practitioner Dispatch', desc: 'Conflict-free appointment and room scheduling.', icon: 'Calendar' }
     ],
     layers: [
-      { number: '01', name: 'INTERFACE', description: 'Booking, patient portals, and diagnostic logs.', assetPath: '/Layers/Holistic Edge layer/HOLISTIC_EDGE_LAYER_01_PATIENT_INTERFACE.svg' },
-      { number: '02', name: 'CARE JOURNEY', description: 'Practitioner handoffs and appointment cycles.', assetPath: '/Layers/Holistic Edge layer/HOLISTIC_EDGE_LAYER_02_CARE_JOURNEY.svg' },
-      { number: '03', name: 'CLINICAL SYSTEM', description: 'Patient records databases and validation stores.', assetPath: '/Layers/Holistic Edge layer/HOLISTIC_EDGE_LAYER_03_CLINICAL_PATIENT_SYSTEM.svg' },
-      { number: '04', name: 'INSIGHT', description: 'Treatment results, follow-up alerts, and analytics.', assetPath: '/Layers/Holistic Edge layer/HOLISTIC_EDGE_LAYER_04_INSIGHT_CONTINUITY.svg' }
+      { number: '01', name: 'INTERFACE', description: 'Booking, patient portals, and diagnostic logs.', assetPath: '/Layers/Holistic Edge layer/HOLISTIC_EDGE_LAYER_01_PATIENT_INTERFACE.webp' },
+      { number: '02', name: 'CARE JOURNEY', description: 'Practitioner handoffs and appointment cycles.', assetPath: '/Layers/Holistic Edge layer/HOLISTIC_EDGE_LAYER_02_CARE_JOURNEY.webp' },
+      { number: '03', name: 'CLINICAL SYSTEM', description: 'Patient records databases and validation stores.', assetPath: '/Layers/Holistic Edge layer/HOLISTIC_EDGE_LAYER_03_CLINICAL_PATIENT_SYSTEM.webp' },
+      { number: '04', name: 'INSIGHT', description: 'Treatment results, follow-up alerts, and analytics.', assetPath: '/Layers/Holistic Edge layer/HOLISTIC_EDGE_LAYER_04_INSIGHT_CONTINUITY.webp' }
     ]
   },
   {
@@ -224,10 +224,10 @@ export const WORK_REVEAL_PROJECTS: WorkRevealProject[] = [
       { title: 'Behavioral Insights', desc: 'Progress metrics and reflective accountability.', icon: 'BarChart3' }
     ],
     layers: [
-      { number: '01', name: 'INTERFACE', description: 'Mobile app layout, Dhikr counters, and dashboard.', assetPath: '/Layers/Peacefull deen layers/PEACEFUL_DEEN_LAYER_01_INTERFACE.svg' },
-      { number: '02', name: 'ACCOUNTABILITY', description: 'Location-aware prayer timings and notification loops.', assetPath: '/Layers/Peacefull deen layers/PEACEFUL_DEEN_LAYER_02_REMINDER_ACCOUNTABILITY.svg' },
-      { number: '03', name: 'INTERVENTION', description: 'Spiritual context analyzers and reflection logs.', assetPath: '/Layers/Peacefull deen layers/PEACEFUL_DEEN_LAYER_03_BEHAVIORAL_TRIAGE_INTERVENTION.svg' },
-      { number: '04', name: 'PROGRESS', description: 'Long-term analytics and spiritual progress trackers.', assetPath: '/Layers/Peacefull deen layers/PEACEFUL_DEEN_LAYER_04_PERSONAL_REFLECTION_PROGRESS.svg' }
+      { number: '01', name: 'INTERFACE', description: 'Mobile app layout, Dhikr counters, and dashboard.', assetPath: '/Layers/Peacefull deen layers/PEACEFUL_DEEN_LAYER_01_INTERFACE.webp' },
+      { number: '02', name: 'ACCOUNTABILITY', description: 'Location-aware prayer timings and notification loops.', assetPath: '/Layers/Peacefull deen layers/PEACEFUL_DEEN_LAYER_02_REMINDER_ACCOUNTABILITY.webp' },
+      { number: '03', name: 'INTERVENTION', description: 'Spiritual context analyzers and reflection logs.', assetPath: '/Layers/Peacefull deen layers/PEACEFUL_DEEN_LAYER_03_BEHAVIORAL_TRIAGE_INTERVENTION.webp' },
+      { number: '04', name: 'PROGRESS', description: 'Long-term analytics and spiritual progress trackers.', assetPath: '/Layers/Peacefull deen layers/PEACEFUL_DEEN_LAYER_04_PERSONAL_REFLECTION_PROGRESS.webp' }
     ]
   },
   {
@@ -262,10 +262,10 @@ export const WORK_REVEAL_PROJECTS: WorkRevealProject[] = [
       { title: 'Adaptive Grading', desc: 'Class progression analytics and skill verification.', icon: 'BarChart3' }
     ],
     layers: [
-      { number: '01', name: 'INTERFACE', description: 'Generative input prompts and grading views.', assetPath: '/Layers/AI co techer layers/AI_CO_TEACHER_LAYER_01_INTERFACE.svg' },
-      { number: '02', name: 'ENGINE', description: 'LLM orchestrator and presentation slide compilers.', assetPath: '/Layers/AI co techer layers/AI_CO_TEACHER_LAYER_02_ENGINE.svg' },
-      { number: '03', name: 'ASSESSMENT', description: 'Dynamic grade verification and question paper generators.', assetPath: '/Layers/AI co techer layers/AI_CO_TEACHER_LAYER_03_ADAPTATION_ASSESSMENT.svg' },
-      { number: '04', name: 'ANALYTICS', description: 'Class progression maps and student metrics dashboard.', assetPath: '/Layers/AI co techer layers/AI_CO_TEACHER_LAYER_04_TEACHER_INSIGHT_LEARNING_ANALYTICS.svg' }
+      { number: '01', name: 'INTERFACE', description: 'Generative input prompts and grading views.', assetPath: '/Layers/AI co techer layers/AI_CO_TEACHER_LAYER_01_INTERFACE.webp' },
+      { number: '02', name: 'ENGINE', description: 'LLM orchestrator and presentation slide compilers.', assetPath: '/Layers/AI co techer layers/AI_CO_TEACHER_LAYER_02_ENGINE.webp' },
+      { number: '03', name: 'ASSESSMENT', description: 'Dynamic grade verification and question paper generators.', assetPath: '/Layers/AI co techer layers/AI_CO_TEACHER_LAYER_03_ADAPTATION_ASSESSMENT.webp' },
+      { number: '04', name: 'ANALYTICS', description: 'Class progression maps and student metrics dashboard.', assetPath: '/Layers/AI co techer layers/AI_CO_TEACHER_LAYER_04_TEACHER_INSIGHT_LEARNING_ANALYTICS.webp' }
     ]
   },
   {
@@ -299,8 +299,8 @@ export const WORK_REVEAL_PROJECTS: WorkRevealProject[] = [
       { title: 'Visual Showcase', desc: 'Cinematic digital gallery with high-res details.', icon: 'Sparkles' }
     ],
     layers: [
-      { number: '01', name: 'INTERFACE', description: 'Artwork display galleries and commission forms.', assetPath: '/Layers/Calligraphy by aqsa layers/CALLIGRAPHY_BY_AQSA_LAYER_01_INTERFACE.svg' },
-      { number: '02', name: 'COMMISSION', description: 'Client request validation and status tracking flow.', assetPath: '/Layers/Calligraphy by aqsa layers/CALLIGRAPHY_BY_AQSA_LAYER_02_COMMISSION_CREATIVE_PROCESS.svg' }
+      { number: '01', name: 'INTERFACE', description: 'Artwork display galleries and commission forms.', assetPath: '/Layers/Calligraphy by aqsa layers/CALLIGRAPHY_BY_AQSA_LAYER_01_INTERFACE.webp' },
+      { number: '02', name: 'COMMISSION', description: 'Client request validation and status tracking flow.', assetPath: '/Layers/Calligraphy by aqsa layers/CALLIGRAPHY_BY_AQSA_LAYER_02_COMMISSION_CREATIVE_PROCESS.webp' }
     ]
   },
   {
@@ -334,9 +334,9 @@ export const WORK_REVEAL_PROJECTS: WorkRevealProject[] = [
       { title: 'Parent Insights', desc: 'Live discovery journey and enrollment progression.', icon: 'BarChart3' }
     ],
     layers: [
-      { number: '01', name: 'INTERFACE', description: 'School maps, curriculum discoverers, and forms.', assetPath: '/Layers/Sakura montessori layer/SAKURA_MONTESSORI_LAYER_01_INTERFACE.svg' },
-      { number: '02', name: 'LEARNING SYSTEM', description: 'Montessori learning metrics and campus activities logs.', assetPath: '/Layers/Sakura montessori layer/SAKURA_MONTESSORI_LAYER_02_LEARNING_CLASSROOM_SYSTEM.svg' },
-      { number: '03', name: 'CHILD DEVELOPMENT', description: 'Enrollment progress boards and student profiles archives.', assetPath: '/Layers/Sakura montessori layer/SAKURA_MONTESSORI_LAYER_03_CHILD_DEVELOPMENT_PARENT_INSIGHT.svg' }
+      { number: '01', name: 'INTERFACE', description: 'School maps, curriculum discoverers, and forms.', assetPath: '/Layers/Sakura montessori layer/SAKURA_MONTESSORI_LAYER_01_INTERFACE.webp' },
+      { number: '02', name: 'LEARNING SYSTEM', description: 'Montessori learning metrics and campus activities logs.', assetPath: '/Layers/Sakura montessori layer/SAKURA_MONTESSORI_LAYER_02_LEARNING_CLASSROOM_SYSTEM.webp' },
+      { number: '03', name: 'CHILD DEVELOPMENT', description: 'Enrollment progress boards and student profiles archives.', assetPath: '/Layers/Sakura montessori layer/SAKURA_MONTESSORI_LAYER_03_CHILD_DEVELOPMENT_PARENT_INSIGHT.webp' }
     ]
   }
 ];

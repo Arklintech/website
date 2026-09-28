@@ -1,6 +1,42 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDb } from '@/lib/admin-db';
 import { verifyAdminRequest } from '@/lib/admin-auth';
+import type { ProjectRecord } from '@/lib/admin-db';
+
+const TEXT_FIELDS = ['name', 'clientName', 'description', 'industry', 'projectType', 'technologies', 'team', 'startDate', 'targetDate', 'projectRef', 'currentStage'] as const;
+const PRIORITIES = ['LOW', 'MEDIUM', 'HIGH'];
+const STATUSES = ['ACTIVE', 'ON_HOLD', 'COMPLETED', 'ARCHIVED'];
+
+/** Whitelists the editable project fields; anything else in the body is ignored.
+ *  The project image is changed through /api/admin/projects/[id]/image instead. */
+function parseProjectUpdate(body: any): { updates: Partial<ProjectRecord> } | { error: string } {
+  if (!body || typeof body !== 'object') return { error: 'Invalid request body' };
+  const updates: Partial<ProjectRecord> = {};
+  for (const key of TEXT_FIELDS) {
+    if (body[key] !== undefined) (updates as any)[key] = String(body[key] ?? '').trim().slice(0, 2000);
+  }
+  if (updates.name !== undefined && !updates.name) return { error: 'Project name is required' };
+  if (updates.clientName !== undefined && !updates.clientName) return { error: 'Client name is required' };
+  if (body.priority !== undefined) {
+    if (!PRIORITIES.includes(body.priority)) return { error: 'Invalid priority' };
+    updates.priority = body.priority;
+  }
+  if (body.status !== undefined) {
+    if (!STATUSES.includes(body.status)) return { error: 'Invalid status' };
+    updates.status = body.status;
+  }
+  if (body.projectValue !== undefined) {
+    const value = Number(body.projectValue);
+    if (!Number.isFinite(value) || value < 0) return { error: 'Invalid project value' };
+    updates.projectValue = value;
+  }
+  if (body.progress !== undefined) {
+    const progress = Number(body.progress);
+    if (!Number.isFinite(progress) || progress < 0 || progress > 100) return { error: 'Invalid progress' };
+    updates.progress = Math.round(progress);
+  }
+  return { updates };
+}
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   const auth = await verifyAdminRequest(req);
@@ -59,8 +95,11 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 
   try {
-    const body = await req.json();
-    const updated = await adminDb.projects.update(params.id, body);
+    const parsed = parseProjectUpdate(await req.json());
+    if ('error' in parsed) {
+      return NextResponse.json({ error: parsed.error }, { status: 400 });
+    }
+    const updated = await adminDb.projects.update(params.id, parsed.updates);
     if (!updated) {
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }

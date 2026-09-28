@@ -10,6 +10,7 @@ import { ABOUT_CONTENT } from '@/content/about';
 import { PROJECTS } from '@/content/projects';
 import EngineeringConvergenceSection from '@/components/home/EngineeringConvergenceSection';
 import { ArrowRight, ArrowLeft, ChevronRight } from 'lucide-react';
+import { withBrandName } from '@/components/brand/BrandName';
 
 export default function AboutView() {
   const featuredProof = PROJECTS.slice(0, 4);
@@ -39,7 +40,7 @@ export default function AboutView() {
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#EDF4FF]/80 border border-[rgba(148,163,184,0.15)]">
                   <span className="w-2 h-2 rounded-full bg-[#1677FF] animate-pulse" />
                   <span className="font-mono text-xs font-semibold text-[#111827] tracking-wider uppercase">
-                    {ABOUT_CONTENT.hero.badge}
+                    {withBrandName(ABOUT_CONTENT.hero.badge)}
                   </span>
                 </div>
 
@@ -48,7 +49,7 @@ export default function AboutView() {
                 </h1>
 
                 <p className="text-lg sm:text-xl text-[#536070] font-body leading-relaxed max-w-3xl">
-                  <span style={{ fontFamily: "'Caveat', var(--font-handwriting), cursive" }}>{ABOUT_CONTENT.hero.subtitle}</span>
+                  <span style={{ fontFamily: "'Caveat', var(--font-handwriting), cursive" }}>{withBrandName(ABOUT_CONTENT.hero.subtitle)}</span>
                 </p>
 
                 <div className="pt-2 flex flex-wrap items-center gap-3 font-mono text-xs text-[#0050E6] font-semibold tracking-wider uppercase">
@@ -75,7 +76,7 @@ export default function AboutView() {
 
                 <div className="lg:col-span-8 space-y-6">
                   <p className="text-lg text-[#111827] font-body leading-relaxed font-medium">
-                    {ABOUT_CONTENT.whoWeAre.primaryStatement}
+                    {withBrandName(ABOUT_CONTENT.whoWeAre.primaryStatement)}
                   </p>
 
                   <div className="p-6 rounded-lg bg-white border border-[#1677FF]/30 text-xl sm:text-2xl font-bold text-[#111827] leading-relaxed shadow-sm" style={{ fontFamily: "'Caveat', var(--font-handwriting), cursive" }}>
@@ -85,7 +86,7 @@ export default function AboutView() {
                   <div className="space-y-4 pt-2">
                     {ABOUT_CONTENT.whoWeAre.narrative.map((p, i) => (
                       <p key={i} className="text-sm sm:text-base text-[#536070] font-body leading-relaxed">
-                        {p}
+                        {withBrandName(p)}
                       </p>
                     ))}
                   </div>
@@ -100,7 +101,7 @@ export default function AboutView() {
                   {ABOUT_CONTENT.systemModel.sectionNumber} — ARCHITECTURAL FRAMEWORK
                 </div>
                 <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#111827] uppercase tracking-tight">
-                  {ABOUT_CONTENT.systemModel.title}
+                  {withBrandName(ABOUT_CONTENT.systemModel.title)}
                 </h2>
                 <p className="text-base text-[#536070] max-w-2xl font-body">
                   {ABOUT_CONTENT.systemModel.description}
@@ -221,7 +222,7 @@ export default function AboutView() {
                   {ABOUT_CONTENT.whyAklintech.sectionNumber} — CORE PRINCIPLES
                 </div>
                 <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#111827] uppercase tracking-tight">
-                  {ABOUT_CONTENT.whyAklintech.title}
+                  {withBrandName(ABOUT_CONTENT.whyAklintech.title)}
                 </h2>
               </div>
 
@@ -277,7 +278,7 @@ export default function AboutView() {
                     {ABOUT_CONTENT.cta.title}
                   </h2>
                   <p className="text-xs sm:text-sm text-[#536070] font-body max-w-md">
-                    {ABOUT_CONTENT.cta.subtitle}
+                    {withBrandName(ABOUT_CONTENT.cta.subtitle)}
                   </p>
                 </div>
 

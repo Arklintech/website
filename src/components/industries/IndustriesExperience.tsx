@@ -6,6 +6,7 @@ import {
   Layers, TrendingUp, UtensilsCrossed, HeartPulse, ShieldCheck,
   Landmark, ArrowRight, Mouse
 } from 'lucide-react';
+import BrandName from '@/components/brand/BrandName';
 
 interface IndustryContext {
   id: string;
@@ -26,7 +27,7 @@ const INDUSTRIES: IndustryContext[] = [
     line1: 'COMMERCE &',
     line2: 'RETAIL',
     name: 'COMMERCE & RETAIL',
-    svgPath: '/Industry%20images/industry-01-commerce-retail.svg',
+    svgPath: '/Industry%20images/industry-01-commerce-retail.webp',
     headline: 'High volume demands systems that never drop an order.',
     tagline: 'Engineering resilient transactional backbones that scale under peak loads without latency or friction. Unified real-time stock sync and intelligent fulfillment.',
     adaptations: [
@@ -43,7 +44,7 @@ const INDUSTRIES: IndustryContext[] = [
     line1: 'EDUCATION &',
     line2: 'INSTITUTIONS',
     name: 'EDUCATION & INSTITUTIONS',
-    svgPath: '/Industry%20images/industry-02-education-institutions.svg',
+    svgPath: '/Industry%20images/industry-02-education-institutions.webp',
     headline: 'Admissions shouldn’t feel like a chain of forms.',
     tagline: 'Architecting intelligent intake engines and academic operational suites that eliminate bureaucratic drag and connect faculty, students, and administration.',
     adaptations: [
@@ -60,7 +61,7 @@ const INDUSTRIES: IndustryContext[] = [
     line1: 'HOSPITALITY &',
     line2: 'FOODSERVICE',
     name: 'HOSPITALITY & FOODSERVICE',
-    svgPath: '/Industry%20images/industry-03-hospitality-foodservice.svg',
+    svgPath: '/Industry%20images/industry-03-hospitality-foodservice.webp',
     headline: 'When the dinner rush hits, every second counts.',
     tagline: 'Creating low-latency restaurant operations suites connecting front-of-house orders, kitchen pipelines, inventory depletion, and franchise analytics.',
     adaptations: [
@@ -77,7 +78,7 @@ const INDUSTRIES: IndustryContext[] = [
     line1: 'HEALTHCARE &',
     line2: 'CLINICAL SYSTEMS',
     name: 'HEALTHCARE & CLINICAL SYSTEMS',
-    svgPath: '/Industry%20images/industry-04-healthcare-clinical-systems.svg',
+    svgPath: '/Industry%20images/industry-04-healthcare-clinical-systems.webp',
     headline: 'In healthcare, a broken workflow can become a real delay.',
     tagline: 'Constructing clinical operating platforms built for patients and practitioners. Frictionless intake from first contact to clinical review.',
     adaptations: [
@@ -94,7 +95,7 @@ const INDUSTRIES: IndustryContext[] = [
     line1: 'NON-PROFIT &',
     line2: 'CIVIC ORGANIZATIONS',
     name: 'NON-PROFIT & CIVIC ORGANIZATIONS',
-    svgPath: '/Industry%20images/industry-05-nonprofit-civic-organizations.svg',
+    svgPath: '/Industry%20images/industry-05-nonprofit-civic-organizations.webp',
     headline: 'When impact depends on trust, every donation and field action must line up.',
     tagline: 'An interconnected platform that unifies donors, causes, allocations, field operations, communications and reporting into one transparent operational ecosystem.',
     adaptations: [
@@ -380,6 +381,7 @@ export default function IndustriesExperience({ onOpenProjectModal }: IndustriesE
                           }}
                           className="select-none pointer-events-none"
                           loading="eager"
+                          decoding="async"
                         />
                       </div>
                     );
@@ -397,7 +399,7 @@ export default function IndustriesExperience({ onOpenProjectModal }: IndustriesE
                   <div className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#0050E6]" />
                     <span className="font-mono text-[8px] uppercase tracking-[0.18em] font-bold text-[#0050E6]">
-                      WHAT ARKLINTECH ADAPTS IN {activeIndustry.name}
+                      WHAT <BrandName /> ADAPTS IN {activeIndustry.name}
                     </span>
                   </div>
                   <span className="font-mono text-[8px] text-[#475569] font-bold">5 CORE ADAPTATIONS</span>

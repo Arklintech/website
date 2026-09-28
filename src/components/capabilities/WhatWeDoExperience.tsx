@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { KeystoneMark } from '@/components/brand/KeystoneLogo';
+import ArklintechWordmark from '@/components/brand/ArklintechWordmark';
 import {
   ArrowDown,
   ArrowRight,
@@ -50,14 +51,8 @@ export default function WhatWeDoExperience({ onOpenProjectModal }: WhatWeDoExper
               <KeystoneMark className="w-8 h-8 sm:w-11 sm:h-11 lg:w-13 lg:h-13" />
 
               {/* Main Wordmark: ARKLINTECH in Deep Navy */}
-              <h1
-                className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-[#111827] uppercase tracking-[0.22em] flex items-center leading-none"
-                style={{
-                  fontFamily: "'Syncopate', var(--font-syncopate), sans-serif",
-                  paddingLeft: '0.22em',
-                }}
-              >
-                <span>ARKLINTECH</span>
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl text-[#111827] flex items-center leading-none">
+                <ArklintechWordmark tracking={0.22} gap={0.16} />
               </h1>
             </div>
 
@@ -171,7 +166,7 @@ export default function WhatWeDoExperience({ onOpenProjectModal }: WhatWeDoExper
             <div className={lightVisualBox}>
               <div className="relative w-full h-full flex items-center justify-center" style={{ minHeight: 260 }}>
                 <Image
-                  src="/what%20we%20do%20images/01-websites.svg"
+                  src="/what%20we%20do%20images/01-websites.webp"
                   alt="Websites service illustration"
                   fill
                   sizes="(max-width: 768px) 100vw, 55vw"
@@ -193,7 +188,7 @@ export default function WhatWeDoExperience({ onOpenProjectModal }: WhatWeDoExper
             <div className={`${blueVisualBox} order-2 lg:order-1`}>
               <div className="relative w-full h-full flex items-center justify-center" style={{ minHeight: 260 }}>
                 <Image
-                  src="/what%20we%20do%20images/02-seo.svg"
+                  src="/what%20we%20do%20images/02-seo.webp"
                   alt="SEO service illustration"
                   fill
                   sizes="(max-width: 768px) 100vw, 55vw"
@@ -242,7 +237,7 @@ export default function WhatWeDoExperience({ onOpenProjectModal }: WhatWeDoExper
             <div className={lightVisualBox}>
               <div className="relative w-full h-full flex items-center justify-center" style={{ minHeight: 260 }}>
                 <Image
-                  src="/what%20we%20do%20images/03-chat-voice-bot.svg"
+                  src="/what%20we%20do%20images/03-chat-voice-bot.webp"
                   alt="Chat and Voice Bot service illustration"
                   fill
                   sizes="(max-width: 768px) 100vw, 55vw"
@@ -263,7 +258,7 @@ export default function WhatWeDoExperience({ onOpenProjectModal }: WhatWeDoExper
             <div className={`${blueVisualBox} order-2 lg:order-1`}>
               <div className="relative w-full h-full flex items-center justify-center" style={{ minHeight: 260 }}>
                 <Image
-                  src="/what%20we%20do%20images/04-ai-automation.svg"
+                  src="/what%20we%20do%20images/04-ai-automation.webp"
                   alt="AI Automation service illustration"
                   fill
                   sizes="(max-width: 768px) 100vw, 55vw"
@@ -312,7 +307,7 @@ export default function WhatWeDoExperience({ onOpenProjectModal }: WhatWeDoExper
             <div className={lightVisualBox}>
               <div className="relative w-full h-full flex items-center justify-center" style={{ minHeight: 260 }}>
                 <Image
-                  src="/what%20we%20do%20images/05-custom-software.svg"
+                  src="/what%20we%20do%20images/05-custom-software.webp"
                   alt="Custom Software service illustration"
                   fill
                   sizes="(max-width: 768px) 100vw, 55vw"
@@ -333,7 +328,7 @@ export default function WhatWeDoExperience({ onOpenProjectModal }: WhatWeDoExper
             <div className={`${blueVisualBox} order-2 lg:order-1`}>
               <div className="relative w-full h-full flex items-center justify-center" style={{ minHeight: 260 }}>
                 <Image
-                  src="/what%20we%20do%20images/06-lead-management-system.svg"
+                  src="/what%20we%20do%20images/06-lead-management-system.webp"
                   alt="Lead Management System service illustration"
                   fill
                   sizes="(max-width: 768px) 100vw, 55vw"
@@ -385,7 +380,7 @@ export default function WhatWeDoExperience({ onOpenProjectModal }: WhatWeDoExper
             <div className={`${darkVisualBox}`}>
               <div className="relative w-full h-full flex items-center justify-center" style={{ minHeight: 260 }}>
                 <Image
-                  src="/what%20we%20do%20images/07-3d-websites.svg"
+                  src="/what%20we%20do%20images/07-3d-websites.webp"
                   alt="3D Websites service illustration"
                   fill
                   sizes="(max-width: 768px) 100vw, 55vw"

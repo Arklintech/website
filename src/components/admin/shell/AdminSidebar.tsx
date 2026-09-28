@@ -4,13 +4,13 @@ import React from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
-  LayoutDashboard, Users, Inbox, BookUser, Building2, CalendarCheck,
-  Radio, Activity, GitBranch, BarChart3, TrendingUp, Filter,
-  Globe, FileBarChart2, UserCog, ShieldCheck, Lock, Settings,
+  LayoutDashboard, BookUser, Building2, CalendarCheck,
+  UserCog, ShieldCheck, Lock, Settings,
   ChevronRight, Zap, Briefcase, Receipt, PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react';
 
 import KeystoneLogo from '@/components/brand/KeystoneLogo';
+import BrandName from '@/components/brand/BrandName';
 
 interface NavItem {
   href: string;
@@ -26,7 +26,6 @@ interface NavSection {
 }
 
 interface AdminSidebarProps {
-  inboxUnread?: number;
   followupsOverdue?: number;
   leadsNew?: number;
   isCollapsed?: boolean;
@@ -46,7 +45,6 @@ const NAV: NavSection[] = [
     section: 'BUSINESS',
     items: [
       { href: '/admin/leads', label: 'Leads', icon: <Zap className="w-4 h-4" /> },
-      { href: '/admin/inbox', label: 'Inbox', icon: <Inbox className="w-4 h-4" /> },
       { href: '/admin/contacts', label: 'Contacts', icon: <BookUser className="w-4 h-4" /> },
       { href: '/admin/companies', label: 'Companies', icon: <Building2 className="w-4 h-4" /> },
       { href: '/admin/follow-ups', label: 'Follow-ups', icon: <CalendarCheck className="w-4 h-4" /> },
@@ -57,24 +55,6 @@ const NAV: NavSection[] = [
     items: [
       { href: '/admin/projects', label: 'Projects', icon: <Briefcase className="w-4 h-4" /> },
       { href: '/admin/billing', label: 'Billing', icon: <Receipt className="w-4 h-4" /> },
-    ],
-  },
-  {
-    section: 'VISITS',
-    items: [
-      { href: '/admin/live-visitors', label: 'Live Visitors', icon: <Radio className="w-4 h-4" />, isLive: true },
-      { href: '/admin/visits', label: 'Visits', icon: <Activity className="w-4 h-4" /> },
-      { href: '/admin/visitor-journeys', label: 'Visitor Journeys', icon: <GitBranch className="w-4 h-4" /> },
-    ],
-  },
-  {
-    section: 'INTELLIGENCE',
-    items: [
-      { href: '/admin/analytics', label: 'Analytics', icon: <BarChart3 className="w-4 h-4" /> },
-      { href: '/admin/funnels', label: 'Funnels', icon: <Filter className="w-4 h-4" /> },
-      { href: '/admin/sources', label: 'Sources', icon: <Globe className="w-4 h-4" /> },
-      { href: '/admin/trends', label: 'Trends', icon: <TrendingUp className="w-4 h-4" /> },
-      { href: '/admin/reports', label: 'Reports', icon: <FileBarChart2 className="w-4 h-4" /> },
     ],
   },
   {
@@ -89,7 +69,6 @@ const NAV: NavSection[] = [
 ];
 
 export default function AdminSidebar({
-  inboxUnread = 0,
   followupsOverdue = 0,
   leadsNew = 0,
   isCollapsed = false,
@@ -101,7 +80,6 @@ export default function AdminSidebar({
 
   const getBadge = (href: string): number | null => {
     if (href === '/admin/leads' && leadsNew > 0) return leadsNew;
-    if (href === '/admin/inbox' && inboxUnread > 0) return inboxUnread;
     if (href === '/admin/follow-ups' && followupsOverdue > 0) return followupsOverdue;
     return null;
   };
@@ -238,7 +216,7 @@ export default function AdminSidebar({
             </div>
             <div className="min-w-0">
               <div className="text-[11px] font-bold text-[#0B132B] truncate">Super Admin</div>
-              <div className="font-mono text-[9px] text-[#94A3B8] truncate">ARKLINTECH</div>
+              <div className="font-mono text-[9px] text-[#94A3B8] truncate"><BrandName /></div>
             </div>
           </div>
         )}

@@ -5,6 +5,7 @@ import PageShell from '@/components/layout/PageShell';
 import PageContainer from '@/components/layout/PageContainer';
 import { INSIGHTS_ARTICLES } from '@/content/insights';
 import { Clock, Calendar, CheckCircle2 } from 'lucide-react';
+import BrandName from '@/components/brand/BrandName';
 
 export default function InsightsView() {
   return (
@@ -28,7 +29,7 @@ export default function InsightsView() {
                 INSIGHTS & ENGINEERING NOTES
               </h1>
               <p className="text-base sm:text-lg text-z-muted font-body leading-relaxed">
-                Technical writings, system architecture analyses, and research papers authored by the <span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: '0.12em' }} className="font-extrabold uppercase">ARKLINTECH</span> engineering team.
+                Technical writings, system architecture analyses, and research papers authored by the <BrandName /> engineering team.
               </p>
             </div>
 

@@ -46,7 +46,9 @@ function ValueBlockIcon({ iconName, className = 'w-4 h-4 text-[#1463FF]' }: { ic
 
 export default function SystemsBuiltSection({ onOpenProjectModal, initialProjectId }: SystemsBuiltSectionProps) {
   const [activeProjectId, setActiveProjectId] = useState(initialProjectId || 'daarayn');
-  const [layerProgress, setLayerProgress] = useState(0);
+  // Only the visible layer index is state: it changes a handful of times per project, whereas
+  // raw scroll progress changed every frame and re-rendered the whole section while scrolling.
+  const [currentLayerIndex, setCurrentLayerIndex] = useState(0);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const rafRef = useRef<number | null>(null);
@@ -58,7 +60,7 @@ export default function SystemsBuiltSection({ onOpenProjectModal, initialProject
       const proj = params.get('project');
       if (proj && WORK_REVEAL_PROJECTS.some((p) => p.id === proj)) {
         setActiveProjectId(proj);
-        setLayerProgress(0);
+        setCurrentLayerIndex(0);
       }
     }
   }, []);
@@ -67,9 +69,6 @@ export default function SystemsBuiltSection({ onOpenProjectModal, initialProject
   const activeLayers = activeProject.layers;
   const totalLayers = activeLayers.length;
 
-  // Calculate active layer index from scroll progress (shared across mobile & desktop)
-  const activeLayerIndex = Math.min(totalLayers - 1, Math.floor(layerProgress * totalLayers));
-  const currentLayerIndex = activeLayerIndex;
   const currentLayer = activeLayers[currentLayerIndex] ?? activeLayers[0];
 
   // Dynamic scroll scrub height per project based on layer count
@@ -87,7 +86,8 @@ export default function SystemsBuiltSection({ onOpenProjectModal, initialProject
         if (totalHeight <= 0) return;
 
         const progress = Math.max(0, Math.min(0.999, (navbarHeight - rect.top) / totalHeight));
-        setLayerProgress(progress);
+        // Same index → React skips the render, so scrolling within a layer costs nothing.
+        setCurrentLayerIndex(Math.min(totalLayers - 1, Math.floor(progress * totalLayers)));
       });
     };
 
@@ -103,7 +103,7 @@ export default function SystemsBuiltSection({ onOpenProjectModal, initialProject
   const handleSelectProject = useCallback((projectId: string) => {
     if (projectId === activeProjectId) return;
     setActiveProjectId(projectId);
-    setLayerProgress(0);
+    setCurrentLayerIndex(0);
 
     // Scroll smoothly to top of the work showcase
     if (containerRef.current) {
@@ -348,6 +348,7 @@ export default function SystemsBuiltSection({ onOpenProjectModal, initialProject
                       }}
                       className="select-none pointer-events-none drop-shadow-md"
                       loading="eager"
+                      decoding="async"
                     />
                   </div>
                 );

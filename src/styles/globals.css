@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@300;400;500;600;700;800&family=Syncopate:wght@400;700&display=swap');
+@import './fonts.css';
 @import './tokens.css';
 
 @tailwind base;
@@ -228,4 +228,9 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+/* Freeze CSS keyframe animations inside SVGs that are off-screen (see OffscreenAnimationPauser). */
+svg[data-offscreen],
+svg[data-offscreen] * {
+  animation-play-state: paused !important;
 }

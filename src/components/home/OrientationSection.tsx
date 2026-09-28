@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import PageContainer from '@/components/layout/PageContainer';
 import { ArrowRight, Shield, Layers, Cpu } from 'lucide-react';
+import BrandName from '@/components/brand/BrandName';
 
 export default function OrientationSection() {
   return (
@@ -31,7 +32,7 @@ export default function OrientationSection() {
             </h2>
 
             <p className="text-sm sm:text-base text-[#536070] font-body leading-relaxed">
-              <span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: "0.08em" }} className="font-extrabold text-[#0050E6]"><span style={{ fontFamily: "'Syncopate', var(--font-syncopate), sans-serif", letterSpacing: '0.12em' }} className="font-extrabold uppercase">ARKLINTECH</span></span> approaches technology as a systems engineering problem. Disconnected software tools create disconnected operational work. We design and engineer unified digital platforms, automated workflow state machines, and business systems that establish clear operational lineage across an enterprise.
+              <BrandName className="text-[#0050E6]" /> approaches technology as a systems engineering problem. Disconnected software tools create disconnected operational work. We design and engineer unified digital platforms, automated workflow state machines, and business systems that establish clear operational lineage across an enterprise.
             </p>
 
             <div className="pt-2">
