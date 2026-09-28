@@ -18,13 +18,13 @@ const { unitsPerEm: UPM, ascent, descent } = WORDMARK_FONT_METRICS;
 const BASELINE_Y = (UPM - (ascent + descent)) / 2 + ascent;
 
 // Approved chevron "A" — path unchanged from the original brand glyph (viewBox 0 0 135 110).
-const CHEVRON_A_PATH = 'M 67.5 4 L 130 106 L 91 106 L 67.5 58 L 44 106 L 5 106 Z';
-const CHEVRON_A = { inkLeft: 5, inkRight: 130, inkBottom: 106 };
+export const CHEVRON_A_PATH = 'M 67.5 4 L 130 106 L 91 106 L 67.5 58 L 44 106 L 5 106 Z';
+export const CHEVRON_A = { inkLeft: 5, inkRight: 130, inkBottom: 106 };
 // Inline use pads both ends with the font's own side bearing so the wordmark spaces like a word.
-const SIDE_BEARING = 215;
+export const SIDE_BEARING = 215;
 
 // Chevron scale: its 135-unit box spans 0.8333em (10px at 12px), as in the approved header logo.
-const CHEVRON_SCALE = (UPM * (10 / 12)) / 135;
+export const CHEVRON_SCALE = (UPM * (10 / 12)) / 135;
 
 interface ArklintechWordmarkProps {
   /** Letter spacing between RKLINTECH glyphs, in em. */

@@ -1,4 +1,4 @@
-import { PDFDocument, rgb, StandardFonts, PDFName, PDFString, PDFArray, PDFDict } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts, PDFName, PDFString, PDFArray, PDFDict, type RGB } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import fs from 'fs';
 import path from 'path';
@@ -8,6 +8,13 @@ import {
   calculateInvoiceTotals,
   formatInvoiceCurrency,
 } from './invoice-spec';
+import { WORDMARK_FONT_METRICS, WORDMARK_GLYPHS } from '@/components/brand/wordmark-glyphs';
+import {
+  CHEVRON_A,
+  CHEVRON_A_PATH,
+  CHEVRON_SCALE,
+  SIDE_BEARING,
+} from '@/components/brand/ArklintechWordmark';
 
 // In-memory font cache for ultra-fast PDF generation (< 20ms)
 let cachedFontRegBuffer: Buffer | null = null;
@@ -66,6 +73,45 @@ function addLinkAnnotation(
   } else {
     page.node.set(PDFName.of('Annots'), doc.context.obj([annotRef]));
   }
+}
+
+/**
+ * Draws the ARKLINTECH vector wordmark (chevron A + outlined Syncopate Bold), laid out exactly
+ * like the inline <BrandName /> on the web preview. `x` is the left edge including the inline
+ * side bearing, `baselineY` the text baseline, `size` the surrounding font size in pt.
+ * Returns the advance width so following text can continue after it.
+ */
+function drawWordmark(
+  page: ReturnType<PDFDocument['addPage']>,
+  x: number,
+  baselineY: number,
+  size: number,
+  color: RGB,
+  tracking = 0.18,
+  gap = 0.14
+): number {
+  const UPM = WORDMARK_FONT_METRICS.unitsPerEm;
+  const s = size / UPM;
+  const originX = x + SIDE_BEARING * s;
+
+  // SVG paths are y-down with the baseline at y = 0; drawSvgPath flips them onto the PDF baseline.
+  page.drawSvgPath(CHEVRON_A_PATH, {
+    x: originX - CHEVRON_A.inkLeft * CHEVRON_SCALE * s,
+    y: baselineY + CHEVRON_A.inkBottom * CHEVRON_SCALE * s,
+    scale: CHEVRON_SCALE * s,
+    color,
+    borderWidth: 0,
+  });
+
+  let glyphX = CHEVRON_A.inkRight * CHEVRON_SCALE + gap * UPM;
+  let inkWidth = 0;
+  WORDMARK_GLYPHS.forEach((glyph, i) => {
+    page.drawSvgPath(glyph.d, { x: originX + glyphX * s, y: baselineY, scale: s, color, borderWidth: 0 });
+    inkWidth = glyphX + glyph.inkRight;
+    glyphX += glyph.advance + (i < WORDMARK_GLYPHS.length - 1 ? tracking * UPM : 0);
+  });
+
+  return (Math.ceil(inkWidth) + SIDE_BEARING * 2) * s;
 }
 
 function cleanWinAnsi(str: string): string {
@@ -177,13 +223,7 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
       height: imgHeight,
     });
   } else {
-    page.drawText(INVOICE_BRAND.name, {
-      x: marginX,
-      y: headerY - 10,
-      size: 18,
-      font: fontBold,
-      color: colorNavy,
-    });
+    drawWordmark(page, marginX - SIDE_BEARING * (18 / WORDMARK_FONT_METRICS.unitsPerEm), headerY - 10, 18, colorNavy);
     page.drawText(INVOICE_BRAND.subName, {
       x: marginX,
       y: headerY - 24,
@@ -610,7 +650,10 @@ export async function generateInvoicePdfBuffer(invoice: InvoiceRecord): Promise<
   const nameY = signY - 44;
   page.drawText(INVOICE_BRAND.signatureName, { x: marginX, y: nameY, size: 8.5, font: fontBold, color: colorNavy });
   page.drawText(INVOICE_BRAND.signatureTitle, { x: marginX, y: nameY - 9, size: 7, font: fontRegular, color: colorSlate });
-  page.drawText(INVOICE_BRAND.signatureCompany, { x: marginX, y: nameY - 18, size: 7.5, font: fontBold, color: colorNavy });
+  // Company line: vector wordmark + "TECHNOLOGY SYSTEMS", matching <BrandName /> in the preview
+  const companyY = nameY - 18;
+  const wordmarkW = drawWordmark(page, marginX, companyY, 7.5, colorNavy);
+  page.drawText(` ${INVOICE_BRAND.subName}`, { x: marginX + wordmarkW, y: companyY, size: 7.5, font: fontBold, color: colorNavy });
 
   // Right Side: BUILD / AUTOMATE / INTEGRATE / SCALE
   const pillarX = width - 110;
